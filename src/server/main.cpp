@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include "../common.h"
 
+std::string ACTION_GET = "GET";
+std::string ACTION_SET = "SET";
+std::string DELIMITER = "$";
+
 class Cache {
     public:
         std::string get(std::string);
@@ -17,17 +21,17 @@ class Cache {
         Cache();
 
     private:
-        std::map<std::string, std::string> content;
+        std::map<std::string, std::string> storage;
 };
 
 Cache::Cache() {};
 
 std::string Cache::get(std::string key) {
-    return this->content[key];
+    return this->storage[key];
 }
 
 void Cache::set(std::string key, std::string value) {
-    this->content[key] = value;
+    this->storage[key] = value;
 };
 
 void init_server(int sockfd, int portno) {
@@ -52,19 +56,27 @@ void init_server(int sockfd, int portno) {
 }
 
 std::string process_message(std::string message, Cache *cache) {
+
+    std::string action = message.substr(0, 3);
+    std::string payload = message.substr(4, message.size() - 5);
+
     std::string reply;
 
-    if (message.substr(0, 3) == "GET") {
-        reply = "Du hast GET gesagt!";
-    } else if (message.substr(0, 3) == "SET") {
-        reply = "Du willst was setzen?";
+
+    if (action == ACTION_GET) {
+        reply = cache->get(payload);
+    } else if (action == ACTION_SET) {
+        std::string key = payload.substr(0, payload.find(DELIMITER));
+        std::string value = payload.substr(payload.find(DELIMITER) + 1);
+        cache->set(key, value);
+        reply = "OK";
     }
     return reply;
 }
 
 void send_reply(int newsockfd, std::string reply_message) {
     int out_message;
-    out_message = write(newsockfd, reply_message.c_str(), 18);
+    out_message = write(newsockfd, reply_message.c_str(), sizeof(reply_message));
 
     if (out_message < 0) {
         error("Error: Writing to socket");
