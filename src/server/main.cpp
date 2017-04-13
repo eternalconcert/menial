@@ -12,7 +12,7 @@
 
 std::string ACTION_GET = "GET";
 std::string ACTION_SET = "SET";
-std::string DELIMITER = "$";
+std::string DELIMITER = ":";
 
 class Cache {
     public:
@@ -58,19 +58,21 @@ void init_server(int sockfd, int portno) {
 std::string process_message(std::string message, Cache *cache) {
 
     std::string action = message.substr(0, 3);
-    std::string payload = message.substr(4, message.size() - 5);
+    std::string payload = message.substr(4, message.size() - 3);
 
     std::string reply;
 
 
     if (action == ACTION_GET) {
         reply = cache->get(payload);
+
     } else if (action == ACTION_SET) {
         std::string key = payload.substr(0, payload.find(DELIMITER));
         std::string value = payload.substr(payload.find(DELIMITER) + 1);
         cache->set(key, value);
         reply = "OK";
     }
+
     return reply;
 }
 

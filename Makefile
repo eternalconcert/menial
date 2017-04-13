@@ -9,10 +9,7 @@ client:
 compile: server client
 
 serve:
-	@build/server.bin 8088
-
-connect:
-	@build/client.bin localhost 8088
+	@build/server.bin 8080
 
 clean:
 	rm build/*

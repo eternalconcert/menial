@@ -1,6 +1,8 @@
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -17,7 +19,7 @@ int main(int argc, char *argv[]) {
     char buffer[BUFFER_SIZE];
 
     if (argc < 3) {
-        fprintf(stderr, "Usage %s hostname port\n", argv[0]);
+        fprintf(stderr, "Usage %s hostname port message\n", argv[0]);
         exit(0);
     }
 
@@ -48,10 +50,8 @@ int main(int argc, char *argv[]) {
         error("Error: Cannot connect");
     }
 
-    printf("Please enter a message: ");
-    bzero(buffer, BUFFER_SIZE);
-    fgets(buffer, BUFFER_LIMIT, stdin);
-    n = write(sockfd, buffer, strlen(buffer));
+    std::string message = argv[3];
+    n = write(sockfd, message.c_str(), message.size());
 
     if (n < 0) {
         error("Error: Cannot write to socket");
