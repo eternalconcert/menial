@@ -8,7 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "../common.h"
+#include "../common/common.h"
 
 int main(int argc, char *argv[]) {
 
