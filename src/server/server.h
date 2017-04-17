@@ -1,22 +1,20 @@
 #ifndef SERVER_H
 #define SERVER_H
 #include <string>
+#include "cache.h"
 
 class Server {
     public:
         void run();
-        void stop();
-        int getSockFd();
-        void setNewSockFd();
-        int getNewSockFd();
-        void sendReply(std::string replyMessage);
-        std::string getIncomingMessage();
+        void setMessageHandler(MessageHandler*);
+        void sendReply(std::string replyMessage, int newsockfd);
+        MessageHandler *messageHandler;
 
         Server(int portno);
+
     private:
-        int sockfd;
-        int newsockfd;
         int portno;
+
 };
 
 #endif

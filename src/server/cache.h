@@ -3,9 +3,13 @@
 
 #include <map>
 #include <string>
+#include "messagehandler.h"
 
-class Cache {
+
+class Cache: public MessageHandler {
     public:
+        std::string handleMessage(std::string message);
+
         std::string get(std::string);
         void set(std::string key, std::string value);
         Cache();
