@@ -41,14 +41,24 @@ std::string getIncomingMessage(int newsockfd) {
     if (newsockfd < 0) {
         error("Error: Cannot accept");
     }
-    bzero(buffer, BUFFER_SIZE);
-    int incoming_transmission;
-    incoming_transmission = read(newsockfd, buffer, BUFFER_LIMIT);
-    if (incoming_transmission < 0) {
-        error("Error: Reading from socket");
+
+    std::string result;
+    char curChar;
+    while (curChar != MESSAGE_DELIMITER) {
+        bzero(buffer, BUFFER_SIZE);
+        int messageSize;
+        messageSize = read(newsockfd, buffer, BUFFER_LIMIT);
+        if (messageSize < 0) {
+            error("Error: Reading from socket");
+        }
+
+        for (int i = 0; i < messageSize; i++) {
+            curChar = buffer[i];
+            result += curChar;
+        }
     }
 
-    return buffer;
+    return result.c_str();
 }
 
 
@@ -82,9 +92,11 @@ void Server::run() {
 
 }
 
+
 void Server::setMessageHandler(MessageHandler *messageHandler) {
     this->messageHandler = messageHandler;
 }
+
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 

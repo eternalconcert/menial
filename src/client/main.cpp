@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::string message = argv[3];
+    message += MESSAGE_DELIMITER;
     n = write(sockfd, message.c_str(), message.size());
 
     if (n < 0) {

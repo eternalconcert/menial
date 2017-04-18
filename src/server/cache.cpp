@@ -6,7 +6,7 @@ std::string DELIMITER = ":";
 
 std::string Cache::handleMessage(std::string message) {
     std::string action = message.substr(0, 3);
-    std::string payload = message.substr(4, message.size() - 3);
+    std::string payload = message.substr(4, message.size() - 5);
 
     std::string reply;
 
