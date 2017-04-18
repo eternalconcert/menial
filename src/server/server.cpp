@@ -100,10 +100,10 @@ void Server::setMessageHandler(MessageHandler *messageHandler) {
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 
-    int outMessage;
-    outMessage = write(newsockfd, replyMessage.c_str(), sizeof(replyMessage));
+    replyMessage += MESSAGE_DELIMITER;
+    int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
 
-    if (outMessage < 0) {
+    if (outMessageLen < 0) {
         error("Error: Writing to socket");
     }
 }

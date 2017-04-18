@@ -10,13 +10,40 @@
 #include <netdb.h>
 #include "../common/common.h"
 
+
+std::string getIncomingMessage(int sockfd) {
+    char buffer[BUFFER_SIZE];
+
+    if (sockfd < 0) {
+        error("Error: Cannot accept");
+    }
+
+    std::string result;
+    char curChar;
+    while (curChar != MESSAGE_DELIMITER) {
+        bzero(buffer, BUFFER_SIZE);
+        int messageSize;
+        messageSize = read(sockfd, buffer, BUFFER_LIMIT);
+        if (messageSize < 0) {
+            error("Error: Reading from socket");
+        }
+
+        for (int i = 0; i < messageSize; i++) {
+            curChar = buffer[i];
+            result += curChar;
+        }
+    }
+
+    result = result.substr(0, result.size() - sizeof(MESSAGE_DELIMITER));
+    return result;
+}
+
+
 int main(int argc, char *argv[]) {
 
-    int sockfd, portno, m, n;
+    int sockfd, portno, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-
-    char buffer[BUFFER_SIZE];
 
     if (argc < 3) {
         fprintf(stderr, "Usage %s hostname port message\n", argv[0]);
@@ -58,12 +85,8 @@ int main(int argc, char *argv[]) {
         error("Error: Cannot write to socket");
     }
 
-    bzero(buffer, BUFFER_SIZE);
-    m = read(sockfd, buffer, BUFFER_LIMIT);
-    if (m < 0) {
-        error("Error: Cannot read from socket");
-    }
-    printf("%s\n", buffer);
+    std::string response = getIncomingMessage(sockfd);
+    printf("%s\n", response.c_str());
     close(sockfd);
     return 0;
 }
