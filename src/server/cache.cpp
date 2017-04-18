@@ -1,12 +1,15 @@
 #include "cache.h"
 
-std::string ACTION_GET = "GET";
-std::string ACTION_SET = "SET";
-std::string DELIMITER = ":";
+const std::string ACTION_GET = "GET";
+const std::string ACTION_SET = "SET";
+const std::string DELIMITER = ":";
+const int ACTION_KEYWORD_LEN = ACTION_GET.length();
 
 std::string Cache::handleMessage(std::string message) {
-    std::string action = message.substr(0, 3);
-    std::string payload = message.substr(4, message.size() - 5);
+    std::string action = message.substr(0, ACTION_KEYWORD_LEN);
+
+    int payloadEnd = message.size() - ACTION_KEYWORD_LEN + 1;
+    std::string payload = message.substr(ACTION_KEYWORD_LEN + 1, payloadEnd);
 
     std::string reply;
 

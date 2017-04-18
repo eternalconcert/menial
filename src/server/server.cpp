@@ -58,9 +58,9 @@ std::string getIncomingMessage(int newsockfd) {
         }
     }
 
-    return result.c_str();
+    result = result.substr(0, result.size() - sizeof(MESSAGE_DELIMITER));
+    return result;
 }
-
 
 
 Server::Server(int portno) {
