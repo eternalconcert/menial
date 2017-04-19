@@ -20,7 +20,7 @@ std::string getIncomingMessage(int sockfd) {
 
     std::string result;
     char curChar;
-    while (curChar != MESSAGE_DELIMITER) {
+    while (curChar != END_OF_MESSAGE) {
         bzero(buffer, BUFFER_SIZE);
         int messageSize;
         messageSize = read(sockfd, buffer, BUFFER_LIMIT);
@@ -34,7 +34,7 @@ std::string getIncomingMessage(int sockfd) {
         }
     }
 
-    result = result.substr(0, result.size() - sizeof(MESSAGE_DELIMITER));
+    result = result.substr(0, result.size() - sizeof(END_OF_MESSAGE));
     return result;
 }
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::string message = argv[3];
-    message += MESSAGE_DELIMITER;
+    message += END_OF_MESSAGE;
     n = write(sockfd, message.c_str(), message.size());
 
     if (n < 0) {

@@ -44,7 +44,7 @@ std::string getIncomingMessage(int newsockfd) {
 
     std::string result;
     char curChar;
-    while (curChar != MESSAGE_DELIMITER) {
+    while (curChar != END_OF_MESSAGE) {
         bzero(buffer, BUFFER_SIZE);
         int messageSize;
         messageSize = read(newsockfd, buffer, BUFFER_LIMIT);
@@ -58,7 +58,7 @@ std::string getIncomingMessage(int newsockfd) {
         }
     }
 
-    result = result.substr(0, result.size() - sizeof(MESSAGE_DELIMITER));
+    result = result.substr(0, result.size() - sizeof(END_OF_MESSAGE));
     return result;
 }
 
@@ -100,7 +100,7 @@ void Server::setMessageHandler(MessageHandler *messageHandler) {
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 
-    replyMessage += MESSAGE_DELIMITER;
+    replyMessage += END_OF_MESSAGE;
     int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
 
     if (outMessageLen < 0) {
