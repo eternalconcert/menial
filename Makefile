@@ -1,7 +1,7 @@
 #!/usr/bin/make
 
 server:
-
+	@mkdir -p build
 	g++ src/server/*.cpp src/common/*.cpp -o build/server.bin -std=c++14 -Wall
 
 client:
@@ -15,4 +15,4 @@ serve:
 clean:
 	rm build/*
 
-.PHONY: compile serve connect
+.PHONY: clean client compile serve server
