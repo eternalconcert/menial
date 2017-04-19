@@ -4,6 +4,8 @@
 #include "cache.h"
 #include "server.h"
 
+#include "../common/logger.h"
+
 
 int main(int argc, char *argv[]) {
 
@@ -15,8 +17,11 @@ int main(int argc, char *argv[]) {
     int portno = atoi(argv[1]);
     Cache* cache = new Cache();
 
+    Logger logger = getLogger();
+    logger.info("Initializing server");
     Server server = Server(portno);
     server.setMessageHandler(cache);
+    logger.info("Starting server");
     server.run();
 
     delete cache;

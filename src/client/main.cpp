@@ -9,7 +9,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include "../common/common.h"
+#include "../common/logger.h"
 
+Logger logger = getLogger();
 
 std::string getIncomingMessage(int sockfd) {
     char buffer[BUFFER_SIZE];
@@ -50,6 +52,7 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
+    logger.debug("Setting up socket");
     portno = atoi(argv[2]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -88,5 +91,6 @@ int main(int argc, char *argv[]) {
     std::string response = getIncomingMessage(sockfd);
     printf("%s\n", response.c_str());
     close(sockfd);
+    logger.debug("Closing socket");
     return 0;
 }

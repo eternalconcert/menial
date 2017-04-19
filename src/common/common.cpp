@@ -7,8 +7,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-
 #include "common.h"
 
 void error(const char *msg)

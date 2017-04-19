@@ -3,9 +3,11 @@
 #include <unistd.h>
 #include "server.h"
 #include "../common/common.h"
+#include "../common/logger.h"
 
 const int QUEUE_LENGTH = 5;
 
+Logger logger = getLogger();
 
 void setUp(int sockfd, int portno) {
     int option = 1;
@@ -64,6 +66,7 @@ std::string getIncomingMessage(int newsockfd) {
 
 
 Server::Server(int portno) {
+    logger.debug("Using portno: " + std::to_string(portno));
     this->portno = portno;
 };
 
@@ -102,6 +105,8 @@ void Server::sendReply(std::string replyMessage, int newsockfd) {
 
     replyMessage += END_OF_MESSAGE;
     int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
+    logger.debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
+    logger.debug("Server::sendReply replyMessage: " + replyMessage);
 
     if (outMessageLen < 0) {
         error("Error: Writing to socket");
