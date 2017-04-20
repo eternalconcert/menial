@@ -37,7 +37,7 @@ int setNewSockFd(int sockfd) {
 }
 
 
-std::string getIncomingMessage(int newsockfd) {
+std::string getIncomingRequest(int newsockfd) {
     char buffer[BUFFER_SIZE];
 
     if (newsockfd < 0) {
@@ -45,8 +45,8 @@ std::string getIncomingMessage(int newsockfd) {
     }
 
     std::string result;
-    char curChar;
-    while (curChar != END_OF_MESSAGE) {
+    char curChar  = ' ';
+    while (curChar != '\0') {
         bzero(buffer, BUFFER_SIZE);
         int messageSize;
         messageSize = read(newsockfd, buffer, BUFFER_LIMIT);
@@ -54,15 +54,15 @@ std::string getIncomingMessage(int newsockfd) {
             error("Error: Reading from socket");
         }
 
-        for (int i = 0; i < messageSize; i++) {
+        for (int i = 0; i < BUFFER_LIMIT; i++) {
             curChar = buffer[i];
             result += curChar;
         }
     }
 
-    result = result.substr(0, result.size() - sizeof(END_OF_MESSAGE));
-    logger.debug("Server::getIncomingMessage result len: " + std::to_string(result.size()));
-    logger.debug("Server::getIncomingMessage result: " + result);
+    result = result.substr(0, result.size());
+    logger.debug("Server::getIncomingRequest result len: " + std::to_string(result.size()));
+    logger.debug("Server::getIncomingRequest result: " + result);
     return result;
 }
 
@@ -85,7 +85,7 @@ void Server::run() {
         int newsockfd = setNewSockFd(sockfd);
 
         // Message
-        std::string incomingMessage = getIncomingMessage(newsockfd);
+        std::string incomingMessage = getIncomingRequest(newsockfd);
         MessageHandler *messageHandler = this->messageHandler;
         std::string replyMessage = messageHandler->handleMessage(incomingMessage);
         this->sendReply(replyMessage, newsockfd);
@@ -105,7 +105,6 @@ void Server::setMessageHandler(MessageHandler *messageHandler) {
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 
-    replyMessage += END_OF_MESSAGE;
     int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
     logger.debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
     logger.debug("Server::sendReply replyMessage: " + replyMessage);

@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -9,8 +10,16 @@
 #include <unistd.h>
 #include "common.h"
 
+
 void error(const char *msg)
 {
     perror(msg);
     exit(0);
+}
+
+
+std::string readFile(std::string path) {
+    std::ifstream file(path);
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return content;
 }
