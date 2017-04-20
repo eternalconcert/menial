@@ -1,7 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 #include <string>
-#include "cache.h"
+#include "messagehandler/messagehandler.h"
+
 
 class Server {
     public:

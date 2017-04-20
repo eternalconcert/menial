@@ -2,7 +2,7 @@
 
 server:
 	@mkdir -p build
-	g++ src/server/*.cpp src/common/*.cpp -o build/server.bin -std=c++14 -Wall
+	g++ src/server/*.cpp src/server/messagehandler/*.cpp src/common/*.cpp -o build/server.bin -std=c++14 -Wall
 
 client:
 	g++ src/client/*.cpp src/common/*.cpp -o build/client.bin -std=c++14 -Wall

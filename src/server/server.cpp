@@ -61,6 +61,8 @@ std::string getIncomingMessage(int newsockfd) {
     }
 
     result = result.substr(0, result.size() - sizeof(END_OF_MESSAGE));
+    logger.debug("Server::getIncomingMessage result len: " + std::to_string(result.size()));
+    logger.debug("Server::getIncomingMessage result: " + result);
     return result;
 }
 
