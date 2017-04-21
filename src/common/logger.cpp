@@ -1,9 +1,23 @@
 #include <iostream>
+#include <map>
 #include "logger.h"
 
 
 void DefaultHandler::log(std::string level, std::string message) {
-    printf("# [%s]: %s\n", level.c_str(), message.c_str());
+    std::map<std::string, std::string> logColors;
+
+    logColors["DEBUG"] = "\x1b[32m"; /* green */
+    logColors["INFO"] = "\e[0m"; /* white */
+    logColors["WARNING"] = "\x1b[33m"; /* yellow */
+    logColors["ERROR"] = "\x1b[31m"; /* red */
+    logColors["CRITICAL"] = "\x1b[34m"; /* blue */
+    logColors["RESET"] = "\x1b[0m";
+
+    printf("%s# [%s]: %s%s\n",
+           logColors.find(level)->second.c_str(),
+           level.c_str(),
+           message.c_str(),
+           logColors["reset"].c_str());
 };
 
 

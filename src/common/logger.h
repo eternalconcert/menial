@@ -3,6 +3,9 @@
 #include <string>
 
 
+enum LogLevel {DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40, CRITICAL = 50, NOTSET = 100};
+
+
 class LogHandler {
     public:
         virtual void log(std::string level, std::string message) {};
@@ -14,9 +17,6 @@ class DefaultHandler: public LogHandler {
         void log(std::string level, std::string message);
         DefaultHandler() {};
 };
-
-
-enum LogLevel {DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40, CRITICAL = 50, NOTSET = 100};
 
 class Logger {
     public:

@@ -3,85 +3,127 @@
 #include "../../common/exceptions.h"
 #include "../../common/logger.h"
 
+// To be made better
+std::string hostRootDir = "src/server/testdata/";
+std::string errorpagesDir = "src/server/testdata/errorpages/";
+
 Logger _logger = getLogger();
 
 
-std::string getMethod(std::string header) {
-    return header.substr(0, header.find(" "));
+Request::Request(std::string message) {
+    this->message = message;
+    this->setHeader();
+    this->setBody();
+    this->setMethod();
+    this->setHost();
+    this->setTarget();
 }
 
-std::string getHost(std::string header) {
+void Request::setHeader() {
+    std::string message = this->message;
+    message.erase(message.find("\n\r\n"), message.length());
+    this->header = message;
+
+}
+
+void Request::setBody() {
+    std::string message = this->message;
+    this->body = message.substr(message.find("\n\r\n"), message.length());
+}
+
+
+void Request::setMethod() {
+    std::string header = this->header;
+    this->method = header.substr(0, header.find(" "));
+}
+
+void Request::setHost() {
+    std::string header = this->header;
     std::string fieldName = "Host: ";
     header.erase(0, header.find(fieldName) + fieldName.length());
     std::string host = header.substr(0, header.find("\n") - 1);
-    return host;
+    this->host = host;
 }
 
-std::string getTarget(std::string header) {
+void Request::setTarget() {
+    std::string header = this->header;
     header.erase(0, header.find(" ") + 1);
     header.erase(header.find(" "), header.length());
-    return header;
+    this->target = header;
 }
 
-Request::Request(std::string message) {
-    this->header = message.substr(0, message.find("\n\r\n"));
-    this->body = message.substr(message.find("\n\r\n"), message.size());
-    this->method = getMethod(this->header);
-    this->host = getHost(this->header);
-    this->target = getTarget(this->header);
+std::string Request::getMethod() {
+    return this->method;
+};
+std::string Request::getHost() {
+    return this->host;
+};
+std::string Request::getTarget() {
+    return this->target;
+};
+
+
+Response::Response(Request *request) {
+    this->request = request;
+    this->setStatus(200);
 }
 
+void Response::setStatus(int status) {
+    this->status = status;
+};
 
-std::string getStatusMessage(int status) {
+int Response::getStatus() {
+    return this->status;
+};
+
+std::string Response::getStatusMessage() {
     std::string statusMessage;
-    switch (status) {
+    switch (this->status) {
         case 200:
             statusMessage = "200 OK";
+            break;
         case 404:
             statusMessage = "404 Not Found";
+            break;
     }
     return statusMessage;
 }
 
-
-std::string buildHeader(int status) {
+std::string Response::getHeader() {
     std::string header = "HTTP/1.0 ";
-    header += getStatusMessage(status);
+    header += this->getStatusMessage();
     header += " \nContent-Type: text/html; charset=utf-8\n\r\n";
     return header;
 }
 
-
-std::string HttpHandler::handleMessage(std::string message) {
-    Request request = Request(message);
-    _logger.debug("RequestMethod: " + request.method);
-    _logger.debug("RequestHost: " + request.host);
-    _logger.debug("RequestTarget: " + request.target);
-
-
+std::string Response::getText() {
     std::string body;
-    std::string rootDir = "src/server/testdata/";
 
-    std::string target = request.target;
-    if (request.target == "/") {
+    std::string target = this->request->getTarget();
+    if (target == "/") {
         target = "index.html";
     }
 
-    // Build Response
-    int status = 200;
-
     try {
-        body += readFile(rootDir + target);
+        body += readFile(hostRootDir + target);
     } catch (FileNotFoundException) {
-        std::string errorpagesDir = "src/server/testdata/errorpages/";
         body += readFile(errorpagesDir + "404.html");
-        status = 404;
+        this->setStatus(404);
     }
 
-	const std::string header = buildHeader(status);
-
-    body = header + body;
+    body = this->getHeader() + body;
     return body;
+}
+
+
+std::string HttpHandler::handleMessage(std::string message) {
+    Request *request = new Request(message);
+    _logger.debug("RequestMethod: " + request->getMethod());
+    _logger.debug("RequestHost: " + request->getHost());
+    _logger.debug("RequestTarget: " + request->getTarget());
+
+    Response response = Response(request);
+    return response.getText();
 }
 
 HttpHandler::HttpHandler() {};
