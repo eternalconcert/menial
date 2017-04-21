@@ -1,5 +1,6 @@
 #include "http.h"
 #include "../../common/common.h"
+#include "../../common/exceptions.h"
 #include "../../common/logger.h"
 
 Logger _logger = getLogger();
@@ -11,14 +12,15 @@ std::string getMethod(std::string header) {
 
 std::string getHost(std::string header) {
     std::string fieldName = "Host: ";
-    std::string host = header.substr(header.find(fieldName) + fieldName.size(), (header.find("\n") - fieldName.size()) - 1);
+    header.erase(0, header.find(fieldName) + fieldName.length());
+    std::string host = header.substr(0, header.find("\n") - 1);
     return host;
 }
 
 std::string getTarget(std::string header) {
-    std::string first = header.substr(header.find(" ") + 1, header.find("\n") - header.find(" "));
-    std::string target = first.substr(0, first.find(" "));
-    return target;
+    header.erase(0, header.find(" ") + 1);
+    header.erase(header.find(" "), header.length());
+    return header;
 }
 
 Request::Request(std::string message) {
@@ -30,20 +32,56 @@ Request::Request(std::string message) {
 }
 
 
+std::string getStatusMessage(int status) {
+    std::string statusMessage;
+    switch (status) {
+        case 200:
+            statusMessage = "200 OK";
+        case 404:
+            statusMessage = "404 Not Found";
+    }
+    return statusMessage;
+}
+
+
+std::string buildHeader(int status) {
+    std::string header = "HTTP/1.0 ";
+    header += getStatusMessage(status);
+    header += " \nContent-Type: text/html; charset=utf-8\n\r\n";
+    return header;
+}
+
+
 std::string HttpHandler::handleMessage(std::string message) {
     Request request = Request(message);
     _logger.debug("RequestMethod: " + request.method);
     _logger.debug("RequestHost: " + request.host);
     _logger.debug("RequestTarget: " + request.target);
 
-	const std::string header = "HTTP/1.0 200 OK\nContent-Type: text/html; charset=utf-8\n\r\n";
 
-    std::string reply = header;
+    std::string body;
     std::string rootDir = "src/server/testdata/";
 
-    reply += readFile(rootDir + request.target);
+    std::string target = request.target;
+    if (request.target == "/") {
+        target = "index.html";
+    }
 
-    return reply;
+    // Build Response
+    int status = 200;
+
+    try {
+        body += readFile(rootDir + target);
+    } catch (FileNotFoundException) {
+        std::string errorpagesDir = "src/server/testdata/errorpages/";
+        body += readFile(errorpagesDir + "404.html");
+        status = 404;
+    }
+
+	const std::string header = buildHeader(status);
+
+    body = header + body;
+    return body;
 }
 
 HttpHandler::HttpHandler() {};

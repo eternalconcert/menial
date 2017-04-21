@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "exceptions.h"
 #include "common.h"
 
 
@@ -20,6 +21,15 @@ void error(const char *msg)
 
 std::string readFile(std::string path) {
     std::ifstream file(path);
-    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    return content;
+
+    if (!file) {
+        throw FileNotFoundException();
+    }
+
+    try {
+        std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        return content;
+    } catch (std::ios_base::failure) {
+        throw FileNotFoundException();
+    }
 }
