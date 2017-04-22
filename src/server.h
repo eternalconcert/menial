@@ -1,15 +1,14 @@
 #ifndef SERVER_H
 #define SERVER_H
-#include <string>
-#include "messagehandler/messagehandler.h"
+#include "requesthandler.h"
 
 
 class Server {
     public:
         void run();
-        void setMessageHandler(MessageHandler*);
+        void setRequestHandler(RequestHandler*);
         void sendReply(std::string replyMessage, int newsockfd);
-        MessageHandler *messageHandler;
+        RequestHandler *requestHandler;
 
         Server(int portno);
 

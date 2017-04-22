@@ -1,13 +1,10 @@
 #!/usr/bin/make
 
-server:
+SOURCES = $(shell find src/ -name "*.cpp")
+
+compile:
 	@mkdir -p build
-	g++ src/server/*.cpp src/server/messagehandler/*.cpp src/common/*.cpp -o build/server.bin -std=c++14 -Wall
-
-client:
-	g++ src/client/*.cpp src/common/*.cpp -o build/client.bin -std=c++14 -Wall
-
-compile: server client
+	g++ $(SOURCES) -o build/server.bin -std=c++14 -Wall -static
 
 serve:
 	@build/server.bin 8080
@@ -15,4 +12,4 @@ serve:
 clean:
 	rm build/*
 
-.PHONY: clean client compile serve server
+.PHONY: clean compile serve

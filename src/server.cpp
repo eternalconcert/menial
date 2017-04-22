@@ -1,9 +1,9 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
+#include "common.h"
+#include "logger.h"
 #include "server.h"
-#include "../common/common.h"
-#include "../common/logger.h"
 
 const int QUEUE_LENGTH = 5;
 
@@ -86,8 +86,8 @@ void Server::run() {
 
         // Message
         std::string incomingMessage = getIncomingRequest(newsockfd);
-        MessageHandler *messageHandler = this->messageHandler;
-        std::string replyMessage = messageHandler->handleMessage(incomingMessage);
+        RequestHandler *requestHandler = this->requestHandler;
+        std::string replyMessage = requestHandler->handleRequest(incomingMessage);
         this->sendReply(replyMessage, newsockfd);
 
         // Close sockets
@@ -98,8 +98,8 @@ void Server::run() {
 }
 
 
-void Server::setMessageHandler(MessageHandler *messageHandler) {
-    this->messageHandler = messageHandler;
+void Server::setRequestHandler(RequestHandler *requestHandler) {
+    this->requestHandler = requestHandler;
 }
 
 

@@ -1,15 +1,6 @@
 #include <fstream>
-#include <iostream>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include "exceptions.h"
 #include "common.h"
+#include "exceptions.h"
 
 
 void error(const char *msg)

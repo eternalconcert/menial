@@ -1,9 +1,6 @@
-#include <netinet/in.h>
-#include <unistd.h>
+#include "httphandler.h"
+#include "logger.h"
 #include "server.h"
-#include "../common/common.h"
-#include "../common/logger.h"
-#include "messagehandler/http.h"
 
 
 int main(int argc, char *argv[]) {
@@ -16,11 +13,11 @@ int main(int argc, char *argv[]) {
     int portno = atoi(argv[1]);
     HttpHandler* httpHandler = new HttpHandler();
 
-    Logger logger = getLogger();
-    logger.info("Initializing server");
+    Logger mainLogger = getLogger();
+    mainLogger.info("Initializing server");
     Server server = Server(portno);
-    server.setMessageHandler(httpHandler);
-    logger.info("Starting server");
+    server.setRequestHandler(httpHandler);
+    mainLogger.info("Starting server");
     server.run();
 
     delete httpHandler;

@@ -1,6 +1,5 @@
 #ifndef LOGGER_H
 #define LOGGER_H
-#include <string>
 
 
 enum LogLevel {DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40, CRITICAL = 50, NOTSET = 100};

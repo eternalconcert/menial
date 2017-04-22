@@ -1,7 +1,5 @@
 #ifndef COMMON_H
 #define COMMON_H
-
-#include <stdio.h>
 #include <string>
 
 const int BUFFER_SIZE = 256;
