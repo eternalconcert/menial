@@ -3,6 +3,7 @@
 
 
 class FileNotFoundException: public std::exception {};
+class ConfigException: public std::exception {};
 
 
 #endif

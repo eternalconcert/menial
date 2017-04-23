@@ -2,6 +2,11 @@
 #include "common.h"
 #include "exceptions.h"
 
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+
+
 
 void error(const char *msg)
 {

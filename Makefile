@@ -4,7 +4,7 @@ SOURCES = $(shell find src/ -name "*.cpp")
 
 compile:
 	@mkdir -p build
-	g++ $(SOURCES) -o build/server.bin -std=c++14 -Wall -static
+	g++ $(SOURCES) -o build/server.bin -std=c++14 -Wall -static -I src/include/
 
 serve:
 	@build/server.bin 8080

@@ -37,10 +37,13 @@ std::string Response::getStatusMessage() {
     return statusMessage;
 }
 
-std::string Response::getHeader() {
+std::string Response::getHeader(int contentLength) {
     std::string header = "HTTP/1.0 ";
     header += this->getStatusMessage();
-    header += " \nContent-Type: text/html; charset=utf-8\n\r\n";
+    header += "\n";
+    header += "Content-Lenght: " + std::to_string(contentLength) + "\n";
+    header += "Content-Type: text/html; charset=utf-8\n";
+    header += "\n\r\n";
     return header;
 }
 
@@ -59,6 +62,6 @@ std::string Response::getText() {
         this->setStatus(404);
     }
 
-    body = this->getHeader() + body;
+    body = this->getHeader(body.length()) + body;
     return body;
 }

@@ -5,7 +5,7 @@
 
 class Response {
     public:
-        std::string getHeader();
+        std::string getHeader(int contentLength);
         void setStatus(int status);
         int getStatus();
         std::string getText();
