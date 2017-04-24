@@ -6,33 +6,44 @@
 #include "exceptions.h"
 #include "logger.h"
 
-Logger configLogger = getLogger();
-
 using namespace rapidjson;
 
-void readConfig(std::string config) {
+Logger configLogger = getLogger();
 
 
-    Document document;
-    ParseResult result = document.Parse(config.c_str());
-    if (!result) {
-        configLogger.error("Config: Cannot parse configuration file");
-        throw ConfigException();
-    }
+class Config {
+    public:
+        void update(std::string config) {
+            Document document;
+            ParseResult result = document.Parse(config.c_str());
+            if (!result) {
+                configLogger.error("Config: Cannot parse configuration file");
+                throw ConfigException();
+            }
 
-    Value& hosts = document["hosts"];
-    if (!hosts.IsArray()) {
-        configLogger.error("Config: hosts key must be an array");
-        throw ConfigException();
-    }
+            Value& hosts = document["hosts"];
+            if (!hosts.IsArray()) {
+                configLogger.error("Config: hosts key must be an array");
+                throw ConfigException();
+            }
 
-    for (Value::ConstValueIterator itr = hosts.Begin(); itr != hosts.End(); ++itr) {
-        configLogger.info(itr->GetString());
-    }
+            for (Value::ConstValueIterator itr = hosts.Begin(); itr != hosts.End(); ++itr) {
+                configLogger.debug(std::string("Read configuration for host: ") + itr->GetString());
+            }
 
-    configLogger.info("Successfully read config");
-}
+            configLogger.debug("Successfully read config");
+        }
+
+        Config(std::string json) {
+            this->update(json);
+        }
+
+};
 
 
+extern Config config;
+
+// cpp
+Config config(readFile("testdata/menial.json"));
 
 #endif
