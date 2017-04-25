@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "response.h"
 
+
 // To be made better
 std::string hostRootDir = "testdata/testhost/";
 std::string errorpagesDir = "testdata/testhost/errorpages/";
@@ -37,18 +38,42 @@ std::string Response::getStatusMessage() {
     return statusMessage;
 }
 
-std::string Response::getHeader(int contentLength) {
+
+std::string Response::getFileName(std::string target) {
+    return target.substr(target.find_last_of("/") + 1, target.length());
+}
+
+
+std::string Response::guessFileType(std::string fileName) {
+    std::string fileType;
+    std::string charset = " charset=utf-8;";
+
+    std::string extension = fileName.substr(fileName.find_last_of(".") + 1, fileName.length());
+
+    responseLogger.debug("Filename extension: " + extension);
+    if (extension == "html") {
+        fileType = "text/html; " + charset;
+    } else if (extension == "png") {
+        fileType = "image/png";
+    }
+    return fileType;
+
+}
+
+
+std::string Response::getHeader(std::string content, std::string fileName) {
     std::string header = "HTTP/1.0 ";
     header += this->getStatusMessage();
     header += "\n";
-    header += "Content-Lenght: " + std::to_string(contentLength) + "\n";
-    header += "Content-Type: text/html; charset=utf-8\n";
+    header += "Content-Length: " + std::to_string(content.length()) + "\n";
+    header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     header += "\n\r\n";
     return header;
 }
 
+
 std::string Response::getText() {
-    std::string body;
+    std::string content;
 
     std::string target = this->request->getTarget();
     if (target == "/") {
@@ -56,12 +81,15 @@ std::string Response::getText() {
     }
 
     try {
-        body += readFile(hostRootDir + target);
+        content += readFile(hostRootDir + target);
     } catch (FileNotFoundException) {
-        body += readFile(errorpagesDir + "404.html");
+        content += readFile(errorpagesDir + "404.html");
         this->setStatus(404);
     }
 
-    body = this->getHeader(body.length()) + body;
+    std::string fileName = getFileName(target);
+
+    std::string body;
+    body = this->getHeader(content, fileName) + content;
     return body;
 }

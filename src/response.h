@@ -5,7 +5,7 @@
 
 class Response {
     public:
-        std::string getHeader(int contentLength);
+        std::string getHeader(std::string content, std::string fileName);
         void setStatus(int status);
         int getStatus();
         std::string getText();
@@ -16,6 +16,8 @@ class Response {
         int status;
         Request *request;
         std::string getStatusMessage();
+        std::string getFileName(std::string target);
+        std::string guessFileType(std::string fileName);
 };
 
 
