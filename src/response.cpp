@@ -53,8 +53,15 @@ std::string Response::guessFileType(std::string fileName) {
     responseLogger.debug("Filename extension: " + extension);
     if (extension == "html") {
         fileType = "text/html; " + charset;
-    } else if (extension == "png") {
+    }
+    else if (extension == "css") {
+        fileType = "text/css";
+    }
+    else if (extension == "png") {
         fileType = "image/png";
+    }
+    else if (extension == "mp3") {
+        fileType = "audio/mpeg";
     }
     return fileType;
 
@@ -67,7 +74,7 @@ std::string Response::getHeader(std::string content, std::string fileName) {
     header += "\n";
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
-    header += "\n\r\n";
+    header += "\r\n";
     return header;
 }
 
