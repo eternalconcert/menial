@@ -10,10 +10,12 @@ class Request {
         void setMethod();
         void setHost();
         void setTarget();
+        void setUserAgent();
 
         std::string getMethod();
         std::string getHost();
         std::string getTarget();
+        std::string getUserAgent();
 
         Request(std::string fullMessage);
 
@@ -24,6 +26,7 @@ class Request {
         std::string method;
         std::string target;
         std::string host;
+        std::string userAgent;
 };
 
 #endif

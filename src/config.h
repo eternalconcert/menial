@@ -8,6 +8,7 @@ class Config {
         void update(std::string config);
         int port;
         LogLevel logLevel;
+        std::string logFilePath;
 
         Config();
 };

@@ -45,16 +45,13 @@ std::string Response::getFileName(std::string target) {
 
 
 std::string Response::guessFileType(std::string fileName) {
-    std::string fileType;
     std::string charset = " charset=utf-8;";
+    std::string fileType = "text/html; " + charset;;
 
     std::string extension = fileName.substr(fileName.find_last_of(".") + 1, fileName.length());
 
     responseLogger.debug("Filename extension: " + extension);
-    if (extension == "html") {
-        fileType = "text/html; " + charset;
-    }
-    else if (extension == "css") {
+    if (extension == "css") {
         fileType = "text/css";
     }
     else if (extension == "png") {
@@ -92,6 +89,7 @@ std::string Response::getText() {
     } catch (FileNotFoundException) {
         content += readFile(errorpagesDir + "404.html");
         this->setStatus(404);
+        responseLogger.error("404: Unknown target requested: " + target);
     }
 
     std::string fileName = getFileName(target);

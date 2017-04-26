@@ -14,20 +14,29 @@ void Config::update(std::string config) {
         throw ConfigException();
     }
 
+    // port
     Value& port = document["port"];
     if (!port.IsInt()) {
         throw ConfigException();
     }
     this->port = port.GetInt();
 
+    // logLevel
     Value& logLevel = document["loglevel"];
     if (!logLevel.IsString()) {
         throw ConfigException();
     }
-
     LogLevel level = logLevelByName(logLevel.GetString());
     this->logLevel = level;
 
+    // logFilePath
+    Value& logFilePath = document["logfilepath"];
+    if (!logFilePath.IsString()) {
+        throw ConfigException();
+    }
+    this->logFilePath = logFilePath.GetString();
+
+    // hosts
     Value& hosts = document["hosts"];
     if (!hosts.IsArray()) {
         throw ConfigException();

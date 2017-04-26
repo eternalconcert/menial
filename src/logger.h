@@ -16,6 +16,12 @@ class DefaultHandler: public LogHandler {
         DefaultHandler() {};
 };
 
+class FileLogHandler: public LogHandler {
+    public:
+        void log(std::string level, std::string message);
+        FileLogHandler() {};
+};
+
 class Logger {
     public:
         void setLevel(LogLevel level);

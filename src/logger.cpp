@@ -1,3 +1,4 @@
+#include <fstream>
 #include <map>
 #include "logger.h"
 
@@ -18,6 +19,18 @@ void DefaultHandler::log(std::string level, std::string message) {
            message.c_str(),
            logColors["reset"].c_str());
 };
+
+
+Config conf = Config();
+
+
+void FileLogHandler::log(std::string level, std::string message) {
+    std::ofstream logfile;
+    logfile.open(conf.logFilePath + "menial.log", std::ios_base::app);
+    std::string logLine = "# [" + level + "]: " + message + "\n";
+    logfile << logLine;
+};
+
 
 
 void Logger::setLevel(LogLevel level) {
@@ -66,9 +79,8 @@ void Logger::critical(std::string message) {
 
 
 Logger getLogger() {
-    Config config = Config();
     Logger logger = Logger();
-    logger.setLevel(config.logLevel);
+    logger.setLevel(conf.logLevel);
 
     DefaultHandler* handler = new DefaultHandler();
     logger.setHandler(handler);
