@@ -1,8 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
-
-
-enum LogLevel {DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40, CRITICAL = 50, NOTSET = 100};
+#include "common.h"
+#include "config.h"
 
 
 class LogHandler {
@@ -36,6 +35,5 @@ class Logger {
 };
 
 Logger getLogger();
-const LogLevel LEVEL = DEBUG;
 
 #endif

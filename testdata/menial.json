@@ -2,5 +2,6 @@
     "hosts": [
         {"default": "test"}
     ],
-    "port": 8080
+    "port": 8080,
+    "loglevel": 30
 }

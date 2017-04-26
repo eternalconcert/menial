@@ -5,12 +5,12 @@
 void DefaultHandler::log(std::string level, std::string message) {
     std::map<std::string, std::string> logColors;
 
-    logColors["DEBUG"] = "\x1b[32m"; /* green */
-    logColors["INFO"] = "\e[0m"; /* white */
-    logColors["WARNING"] = "\x1b[33m"; /* yellow */
-    logColors["ERROR"] = "\x1b[31m"; /* red */
-    logColors["CRITICAL"] = "\x1b[34m"; /* blue */
-    logColors["RESET"] = "\x1b[0m";
+    logColors["debug"] = "\x1b[32m"; /* green */
+    logColors["info"] = "\e[0m"; /* white */
+    logColors["warning"] = "\x1b[33m"; /* yellow */
+    logColors["error"] = "\x1b[31m"; /* red */
+    logColors["critical"] = "\x1b[34m"; /* blue */
+    logColors["reset"] = "\x1b[0m";
 
     printf("%s# [%s]: %s%s\n",
            logColors.find(level)->second.c_str(),
@@ -32,42 +32,42 @@ void Logger::setHandler(LogHandler *handler) {
 
 void Logger::debug(std::string message) {
     if (this->level <= DEBUG) {
-        this->handler->log("DEBUG", message);
+        this->handler->log("debug", message);
     }
 }
 
 
 void Logger::info(std::string message) {
     if (this->level <= INFO) {
-        this->handler->log("INFO", message);
+        this->handler->log("info", message);
     }
 }
 
 
 void Logger::warning(std::string message) {
     if (this->level <= WARNING) {
-        this->handler->log("WARNING", message);
+        this->handler->log("warning", message);
     }
 }
 
 
 void Logger::error(std::string message) {
     if (this->level <= ERROR) {
-        this->handler->log("ERROR", message);
+        this->handler->log("error", message);
     }
 }
 
 
 void Logger::critical(std::string message) {
     if (this->level <= CRITICAL) {
-        this->handler->log("CRITICAL", message);
+        this->handler->log("critical", message);
     }
 }
 
 
 Logger getLogger() {
     Logger logger = Logger();
-    logger.setLevel(LEVEL);
+    logger.setLevel(config.logLevel);
 
     DefaultHandler* handler = new DefaultHandler();
     logger.setHandler(handler);

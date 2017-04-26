@@ -1,7 +1,6 @@
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
-#include "common.h"
 #include "config.h"
 #include "exceptions.h"
 #include "logger.h"
@@ -27,6 +26,15 @@ void Config::update(std::string config) {
     }
     this->port = port.GetInt();
     configLogger.debug(std::string("Read config for port: ") + std::to_string(port.GetInt()));
+
+    Value& logLevel = document["loglevel"];
+    if (!logLevel.IsInt()) {
+        configLogger.error("Config: loglevel value must be an integer");
+        throw ConfigException();
+    }
+    this->logLevel = (LogLevel)logLevel.GetInt();
+    configLogger.debug(std::string("Read config for loglevel: ") + std::to_string(logLevel.GetInt()));
+
 
     Value& hosts = document["hosts"];
     if (!hosts.IsArray()) {
