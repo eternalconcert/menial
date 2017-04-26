@@ -29,3 +29,24 @@ std::string readFile(std::string path) {
         throw FileNotFoundException();
     }
 }
+
+LogLevel logLevelByName(std::string levelName) {
+    if (levelName == "debug") {
+        return DEBUG;
+    }
+    else if (levelName == "info") {
+        return INFO;
+    }
+    else if (levelName == "warning") {
+        return WARNING;
+    }
+    else if (levelName == "error") {
+        return ERROR;
+    }
+    else if (levelName == "critical") {
+        return CRITICAL;
+    }
+    else {
+        return NOTSET;
+    }
+};

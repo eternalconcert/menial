@@ -66,6 +66,7 @@ void Logger::critical(std::string message) {
 
 
 Logger getLogger() {
+    Config config = Config();
     Logger logger = Logger();
     logger.setLevel(config.logLevel);
 

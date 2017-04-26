@@ -3,5 +3,5 @@
         {"default": "test"}
     ],
     "port": 8080,
-    "loglevel": 30
+    "loglevel": "info"
 }

@@ -9,9 +9,7 @@ class Config {
         int port;
         LogLevel logLevel;
 
-        Config(std::string json);
+        Config();
 };
-
-extern Config config;
 
 #endif

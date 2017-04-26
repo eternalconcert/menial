@@ -3,14 +3,14 @@
 #include "logger.h"
 #include "server.h"
 
+Config config = Config();
+HttpHandler* httpHandler = new HttpHandler();
+Logger mainLogger = getLogger();
+
 
 int main(int argc, char *argv[]) {
 
-    HttpHandler* httpHandler = new HttpHandler();
-
-    Logger mainLogger = getLogger();
     mainLogger.info("Starting menial");
-
     mainLogger.info("Initializing server");
     Server server = Server(config.port);
     server.setRequestHandler(httpHandler);
