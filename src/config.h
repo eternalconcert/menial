@@ -9,6 +9,7 @@ class Config {
         int port;
         LogLevel logLevel;
         std::string logFilePath;
+        std::string logger;
 
         Config();
 };

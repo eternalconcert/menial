@@ -36,6 +36,13 @@ void Config::update(std::string config) {
     }
     this->logFilePath = logFilePath.GetString();
 
+    // logFilePath
+    Value& logger = document["logger"];
+    if (!logger.IsString()) {
+        throw ConfigException();
+    }
+    this->logger = logger.GetString();
+
     // hosts
     Value& hosts = document["hosts"];
     if (!hosts.IsArray()) {

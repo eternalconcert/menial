@@ -1,9 +1,10 @@
 #include <fstream>
 #include <map>
+#include "exceptions.h"
 #include "logger.h"
 
 
-void DefaultHandler::log(std::string level, std::string message) {
+void DefaultLogHandler::log(std::string level, std::string message) {
     std::map<std::string, std::string> logColors;
 
     logColors["debug"] = "\x1b[32m"; /* green */
@@ -32,16 +33,13 @@ void FileLogHandler::log(std::string level, std::string message) {
 };
 
 
-
 void Logger::setLevel(LogLevel level) {
     this->level = level;
 }
 
-
 void Logger::setHandler(LogHandler *handler) {
     this->handler = handler;
 }
-
 
 void Logger::debug(std::string message) {
     if (this->level <= DEBUG) {
@@ -49,13 +47,11 @@ void Logger::debug(std::string message) {
     }
 }
 
-
 void Logger::info(std::string message) {
     if (this->level <= INFO) {
         this->handler->log("info", message);
     }
 }
-
 
 void Logger::warning(std::string message) {
     if (this->level <= WARNING) {
@@ -63,13 +59,11 @@ void Logger::warning(std::string message) {
     }
 }
 
-
 void Logger::error(std::string message) {
     if (this->level <= ERROR) {
         this->handler->log("error", message);
     }
 }
-
 
 void Logger::critical(std::string message) {
     if (this->level <= CRITICAL) {
@@ -82,7 +76,16 @@ Logger getLogger() {
     Logger logger = Logger();
     logger.setLevel(conf.logLevel);
 
-    DefaultHandler* handler = new DefaultHandler();
+    LogHandler* handler;
+    if (conf.logger == "console") {
+        handler = new DefaultLogHandler();
+    }
+    else if (conf.logger == "file") {
+        handler = new FileLogHandler();
+    }
+    else {
+        throw ConfigException();
+    }
     logger.setHandler(handler);
     return logger;
 }

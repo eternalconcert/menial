@@ -10,10 +10,10 @@ class LogHandler {
 };
 
 
-class DefaultHandler: public LogHandler {
+class DefaultLogHandler: public LogHandler {
     public:
         void log(std::string level, std::string message);
-        DefaultHandler() {};
+        DefaultLogHandler() {};
 };
 
 class FileLogHandler: public LogHandler {

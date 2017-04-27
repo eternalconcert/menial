@@ -13,8 +13,8 @@ Request::Request(std::string message) {
     this->setHost();
     this->setTarget();
     this->setUserAgent();
-    requestLogger.info("Incoming " + this->getMethod() + " request. "
-                        "Target: " + this->getTarget() +
+    requestLogger.info("Incoming " + this->getMethod() + " request | "
+                        "Target: " + this->getTarget() + " | "
                         "User-Agent: " + this->getUserAgent());
 }
 

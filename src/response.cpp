@@ -46,7 +46,7 @@ std::string Response::getFileName(std::string target) {
 
 std::string Response::guessFileType(std::string fileName) {
     std::string charset = " charset=utf-8;";
-    std::string fileType = "text/html; " + charset;;
+    std::string fileType = "text/html;" + charset;;
 
     std::string extension = fileName.substr(fileName.find_last_of(".") + 1, fileName.length());
 
