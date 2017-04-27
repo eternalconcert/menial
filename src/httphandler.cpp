@@ -12,7 +12,7 @@ std::string HttpHandler::handleRequest(std::string message) {
     httpHandlerLogger.debug("RequestTarget: " + request->getTarget());
 
     Response response = Response(request);
-    return response.getText();
+    return response.get();
 }
 
 HttpHandler::HttpHandler() {};

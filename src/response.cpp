@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "common.h"
 #include "exceptions.h"
 #include "logger.h"
@@ -34,6 +35,9 @@ std::string Response::getStatusMessage() {
         case 404:
             statusMessage = "404 Not Found";
             break;
+        case 500:
+            statusMessage = "500 Internal Server Error";
+            break;
     }
     return statusMessage;
 }
@@ -64,7 +68,6 @@ std::string Response::guessFileType(std::string fileName) {
 
 }
 
-
 std::string Response::getHeader(std::string content, std::string fileName) {
     std::string header = "HTTP/1.0 ";
     header += this->getStatusMessage();
@@ -75,26 +78,52 @@ std::string Response::getHeader(std::string content, std::string fileName) {
     return header;
 }
 
+Request* Response::getRequest() {
+    return this->request;
+}
 
-std::string Response::getText() {
-    std::string content;
-
-    std::string target = this->request->getTarget();
+std::string fromFile(Response *response) {
+    std::string target = response->getRequest()->getTarget();
     if (target == "/") {
         target = "index.html";
     }
-
+    std::string content;
     try {
         content += readFile(hostRootDir + target);
     } catch (FileNotFoundException) {
         content += readFile(errorpagesDir + "404.html");
-        this->setStatus(404);
+        response->setStatus(404);
         responseLogger.error("404: Unknown target requested: " + target);
     }
 
-    std::string fileName = getFileName(target);
+    std::string fileName = response->getFileName(target);
 
-    std::string body;
-    body = this->getHeader(content, fileName) + content;
-    return body;
+    std::string result;
+    result = response->getHeader(content, fileName) + content;
+    return result;
+}
+
+std::string fromProcess(Response *response) {
+    FILE *f;
+    char path[BUFFER_SIZE];
+    f = popen("python testdata/testhost/pyresponse.py", "r");
+    std::string content;
+    while (fgets(path, BUFFER_SIZE, f) != NULL) {
+        content += path;
+    }
+    int status = pclose(f);
+    if (WEXITSTATUS(status) != 0) {
+        response->setStatus(500);
+        responseLogger.error("500: Error while reading from python");
+    }
+
+    std::string result;
+    result = response->getHeader(content, "python.html") + content;
+    return result;
+}
+
+std::string Response::get() {
+    // std::string content = fromFile(this);
+    std::string content = fromProcess(this);
+    return content;
 }
