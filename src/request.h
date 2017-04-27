@@ -15,6 +15,7 @@ class Request {
         std::string getMethod();
         std::string getHost();
         std::string getTarget();
+        std::string getGetParamsString(std::string target);
         std::string getUserAgent();
 
         Request(std::string fullMessage);

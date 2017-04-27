@@ -53,10 +53,16 @@ void Request::setUserAgent() {
 }
 
 void Request::setTarget() {
-    std::string header = this->header;
-    header.erase(0, header.find(" ") + 1);
-    header.erase(header.find(" "), header.length());
-    this->target = header;
+    std::string target = this->header;
+    target.erase(0, target.find(" ") + 1);
+    target.erase(target.find(" "), target.length());
+
+    std::string getParams = this->getGetParamsString(target);
+    if (getParams.length() > 0) {
+        target.erase(target.find(getParams));
+    }
+
+    this->target = target;
 }
 
 std::string Request::getMethod() {
@@ -69,6 +75,13 @@ std::string Request::getHost() {
 
 std::string Request::getTarget() {
     return this->target;
+};
+
+std::string Request::getGetParamsString(std::string target) {
+    std::string paramString = target;
+    paramString.erase(0, target.find("?"));
+    requestLogger.debug("Get Request params " + paramString);
+    return paramString;
 };
 
 std::string Request::getUserAgent() {

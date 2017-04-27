@@ -3,7 +3,7 @@
         {"default": "test"}
     ],
     "port": 8080,
-    "loglevel": "info",
+    "loglevel": "debug",
     "logfilepath": "/tmp/",
     "logger": "console"
 }

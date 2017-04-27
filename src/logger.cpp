@@ -22,10 +22,10 @@ void DefaultLogHandler::log(std::string level, std::string message) {
 };
 
 
-Config conf = Config();
 
 
 void FileLogHandler::log(std::string level, std::string message) {
+    Config conf = Config();
     std::ofstream logfile;
     logfile.open(conf.logFilePath + "menial.log", std::ios_base::app);
     std::string logLine = "# [" + level + "]: " + message + "\n";
@@ -73,6 +73,7 @@ void Logger::critical(std::string message) {
 
 
 Logger getLogger() {
+    Config conf = Config();
     Logger logger = Logger();
     logger.setLevel(conf.logLevel);
 
