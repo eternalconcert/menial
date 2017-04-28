@@ -82,27 +82,6 @@ Request* FileResponse::getRequest() {
     return this->request;
 }
 
-std::string fromFile(FileResponse *response) {
-    std::string target = response->getRequest()->getTarget();
-    if (target == "/") {
-        target = "index.html";
-    }
-    std::string content;
-    try {
-        content += readFile(hostRootDir + target);
-    } catch (FileNotFoundException) {
-        content += readFile(errorpagesDir + "404.html");
-        response->setStatus(404);
-        responseLogger.error("404: Unknown target requested: " + target);
-    }
-
-    std::string fileName = response->getFileName(target);
-
-    std::string result;
-    result = response->getHeader(content, fileName) + content;
-    return result;
-}
-
 std::string fromProcess(FileResponse *response) {
     FILE *f;
     char path[BUFFER_SIZE];
@@ -124,7 +103,26 @@ std::string fromProcess(FileResponse *response) {
 }
 
 std::string FileResponse::get() {
-    std::string content = fromFile(this);
+
+    std::string target = this->getRequest()->getTarget();
+    if (target == "/") {
+        target = "index.html";
+    }
+    std::string content;
+    try {
+        content += readFile(hostRootDir + target);
+    } catch (FileNotFoundException) {
+        content += readFile(errorpagesDir + "404.html");
+        this->setStatus(404);
+        responseLogger.error("404: Unknown target requested: " + target);
+    }
+
+    std::string fileName = this->getFileName(target);
+
+    std::string result;
+    result = this->getHeader(content, fileName) + content;
+    return result;
+
     // std::string content = fromProcess(this);
     return content;
 }

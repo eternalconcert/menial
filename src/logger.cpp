@@ -22,8 +22,6 @@ void DefaultLogHandler::log(std::string level, std::string message) {
 };
 
 
-
-
 void FileLogHandler::log(std::string level, std::string message) {
     Config conf = Config();
     std::ofstream logfile;

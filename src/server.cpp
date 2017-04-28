@@ -4,6 +4,8 @@
 #include "common.h"
 #include "logger.h"
 #include "server.h"
+#include "request.h"
+#include "fileresponse.h"
 
 const int QUEUE_LENGTH = 5;
 
@@ -37,7 +39,7 @@ int setNewSockFd(int sockfd) {
 }
 
 
-std::string getIncomingRequest(int newsockfd) {
+std::string Server::getIncomingRequest(int newsockfd) {
     char buffer[BUFFER_SIZE];
 
     if (newsockfd < 0) {
@@ -85,23 +87,25 @@ void Server::run() {
         int newsockfd = setNewSockFd(sockfd);
 
         // Message
-        std::string incomingMessage = getIncomingRequest(newsockfd);
-        RequestHandler *requestHandler = this->requestHandler;
-        std::string replyMessage = requestHandler->handle(incomingMessage);
+        std::string incomingMessage = this->getIncomingRequest(newsockfd);
+
+        std::string replyMessage = this->getReplyMessage(incomingMessage);
         this->sendReply(replyMessage, newsockfd);
 
         // Close sockets
         close(sockfd);
         close(newsockfd);
     }
-
 }
 
-
-void Server::setRequestHandler(RequestHandler *requestHandler) {
-    this->requestHandler = requestHandler;
+std::string Server::getReplyMessage(std::string incomingMessage) {
+        Request *request = new Request(incomingMessage);
+        logger.debug("RequestMethod: " + request->getMethod());
+        logger.debug("RequestHost: " + request->getHost());
+        logger.debug("RequestTarget: " + request->getTarget());
+        FileResponse response = FileResponse(request);
+        return response.get();
 }
-
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 

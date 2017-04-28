@@ -1,6 +1,5 @@
 #ifndef REQUEST_H
 #define REQUEST_H
-#include "requesthandler.h"
 
 
 class Request {
