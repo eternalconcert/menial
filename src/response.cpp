@@ -113,6 +113,7 @@ std::string fromProcess(Response *response) {
     }
     int status = pclose(f);
     if (WEXITSTATUS(status) != 0) {
+        content += readFile(errorpagesDir + "500.html");
         response->setStatus(500);
         responseLogger.error("500: Error while reading from python");
     }
