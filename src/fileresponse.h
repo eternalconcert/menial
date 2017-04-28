@@ -3,7 +3,7 @@
 #include "request.h"
 
 
-class Response {
+class FileResponse {
     public:
         std::string getHeader(std::string content, std::string fileName);
         void setStatus(int status);
@@ -12,7 +12,7 @@ class Response {
         Request* getRequest();
         std::string getFileName(std::string target);
 
-        Response(Request *request);
+        FileResponse(Request *request);
 
     private:
         int status;

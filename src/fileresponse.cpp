@@ -2,7 +2,7 @@
 #include "common.h"
 #include "exceptions.h"
 #include "logger.h"
-#include "response.h"
+#include "fileresponse.h"
 
 
 // To be made better
@@ -13,20 +13,20 @@ std::string errorpagesDir = "testdata/testhost/errorpages/";
 Logger responseLogger = getLogger();
 
 
-Response::Response(Request *request) {
+FileResponse::FileResponse(Request *request) {
     this->request = request;
     this->setStatus(200);
 }
 
-void Response::setStatus(int status) {
+void FileResponse::setStatus(int status) {
     this->status = status;
 };
 
-int Response::getStatus() {
+int FileResponse::getStatus() {
     return this->status;
 };
 
-std::string Response::getStatusMessage() {
+std::string FileResponse::getStatusMessage() {
     std::string statusMessage;
     switch (this->status) {
         case 200:
@@ -43,12 +43,12 @@ std::string Response::getStatusMessage() {
 }
 
 
-std::string Response::getFileName(std::string target) {
+std::string FileResponse::getFileName(std::string target) {
     return target.substr(target.find_last_of("/") + 1, target.length());
 }
 
 
-std::string Response::guessFileType(std::string fileName) {
+std::string FileResponse::guessFileType(std::string fileName) {
     std::string charset = " charset=utf-8;";
     std::string fileType = "text/html;" + charset;;
 
@@ -68,7 +68,7 @@ std::string Response::guessFileType(std::string fileName) {
 
 }
 
-std::string Response::getHeader(std::string content, std::string fileName) {
+std::string FileResponse::getHeader(std::string content, std::string fileName) {
     std::string header = "HTTP/1.0 ";
     header += this->getStatusMessage();
     header += "\n";
@@ -78,11 +78,11 @@ std::string Response::getHeader(std::string content, std::string fileName) {
     return header;
 }
 
-Request* Response::getRequest() {
+Request* FileResponse::getRequest() {
     return this->request;
 }
 
-std::string fromFile(Response *response) {
+std::string fromFile(FileResponse *response) {
     std::string target = response->getRequest()->getTarget();
     if (target == "/") {
         target = "index.html";
@@ -103,7 +103,7 @@ std::string fromFile(Response *response) {
     return result;
 }
 
-std::string fromProcess(Response *response) {
+std::string fromProcess(FileResponse *response) {
     FILE *f;
     char path[BUFFER_SIZE];
     f = popen("python testdata/testhost/pyresponse.py", "r");
@@ -123,8 +123,8 @@ std::string fromProcess(Response *response) {
     return result;
 }
 
-std::string Response::get() {
-    // std::string content = fromFile(this);
-    std::string content = fromProcess(this);
+std::string FileResponse::get() {
+    std::string content = fromFile(this);
+    // std::string content = fromProcess(this);
     return content;
 }

@@ -5,8 +5,8 @@
 
 class RequestHandler {
     public:
-        virtual std::string handleRequest(std::string message) { return ""; };
-        virtual ~RequestHandler() {};
+        std::string handle(std::string message);
+        RequestHandler();
 };
 
 

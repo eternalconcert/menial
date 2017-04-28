@@ -87,7 +87,7 @@ void Server::run() {
         // Message
         std::string incomingMessage = getIncomingRequest(newsockfd);
         RequestHandler *requestHandler = this->requestHandler;
-        std::string replyMessage = requestHandler->handleRequest(incomingMessage);
+        std::string replyMessage = requestHandler->handle(incomingMessage);
         this->sendReply(replyMessage, newsockfd);
 
         // Close sockets

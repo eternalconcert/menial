@@ -1,10 +1,10 @@
 #include "config.h"
-#include "httphandler.h"
+#include "requesthandler.h"
 #include "logger.h"
 #include "server.h"
 
 Config config = Config();
-HttpHandler* httpHandler = new HttpHandler();
+RequestHandler* requestHandler = new RequestHandler();
 Logger mainLogger = getLogger();
 
 
@@ -13,11 +13,11 @@ int main(int argc, char *argv[]) {
     mainLogger.info("Starting menial");
     mainLogger.info("Initializing server");
     Server server = Server(config.port);
-    server.setRequestHandler(httpHandler);
+    server.setRequestHandler(requestHandler);
     mainLogger.info("Starting server");
     server.run();
 
-    delete httpHandler;
+    delete requestHandler;
 
     return 0;
 }
