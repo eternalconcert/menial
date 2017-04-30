@@ -6,8 +6,8 @@ class Server {
     public:
         void run();
         void sendReply(std::string replyMessage, int newsockfd);
-
         Server(int portno);
+
 
     private:
         int portno;

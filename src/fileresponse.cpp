@@ -3,43 +3,46 @@
 #include "exceptions.h"
 #include "logger.h"
 #include "fileresponse.h"
-
-
-// To be made better
-std::string hostRootDir = "testdata/testhost/";
-std::string errorpagesDir = "testdata/testhost/errorpages/";
+#include "config.h"
 
 
 Logger responseLogger = getLogger();
 
 
-FileResponse::FileResponse(Request *request) {
-    this->request = request;
-    this->setStatus(200);
+std::string FileResponse::get() {
+
+    std::string target = this->getRequest()->getTarget();
+    if (target == "/") {
+        target = "index.html";
+    }
+    Config config = Config();
+    std::string content;
+    try {
+        content += readFile(config.rootDir + target);
+    } catch (FileNotFoundException) {
+        content += readFile(config.errorPagesRootDir + "404.html");
+        this->setStatus(404);
+        responseLogger.error("404: Unknown target requested: " + target);
+    }
+
+    std::string fileName = this->getFileName(target);
+
+    std::string result;
+    result = this->getHeader(content, fileName) + content;
+    return result;
+
+    return content;
 }
 
-void FileResponse::setStatus(int status) {
-    this->status = status;
-};
 
-int FileResponse::getStatus() {
-    return this->status;
-};
-
-std::string FileResponse::getStatusMessage() {
-    std::string statusMessage;
-    switch (this->status) {
-        case 200:
-            statusMessage = "200 OK";
-            break;
-        case 404:
-            statusMessage = "404 Not Found";
-            break;
-        case 500:
-            statusMessage = "500 Internal Server Error";
-            break;
-    }
-    return statusMessage;
+std::string FileResponse::getHeader(std::string content, std::string fileName) {
+    std::string header = "HTTP/1.0 ";
+    header += this->getStatusMessage();
+    header += "\n";
+    header += "Content-Length: " + std::to_string(content.length()) + "\n";
+    header += "Content-Type: " + this->guessFileType(fileName) + "\n";
+    header += "\r\n";
+    return header;
 }
 
 
@@ -66,63 +69,4 @@ std::string FileResponse::guessFileType(std::string fileName) {
     }
     return fileType;
 
-}
-
-std::string FileResponse::getHeader(std::string content, std::string fileName) {
-    std::string header = "HTTP/1.0 ";
-    header += this->getStatusMessage();
-    header += "\n";
-    header += "Content-Length: " + std::to_string(content.length()) + "\n";
-    header += "Content-Type: " + this->guessFileType(fileName) + "\n";
-    header += "\r\n";
-    return header;
-}
-
-Request* FileResponse::getRequest() {
-    return this->request;
-}
-
-std::string fromProcess(FileResponse *response) {
-    FILE *f;
-    char path[BUFFER_SIZE];
-    f = popen("python testdata/testhost/pyresponse.py", "r");
-    std::string content;
-    while (fgets(path, BUFFER_SIZE, f) != NULL) {
-        content += path;
-    }
-    int status = pclose(f);
-    if (WEXITSTATUS(status) != 0) {
-        content += readFile(errorpagesDir + "500.html");
-        response->setStatus(500);
-        responseLogger.error("500: Error while reading from python");
-    }
-
-    std::string result;
-    result = response->getHeader(content, "python.html") + content;
-    return result;
-}
-
-std::string FileResponse::get() {
-
-    std::string target = this->getRequest()->getTarget();
-    if (target == "/") {
-        target = "index.html";
-    }
-    std::string content;
-    try {
-        content += readFile(hostRootDir + target);
-    } catch (FileNotFoundException) {
-        content += readFile(errorpagesDir + "404.html");
-        this->setStatus(404);
-        responseLogger.error("404: Unknown target requested: " + target);
-    }
-
-    std::string fileName = this->getFileName(target);
-
-    std::string result;
-    result = this->getHeader(content, fileName) + content;
-    return result;
-
-    // std::string content = fromProcess(this);
-    return content;
 }

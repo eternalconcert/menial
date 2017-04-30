@@ -5,5 +5,8 @@
     "port": 8080,
     "loglevel": "debug",
     "logfilepath": "/tmp/",
-    "logger": "console"
+    "logger": "console",
+    "rootdir": "testdata/testhost/",
+    "errorpagesdir": "testdata/testhost/errorpages/"
 }
+

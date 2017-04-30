@@ -10,6 +10,8 @@ class Config {
         LogLevel logLevel;
         std::string logFilePath;
         std::string logger;
+        std::string rootDir;
+        std::string errorPagesRootDir;
 
         Config();
 };

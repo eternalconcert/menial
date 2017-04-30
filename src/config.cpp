@@ -43,6 +43,20 @@ void Config::update(std::string config) {
     }
     this->logger = logger.GetString();
 
+    // rootDir
+    Value& rootDir = document["rootdir"];
+    if (!logger.IsString()) {
+        throw ConfigException();
+    }
+    this->rootDir = rootDir.GetString();
+
+    // errorPagesRootDir
+    Value& errorPagesRootDir = document["errorpagesdir"];
+    if (!logger.IsString()) {
+        throw ConfigException();
+    }
+    this->errorPagesRootDir = errorPagesRootDir.GetString();
+
     // hosts
     Value& hosts = document["hosts"];
     if (!hosts.IsArray()) {

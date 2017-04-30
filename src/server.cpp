@@ -6,6 +6,7 @@
 #include "server.h"
 #include "request.h"
 #include "fileresponse.h"
+#include "pyresponse.h"
 
 const int QUEUE_LENGTH = 5;
 
@@ -98,13 +99,18 @@ void Server::run() {
     }
 }
 
+Response* getResponder(Request *request) {
+    Response *responder = new FileResponse(request);
+    return responder;
+}
+
 std::string Server::getReplyMessage(std::string incomingMessage) {
         Request *request = new Request(incomingMessage);
         logger.debug("RequestMethod: " + request->getMethod());
         logger.debug("RequestHost: " + request->getHost());
         logger.debug("RequestTarget: " + request->getTarget());
-        FileResponse response = FileResponse(request);
-        return response.get();
+        Response* response = getResponder(request);
+        return response->get();
 }
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {

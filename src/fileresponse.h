@@ -7,19 +7,11 @@
 class FileResponse: public Response {
     public:
         std::string get();
-
         std::string getHeader(std::string content, std::string fileName);
-        void setStatus(int status);
-        int getStatus();
-        Request* getRequest();
         std::string getFileName(std::string target);
-
-        FileResponse(Request *request);
-        int status;
+        FileResponse(Request *request): Response (request) {};
 
     private:
-        Request *request;
-        std::string getStatusMessage();
         std::string guessFileType(std::string fileName);
 };
 
