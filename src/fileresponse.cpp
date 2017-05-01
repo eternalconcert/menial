@@ -17,10 +17,11 @@ std::string FileResponse::get() {
     }
     Config config = Config();
     std::string content;
+    std::string hostName = this->getRequest()->getHost();
     try {
-        content += readFile(config.rootDir + target);
+        content += readFile(config.hosts[hostName]["root"] + target);
     } catch (FileNotFoundException) {
-        content += readFile(config.errorPagesRootDir + "404.html");
+        content += readFile(config.hosts[hostName]["errorPagesDir"] + "404.html");
         this->setStatus(404);
         responseLogger.error("404: Unknown target requested: " + target);
     }

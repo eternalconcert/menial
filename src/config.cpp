@@ -43,27 +43,21 @@ void Config::update(std::string config) {
     }
     this->logger = logger.GetString();
 
-    // rootDir
-    Value& rootDir = document["rootdir"];
-    if (!logger.IsString()) {
-        throw ConfigException();
-    }
-    this->rootDir = rootDir.GetString();
-
-    // errorPagesRootDir
-    Value& errorPagesRootDir = document["errorpagesdir"];
-    if (!logger.IsString()) {
-        throw ConfigException();
-    }
-    this->errorPagesRootDir = errorPagesRootDir.GetString();
-
     // hosts
     Value& hosts = document["hosts"];
-    if (!hosts.IsArray()) {
+    if (!hosts.IsObject()) {
         throw ConfigException();
     }
 
-    for (Value::ConstValueIterator itr = hosts.Begin(); itr != hosts.End(); ++itr) {
+    for (Value::MemberIterator itr = hosts.MemberBegin(); itr != hosts.MemberEnd(); ++itr) {
+        std::string host = itr->name.GetString();
+
+        std::string root = document["hosts"][host.c_str()]["root"].GetString();
+        std::string errorPagesDir = document["hosts"][host.c_str()]["errorpagesdir"].GetString();
+
+        this->hosts[host]["root"] = root;
+        this->hosts[host]["errorPagesDir"] = errorPagesDir;
+
     }
 
 }

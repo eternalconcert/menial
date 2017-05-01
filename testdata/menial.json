@@ -1,7 +1,14 @@
 {
-    "hosts": [
-        {"default": "test"}
-    ],
+    "hosts": {
+        "localhost:8080": {
+            "root": "testdata/testhost/",
+            "errorpagesdir": "testdata/testhost/errorpages/"
+        },
+        "127.0.0.1:8080": {
+            "root": "testdata/testhost/pyresponse.py",
+            "errorpagesdir": "testdata/testhost/errorpages/"
+        }
+    },
     "port": 8080,
     "loglevel": "debug",
     "logfilepath": "/tmp/",

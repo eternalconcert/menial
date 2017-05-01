@@ -1,5 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
+#include <map>
 #include <string>
 #include "common.h"
 
@@ -10,8 +11,7 @@ class Config {
         LogLevel logLevel;
         std::string logFilePath;
         std::string logger;
-        std::string rootDir;
-        std::string errorPagesRootDir;
+        std::map<std::string, std::map<std::string, std::string>> hosts;
 
         Config();
 };

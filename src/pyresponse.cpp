@@ -21,7 +21,8 @@ std::string PyResponse::getHeader(std::string content) {
 
 std::string PyResponse::get() {
     Config config = Config();
-    std::string interfaceCall = "python " + config.rootDir;
+    std::string hostName = this->getRequest()->getHost();
+    std::string interfaceCall = "python " + config.hosts[hostName]["root"];
     FILE *f;
     char path[BUFFER_SIZE];
     f = popen(interfaceCall.c_str(), "r");
@@ -31,7 +32,7 @@ std::string PyResponse::get() {
     }
     int status = pclose(f);
     if (WEXITSTATUS(status) != 0) {
-        content += readFile(config.errorPagesRootDir + "500.html");
+        content += readFile(config.hosts[hostName]["errorPagesDir"] + "500.html");
         this->setStatus(500);
         pyResonseLogger.error("500: Error while reading from python");
     }
