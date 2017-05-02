@@ -12,7 +12,10 @@ class Config {
         std::string logFilePath;
         std::string logger;
         std::map<std::string, std::map<std::string, std::string>> hosts;
+        static Config* getConfig();
 
+    private:
+        static Config *_instance;
         Config();
 };
 

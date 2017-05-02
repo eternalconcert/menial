@@ -4,7 +4,7 @@
 #include "logger.h"
 #include "pyresponse.h"
 
-Logger pyResonseLogger = getLogger();
+Logger* pyResonseLogger = Logger::getLogger();
 
 
 
@@ -20,9 +20,9 @@ std::string PyResponse::getHeader(std::string content) {
 
 
 std::string PyResponse::get() {
-    Config config = Config();
+    Config* config = Config::getConfig();
     std::string hostName = this->getRequest()->getHost();
-    std::string interfaceCall = "python " + config.hosts[hostName]["root"];
+    std::string interfaceCall = "python " + config->hosts[hostName]["root"];
     FILE *f;
     char path[BUFFER_SIZE];
     f = popen(interfaceCall.c_str(), "r");
@@ -32,9 +32,9 @@ std::string PyResponse::get() {
     }
     int status = pclose(f);
     if (WEXITSTATUS(status) != 0) {
-        content += readFile(config.hosts[hostName]["errorPagesDir"] + "500.html");
+        content += readFile(config->hosts[hostName]["errorPagesDir"] + "500.html");
         this->setStatus(500);
-        pyResonseLogger.error("500: Error while reading from python");
+        pyResonseLogger->error("500: Error while reading from python");
     }
 
     std::string result;

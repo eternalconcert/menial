@@ -2,7 +2,7 @@
 #include "request.h"
 
 
-Logger requestLogger = getLogger();
+Logger* requestLogger = Logger::getLogger();
 
 
 Request::Request(std::string message) {
@@ -13,7 +13,7 @@ Request::Request(std::string message) {
     this->setHost();
     this->setTarget();
     this->setUserAgent();
-    requestLogger.info("Incoming " + this->getMethod() + " request | "
+    requestLogger->info("Incoming " + this->getMethod() + " request | "
                         "Target: " + this->getTarget() + " | "
                         "User-Agent: " + this->getUserAgent());
 }
@@ -80,7 +80,7 @@ std::string Request::getTarget() {
 std::string Request::getGetParamsString(std::string target) {
     std::string paramString = target;
     paramString.erase(0, target.find("?"));
-    requestLogger.debug("Get Request params " + paramString);
+    requestLogger->debug("Get Request params " + paramString);
     return paramString;
 };
 

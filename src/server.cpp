@@ -10,7 +10,7 @@
 
 const int QUEUE_LENGTH = 5;
 
-Logger logger = getLogger();
+Logger* logger = Logger::getLogger();
 
 void setUp(int sockfd, int portno) {
     int option = 1;
@@ -64,14 +64,14 @@ std::string Server::getIncomingRequest(int newsockfd) {
     }
 
     result = result.substr(0, result.size());
-    logger.debug("Server::getIncomingRequest result len: " + std::to_string(result.size()));
-    logger.debug("Server::getIncomingRequest result: " + result);
+    logger->debug("Server::getIncomingRequest result len: " + std::to_string(result.size()));
+    logger->debug("Server::getIncomingRequest result: " + result);
     return result;
 }
 
 
 Server::Server(int portno) {
-    logger.debug("Using portno: " + std::to_string(portno));
+    logger->debug("Using portno: " + std::to_string(portno));
     this->portno = portno;
 };
 
@@ -106,9 +106,9 @@ Response* getResponder(Request *request) {
 
 std::string Server::getReplyMessage(std::string incomingMessage) {
         Request *request = new Request(incomingMessage);
-        logger.debug("RequestMethod: " + request->getMethod());
-        logger.debug("RequestHost: " + request->getHost());
-        logger.debug("RequestTarget: " + request->getTarget());
+        logger->debug("RequestMethod: " + request->getMethod());
+        logger->debug("RequestHost: " + request->getHost());
+        logger->debug("RequestTarget: " + request->getTarget());
         Response* response = getResponder(request);
         return response->get();
 }
@@ -116,8 +116,8 @@ std::string Server::getReplyMessage(std::string incomingMessage) {
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 
     int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
-    logger.debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
-    logger.debug("Server::sendReply replyMessage: " + replyMessage);
+    logger->debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
+    logger->debug("Server::sendReply replyMessage: " + replyMessage);
 
     if (outMessageLen < 0) {
         error("Error: Writing to socket");

@@ -32,13 +32,14 @@ class Logger {
         void error(std::string message);
         void critical(std::string message);
 
-        Logger() {};
+        static Logger* getLogger();
 
     private:
+        Logger() {};
         LogLevel level;
         LogHandler *handler;
+        static Logger* _instance;
 };
 
-Logger getLogger();
 
 #endif

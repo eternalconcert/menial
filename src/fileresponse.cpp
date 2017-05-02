@@ -6,7 +6,7 @@
 #include "config.h"
 
 
-Logger responseLogger = getLogger();
+Logger* responseLogger = Logger::getLogger();
 
 
 std::string FileResponse::get() {
@@ -15,15 +15,15 @@ std::string FileResponse::get() {
     if (target == "/") {
         target = "index.html";
     }
-    Config config = Config();
+    Config* config = Config::getConfig();
     std::string content;
     std::string hostName = this->getRequest()->getHost();
     try {
-        content += readFile(config.hosts[hostName]["root"] + target);
+        content += readFile(config->hosts[hostName]["root"] + target);
     } catch (FileNotFoundException) {
-        content += readFile(config.hosts[hostName]["errorPagesDir"] + "404.html");
+        content += readFile(config->hosts[hostName]["errorPagesDir"] + "404.html");
         this->setStatus(404);
-        responseLogger.error("404: Unknown target requested: " + target);
+        responseLogger->error("404: Unknown target requested: " + target);
     }
 
     std::string fileName = this->getFileName(target);
@@ -58,7 +58,7 @@ std::string FileResponse::guessFileType(std::string fileName) {
 
     std::string extension = fileName.substr(fileName.find_last_of(".") + 1, fileName.length());
 
-    responseLogger.debug("Filename extension: " + extension);
+    responseLogger->debug("Filename extension: " + extension);
     if (extension == "css") {
         fileType = "text/css";
     }
