@@ -3,6 +3,7 @@
 #include "server.h"
 
 #include <list>
+#include <set>
 #include <thread>
 
 Logger* mainLogger = Logger::getLogger();
@@ -24,10 +25,10 @@ int main(int argc, char *argv[]) {
     mainLogger->info("Initializing servers");
     mainLogger->info("Starting servers");
     std::list<std::thread> threads;
-    std::list<int>::iterator portItr = config->ports.begin();
+
+    std::set<int>::iterator portItr = config->ports.begin();
     for (portItr = config->ports.begin(); portItr != config->ports.end(); portItr++) {
         Server server = Server(*portItr);
-
         threads.push_back(std::thread(spawnThread, server));
     }
 

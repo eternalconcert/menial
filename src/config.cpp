@@ -53,15 +53,14 @@ void Config::update(std::string config) {
 
         int newPort;
         std::string port = host;
-        if (!port.find(":")) {
-            newPort = 80;
+        if (port.find(":") == std::string::npos) {
+            throw ConfigException();
         }
         else {
             port.erase(0, port.find(":") + 1);
             newPort = atoi(port.c_str());
         }
-
-        this->ports.push_back(newPort);
+        this->ports.insert(newPort);
     }
 
 }

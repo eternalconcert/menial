@@ -2,8 +2,15 @@
 #define EXCEPTIONS_H
 
 
-class FileNotFoundException: public std::exception {};
-class ConfigException: public std::exception {};
+class Exception: public std::exception {};
+
+class FileNotFoundException: public Exception {
+    using Exception::Exception;
+};
+
+class ConfigException: public Exception {
+    using Exception::Exception;
+};
 
 
 #endif

@@ -1,11 +1,15 @@
 {
     "hosts": {
-        "localhost:8080": {
+        "localhost:8000": {
             "root": "testdata/testhost/",
             "errorpagesdir": "testdata/testhost/errorpages/"
         },
-        "localhost:8000": {
+        "localhost:8080": {
             "root": "testdata/threaded/",
+            "errorpagesdir": "testdata/testhost/errorpages/"
+        },
+        "127.0.0.1:8080": {
+            "root": "testdata/testhost/",
             "errorpagesdir": "testdata/testhost/errorpages/"
         }
     },

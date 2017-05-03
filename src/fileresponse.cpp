@@ -21,7 +21,6 @@ std::string FileResponse::get() {
 
     if (hostName.find(":") == std::string::npos) {
         hostName += ":80";
-        responseLogger->error(hostName);
     }
     try {
         content += readFile(config->hosts[hostName]["root"] + target);
