@@ -7,7 +7,6 @@
 Logger* pyResonseLogger = Logger::getLogger();
 
 
-
 std::string PyResponse::getHeader(std::string content) {
     std::string header = "HTTP/1.0 ";
     header += this->getStatusMessage();

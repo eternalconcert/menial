@@ -3,7 +3,6 @@
 #include "server.h"
 
 #include <list>
-#include <map>
 #include <thread>
 
 Logger* mainLogger = Logger::getLogger();
@@ -23,12 +22,11 @@ void spawnThread(Server server) {
 int main(int argc, char *argv[]) {
     mainLogger->info("Starting menial");
     mainLogger->info("Initializing servers");
-
     mainLogger->info("Starting servers");
     std::list<std::thread> threads;
-    std::map<std::string, std::map<std::string, std::string>>::iterator hostItr = config->hosts.begin();
-    for (hostItr = config->hosts.begin(); hostItr != config->hosts.end(); hostItr++) {
-        Server server = Server(stoi(hostItr->second["port"]));
+    std::list<int>::iterator portItr = config->ports.begin();
+    for (portItr = config->ports.begin(); portItr != config->ports.end(); portItr++) {
+        Server server = Server(*portItr);
 
         threads.push_back(std::thread(spawnThread, server));
     }

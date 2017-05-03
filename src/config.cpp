@@ -47,12 +47,21 @@ void Config::update(std::string config) {
 
         std::string root = document["hosts"][host.c_str()]["root"].GetString();
         std::string errorPagesDir = document["hosts"][host.c_str()]["errorpagesdir"].GetString();
-        int port = document["hosts"][host.c_str()]["port"].GetInt();
 
         this->hosts[host]["root"] = root;
         this->hosts[host]["errorPagesDir"] = errorPagesDir;
-        this->hosts[host]["port"] = std::to_string(port);
 
+        int newPort;
+        std::string port = host;
+        if (!port.find(":")) {
+            newPort = 80;
+        }
+        else {
+            port.erase(0, port.find(":") + 1);
+            newPort = atoi(port.c_str());
+        }
+
+        this->ports.push_back(newPort);
     }
 
 }

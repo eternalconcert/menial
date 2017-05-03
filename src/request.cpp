@@ -11,7 +11,6 @@ Request::Request(std::string message) {
     this->setBody();
     this->setMethod();
     this->setHost();
-    this->setPort();
     this->setTarget();
     this->setUserAgent();
     requestLogger->info("Incoming " + this->getMethod() + " request | "
@@ -43,17 +42,6 @@ void Request::setHost() {
     header.erase(0, header.find(fieldName) + fieldName.length());
     std::string host = header.substr(0, header.find("\n") - 1);
     this->host = host;
-}
-
-void Request::setPort() {
-    std::string port = this->host;
-    if (!port.find(":")) {
-        this->port = 80;
-    }
-    else {
-        port.erase(0, port.find(":") + 1);
-        this->port = atoi(port.c_str());
-    }
 }
 
 void Request::setUserAgent() {
