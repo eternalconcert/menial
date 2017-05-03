@@ -7,7 +7,6 @@
 class Config {
     public:
         void update(std::string config);
-        int port;
         LogLevel logLevel;
         std::string logFilePath;
         std::string logger;

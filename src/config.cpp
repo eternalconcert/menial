@@ -14,13 +14,6 @@ void Config::update(std::string config) {
         throw ConfigException();
     }
 
-    // port
-    Value& port = document["port"];
-    if (!port.IsInt()) {
-        throw ConfigException();
-    }
-    this->port = port.GetInt();
-
     // logLevel
     Value& logLevel = document["loglevel"];
     if (!logLevel.IsString()) {
@@ -54,9 +47,11 @@ void Config::update(std::string config) {
 
         std::string root = document["hosts"][host.c_str()]["root"].GetString();
         std::string errorPagesDir = document["hosts"][host.c_str()]["errorpagesdir"].GetString();
+        int port = document["hosts"][host.c_str()]["port"].GetInt();
 
         this->hosts[host]["root"] = root;
         this->hosts[host]["errorPagesDir"] = errorPagesDir;
+        this->hosts[host]["port"] = std::to_string(port);
 
     }
 

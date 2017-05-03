@@ -8,11 +8,13 @@ class Request {
         void setBody();
         void setMethod();
         void setHost();
+        void setPort();
         void setTarget();
         void setUserAgent();
 
         std::string getMethod();
         std::string getHost();
+        std::string getPort();
         std::string getTarget();
         std::string getGetParamsString(std::string target);
         std::string getUserAgent();
@@ -26,6 +28,7 @@ class Request {
         std::string method;
         std::string target;
         std::string host;
+        int port;
         std::string userAgent;
 };
 
