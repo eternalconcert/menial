@@ -1,0 +1,11 @@
+{
+    "hosts": {
+        "localhost:8000": {
+            "root": "root/default/",
+            "errorpagesdir": "root/default/errorpages/"
+        }
+    },
+    "loglevel": "info",
+    "logfilepath": "/var/log/menial/",
+    "logger": "file"
+}

@@ -4,10 +4,10 @@ SOURCES = $(shell find src/ -name "*.cpp")
 
 compile:
 	@mkdir -p build
-	g++ $(SOURCES) -o build/server.bin -std=c++14 -pthread -Wall -I src/include/
+	g++ $(SOURCES) -o build/menial -std=c++14 -pthread -Wall -I src/include/
 
 serve:
-	@build/server.bin 8080
+	@build/menial 8080
 
 clean:
 	rm build/*
