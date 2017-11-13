@@ -5,7 +5,9 @@
 
 class Response {
     public:
-        virtual std::string get() {return ""; };
+        virtual std::string get() {
+            return "";
+        };
         Request* getRequest();
         void setStatus(int status);
         int getStatus();

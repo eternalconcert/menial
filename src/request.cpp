@@ -57,7 +57,7 @@ void Request::setTarget() {
     target.erase(0, target.find(" ") + 1);
     target.erase(target.find(" "), target.length());
 
-    std::string getParams = this->getGetParamsString(target);
+    std::string getParams = this->getGetParamsString();
     if (getParams.length() > 0) {
         target.erase(target.find(getParams));
     }
@@ -77,7 +77,11 @@ std::string Request::getTarget() {
     return this->target;
 };
 
-std::string Request::getGetParamsString(std::string target) {
+std::string Request::getGetParamsString() {
+    std::string target = this->header;
+    target.erase(0, target.find(" ") + 1);
+    target.erase(target.find(" "), target.length());
+
     std::string paramString = target;
     paramString.erase(0, target.find("?"));
     requestLogger->debug("Get Request params " + paramString);

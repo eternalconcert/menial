@@ -47,9 +47,11 @@ void Config::update(std::string config) {
 
         std::string root = document["hosts"][host.c_str()]["root"].GetString();
         std::string errorPagesDir = document["hosts"][host.c_str()]["errorpagesdir"].GetString();
+        std::string responder = document["hosts"][host.c_str()]["responder"].GetString();
 
         this->hosts[host]["root"] = root;
         this->hosts[host]["errorPagesDir"] = errorPagesDir;
+        this->hosts[host]["responder"] = responder;
 
         int newPort;
         std::string port = host;

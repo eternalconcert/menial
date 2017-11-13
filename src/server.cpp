@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "common.h"
+#include "config.h"
 #include "logger.h"
 #include "server.h"
 #include "request.h"
@@ -11,6 +12,7 @@
 const int QUEUE_LENGTH = 5;
 
 Logger* logger = Logger::getLogger();
+static Config* config = Config::getConfig();
 
 void setUp(int sockfd, int portno) {
     int option = 1;
@@ -100,8 +102,18 @@ void Server::run() {
 }
 
 Response* getResponder(Request *request) {
-    Response *responder = new FileResponse(request);
-    return responder;
+    std::string responderName = config->hosts[request->getHost()]["responder"];
+
+
+    if (responderName == "file") {
+        return new FileResponse(request);
+    }
+    else if (responderName == "python") {
+        return new PyResponse(request);
+    }
+    else {
+        return new Response(request);
+    }
 }
 
 std::string Server::getReplyMessage(std::string incomingMessage) {

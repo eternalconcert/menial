@@ -22,6 +22,10 @@ std::string PyResponse::get() {
     Config* config = Config::getConfig();
     std::string hostName = this->getRequest()->getHost();
     std::string interfaceCall = "python " + config->hosts[hostName]["root"];
+    interfaceCall += " " + this->getRequest()->getTarget();
+    interfaceCall += " " + this->getRequest()->getMethod();
+    interfaceCall += " " + this->getRequest()->getGetParamsString();
+
     FILE *f;
     char path[BUFFER_SIZE];
     f = popen(interfaceCall.c_str(), "r");
