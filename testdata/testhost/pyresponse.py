@@ -2,28 +2,48 @@ import sys
 import json
 
 
-class ResquestDispatcher(object):
-    def __init__(self, host, method, get_params):
+class Resquest(object):
+    def __init__(self, host, url, header, body):
         self.host = host
-        self.url = host.lstrip('/')
-        self.get_params = get_params
-        self.method = method
+        self.url = url
+        self.header = header
+        self.body = body
+        self.method = self.header.split('/')[0].strip()
+        self.get = self._get_get_params()
+        self.post = self._get_post_params()
 
-get_params = None
+    def _get_get_params(self):
+        params = {}
+        if len(self.url.split('?')) > 1:
+            query_string = self.url.split('?')[1]
+            for item in query_string.split('#'):
+                try:
+                    key, value = item.split('=')
+                    params[key] = value
+                except ValueError:
+                    params[item] = None
+        return params
 
-if len(sys.argv) >= 4:
-    get_params = sys.argv[3]
+    def _get_post_params(self):
+        params = {}
+        if len(self.url.split('?')) > 1:
+            query_string = self.url.split('?')[1]
+            for item in query_string.split('#'):
+                try:
+                    key, value = item.split('=')
+                    params[key] = value
+                except ValueError:
+                    params[item] = None
+        return params
+
+print(sys.argv)
 
 try:
-    request_dispatcher = ResquestDispatcher(sys.argv[1], sys.argv[2], get_params)
-    print(request_dispatcher.url, request_dispatcher.method, request_dispatcher.get_params)
+    request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    print(request.host, request.url, request.get, request.header, request.method)
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
 
-
-
-'''with open("testdata/menial.json") as f:
-    config = json.load(f)
 
 template = """
 <!DOCTYPE html>
@@ -43,24 +63,12 @@ template = """
                 If you see this page, the menial webserver is up and running with the python extension.
             </p>
 
-            <div id=conf>
-            <h2>Configuration:</h2>
-                <table width=200>
-                    <tr>
-                        <td>Loglevel:</td>
-                        <td>{}</td>
-                    </tr>
-                    <tr>
-                        <td>Logger:</td>
-                        <td>{}</td>
-                    </tr>
-                    <tr>
-                        <td>Logfilepath:</td>
-                        <td>{}</td>
-                    </tr>
-                </table>
-            </div>
-            <br />
+            <form action='.' method='POST' >
+                <input type='text' name='name' />
+                <input type='password' name='password' />
+                <button>Senden</button>
+            </form>
+
             <div id=footer>
                 Licensed under <a href="https://www.gnu.org/licenses/gpl.html">GPLv3</a>
             </div>
@@ -68,6 +76,6 @@ template = """
     </body>
 </html>
 
-""".format(config['loglevel'], config['logger'], config['logfilepath'])'''
+"""
 
-# sys.stdout.write(respsonse)
+print(template)

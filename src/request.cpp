@@ -20,16 +20,15 @@ Request::Request(std::string message) {
 
 void Request::setHeader() {
     std::string message = this->message;
-    message.erase(message.find("\n\r\n"), message.length());
+    message.erase(message.find("\n\r\n"), message.length() - 3);
     this->header = message;
-
 }
 
 void Request::setBody() {
     std::string message = this->message;
-    this->body = message.substr(message.find("\n\r\n"), message.length());
+    message.erase(0, message.find("\n\r\n") + 3);
+    this->body = message;
 }
-
 
 void Request::setMethod() {
     std::string header = this->header;
@@ -57,16 +56,19 @@ void Request::setTarget() {
     target.erase(0, target.find(" ") + 1);
     target.erase(target.find(" "), target.length());
 
-    std::string getParams = this->getGetParamsString();
-    if (getParams.length() > 0) {
-        target.erase(target.find(getParams));
-    }
-
     this->target = target;
 }
 
 std::string Request::getMethod() {
     return this->method;
+};
+
+std::string Request::getHeader() {
+    return this->header;
+};
+
+std::string Request::getBody() {
+    return this->body;
 };
 
 std::string Request::getHost() {
@@ -75,17 +77,6 @@ std::string Request::getHost() {
 
 std::string Request::getTarget() {
     return this->target;
-};
-
-std::string Request::getGetParamsString() {
-    std::string target = this->header;
-    target.erase(0, target.find(" ") + 1);
-    target.erase(target.find(" "), target.length());
-
-    std::string paramString = target;
-    paramString.erase(0, target.find("?"));
-    requestLogger->debug("Get Request params " + paramString);
-    return paramString;
 };
 
 std::string Request::getUserAgent() {

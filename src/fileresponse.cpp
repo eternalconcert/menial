@@ -9,9 +9,26 @@
 Logger* responseLogger = Logger::getLogger();
 
 
-std::string FileResponse::get() {
+std::string getGetParamsString(Request *request) {
+    std::string target = request->getHeader();
+    target.erase(0, target.find(" ") + 1);
+    target.erase(target.find(" "), target.length());
 
+    std::string paramString = target;
+    paramString.erase(0, target.find("?"));
+    responseLogger->debug("Get Request params " + paramString);
+    return paramString;
+};
+
+
+std::string FileResponse::get() {
     std::string target = this->getRequest()->getTarget();
+    std::string getParams = getGetParamsString(this->getRequest());
+
+    if (getParams.length() > 0) {
+        target.erase(target.find(getParams));
+    }
+
     if (target == "/") {
         target = "index.html";
     }
@@ -68,6 +85,9 @@ std::string FileResponse::guessFileType(std::string fileName) {
     }
     else if (extension == "png") {
         fileType = "image/png";
+    }
+    else if (extension == "jpg") {
+        fileType = "image/jpg";
     }
     else if (extension == "mp3") {
         fileType = "audio/mpeg";
