@@ -14,6 +14,7 @@ Request::Request(std::string message) {
     this->setTarget();
     this->setUserAgent();
     requestLogger->info("Incoming " + this->getMethod() + " request | "
+                        "Host: " + this->getHost() + " | "
                         "Target: " + this->getTarget() + " | "
                         "User-Agent: " + this->getUserAgent());
 }
