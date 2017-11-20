@@ -15,6 +15,7 @@ class Request {
         std::string getHeader();
         std::string getBody();
         std::string getHost();
+        std::string getVirtualHost();
         std::string getPort();
         std::string getTarget();
         std::string getUserAgent();

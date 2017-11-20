@@ -1,9 +1,10 @@
+#include "config.h"
 #include "logger.h"
 #include "request.h"
 
 
+static Config* config = Config::getConfig();
 Logger* requestLogger = Logger::getLogger();
-
 
 Request::Request(std::string message) {
     this->message = message;
@@ -74,6 +75,19 @@ std::string Request::getBody() {
 
 std::string Request::getHost() {
     return this->host;
+};
+
+std::string Request::getVirtualHost() {
+    std::string virtualHost = this->host;
+    if (virtualHost.find(":") == std::string::npos) {
+        virtualHost += ":80";
+    }
+
+    if (config->hosts[virtualHost]["responder"] == "") {
+        virtualHost.erase(0, virtualHost.find(":"));
+        virtualHost = "*" + virtualHost;
+    };
+    return virtualHost;
 };
 
 std::string Request::getTarget() {

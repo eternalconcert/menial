@@ -20,7 +20,7 @@ std::string PyResponse::getHeader(std::string content) {
 
 std::string PyResponse::get() {
     Config* config = Config::getConfig();
-    std::string hostName = this->getRequest()->getHost();
+    std::string hostName = this->getRequest()->getVirtualHost();
     std::string interfaceCall = "python " + config->hosts[hostName]["root"];
     interfaceCall += " " + hostName;
     interfaceCall += " " + this->getRequest()->getTarget();

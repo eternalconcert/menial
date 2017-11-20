@@ -102,8 +102,7 @@ void Server::run() {
 }
 
 Response* getResponder(Request *request) {
-    std::string responderName = config->hosts[request->getHost()]["responder"];
-
+    std::string responderName = config->hosts[request->getVirtualHost()]["responder"];
 
     if (responderName == "file") {
         return new FileResponse(request);

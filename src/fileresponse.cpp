@@ -34,11 +34,8 @@ std::string FileResponse::get() {
     }
     Config* config = Config::getConfig();
     std::string content;
-    std::string hostName = this->getRequest()->getHost();
+    std::string hostName = this->getRequest()->getVirtualHost();
 
-    if (hostName.find(":") == std::string::npos) {
-        hostName += ":80";
-    }
     try {
         content += readFile(config->hosts[hostName]["root"] + target);
     } catch (FileNotFoundException) {

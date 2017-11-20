@@ -96,7 +96,7 @@ Logger* Logger::getLogger() {
         handler = new FileLogHandler();
     }
     else {
-        throw ConfigException();
+        throw ConfigException("No valid LogHandler defined.");
     }
     _instance->setHandler(handler);
     return _instance;

@@ -15,11 +15,6 @@ void spawnThread(Server server) {
 };
 
 
-// void joinThread(std::thread thread) {
-//     thread.join();
-// };
-
-
 int main(int argc, char *argv[]) {
     mainLogger->info("Starting menial");
     mainLogger->info("Initializing servers");

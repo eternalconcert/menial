@@ -11,13 +11,13 @@ void Config::update(std::string config) {
     Document document;
     ParseResult result = document.Parse(config.c_str());
     if (!result) {
-        throw ConfigException();
+        throw ConfigException("Could not parse config.");
     }
 
     // logLevel
     Value& logLevel = document["loglevel"];
     if (!logLevel.IsString()) {
-        throw ConfigException();
+        throw ConfigException("No valid config value for loglevel defined.");
     }
     LogLevel level = logLevelByName(logLevel.GetString());
     this->logLevel = level;
@@ -25,21 +25,21 @@ void Config::update(std::string config) {
     // logFilePath
     Value& logFilePath = document["logfilepath"];
     if (!logFilePath.IsString()) {
-        throw ConfigException();
+        throw ConfigException("No valid config value for logfilepath defined.");
     }
     this->logFilePath = logFilePath.GetString();
 
     // logFilePath
     Value& logger = document["logger"];
     if (!logger.IsString()) {
-        throw ConfigException();
+        throw ConfigException("No valid config value for logger defined.");
     }
     this->logger = logger.GetString();
 
     // hosts
     Value& hosts = document["hosts"];
     if (!hosts.IsObject()) {
-        throw ConfigException();
+        throw ConfigException("No valid config value for hosts defined.");
     }
 
     for (Value::MemberIterator itr = hosts.MemberBegin(); itr != hosts.MemberEnd(); ++itr) {
@@ -56,7 +56,7 @@ void Config::update(std::string config) {
         int newPort;
         std::string port = host;
         if (port.find(":") == std::string::npos) {
-            throw ConfigException();
+            throw ConfigException("No port defined for host " + host);
         }
         else {
             port.erase(0, port.find(":") + 1);

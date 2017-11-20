@@ -7,7 +7,7 @@ compile:
 	g++ $(SOURCES) -o build/menial -std=c++14 -pthread -Wall -I src/include/
 
 serve:
-	@build/menial 8080
+	@build/menial
 
 clean:
 	rm build/*

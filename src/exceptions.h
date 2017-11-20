@@ -10,6 +10,9 @@ class FileNotFoundException: public Exception {
 
 class ConfigException: public Exception {
     using Exception::Exception;
+
+    public:
+        ConfigException(std::string message = "");
 };
 
 
