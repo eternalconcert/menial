@@ -5,15 +5,14 @@
             "root": "testdata/testhost/",
             "errorpagesdir": "testdata/testhost/errorpages/"
         },
-        "*:8080": {
+        "*:8081": {
             "responder": "file",
             "root": "testdata/threaded/",
             "errorpagesdir": "testdata/testhost/errorpages/"
         }
     },
-    "loglevel": "info",
+    "loglevel": "debug",
     "logfilepath": "/tmp/",
     "logger": "console",
-    "rootdir": "testdata/testhost/",
-    "errorpagesdir": "testdata/testhost/errorpages/"
+    "rootdir": "testdata/testhost/"
 }
