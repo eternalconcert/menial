@@ -13,5 +13,5 @@
     },
     "loglevel": "debug",
     "logfilepath": "/tmp/",
-    "logger": "console",
+    "logger": "console"
 }
