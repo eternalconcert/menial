@@ -5,7 +5,7 @@
             "root": "testdata/testhost/",
             "errorpagesdir": "testdata/testhost/errorpages/"
         },
-        "*:8081": {
+        "*:8080": {
             "responder": "file",
             "root": "testdata/threaded/",
             "errorpagesdir": "testdata/testhost/errorpages/"
