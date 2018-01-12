@@ -70,7 +70,7 @@ void Config::update(std::string config) {
 Config* Config::_instance = 0;
 
 Config::Config() {
-    std::string json = readFile("testdata/menial.json");
+    std::string json = readFile("menial.json");
     this->update(json);
 };
 
