@@ -6,8 +6,8 @@
 #include <set>
 #include <thread>
 
-Logger* mainLogger = Logger::getLogger();
 static Config* config = Config::getConfig();
+Logger* mainLogger = Logger::getLogger();
 
 
 void spawnThread(Server server) {

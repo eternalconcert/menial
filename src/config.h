@@ -7,7 +7,7 @@
 
 class Config {
     public:
-        void update(std::string config);
+        void update(std::string path);
         LogLevel logLevel;
         std::string logFilePath;
         std::string logger;
