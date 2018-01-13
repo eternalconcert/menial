@@ -1,0 +1,12 @@
+{
+    "hosts": {
+        "*:80": {
+            "responder": "file",
+            "root": "default/",
+            "errorpagesdir": "default/errorpages/"
+        }
+    },
+    "loglevel": "debug",
+    "logfilepath": "/tmp/",
+    "logger": "console"
+}
