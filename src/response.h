@@ -1,6 +1,8 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 #include <string>
+#include "config.h"
+#include "logger.h"
 #include "request.h"
 
 class Response {
@@ -12,7 +14,9 @@ class Response {
         void setStatus(int status);
         int getStatus();
         std::string getStatusMessage();
-        Response(Request *request);
+        Response(Request *request, Config *config, Logger *logger);
+        Config *config;
+        Logger *logger;
 
     protected:
         Request *request;

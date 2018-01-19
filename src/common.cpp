@@ -7,7 +7,6 @@
 #include <rapidjson/stringbuffer.h>
 
 
-
 void error(const char *msg)
 {
     perror(msg);

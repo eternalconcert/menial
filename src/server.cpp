@@ -2,8 +2,6 @@
 #include <string.h>
 #include <unistd.h>
 #include "common.h"
-#include "config.h"
-#include "logger.h"
 #include "server.h"
 #include "request.h"
 #include "fileresponse.h"
@@ -11,8 +9,6 @@
 
 const int QUEUE_LENGTH = 5;
 
-Logger* logger = Logger::getLogger();
-static Config* config = Config::getConfig();
 
 void setUp(int sockfd, int portno) {
     int option = 1;
@@ -66,14 +62,16 @@ std::string Server::getIncomingRequest(int newsockfd) {
     }
 
     result = result.substr(0, result.size());
-    logger->debug("Server::getIncomingRequest result len: " + std::to_string(result.size()));
-    logger->debug("Server::getIncomingRequest result: " + result);
+    this->logger->debug("Server::getIncomingRequest result len: " + std::to_string(result.size()));
+    this->logger->debug("Server::getIncomingRequest result: " + result);
     return result;
 }
 
 
-Server::Server(int portno) {
-    logger->debug("Using portno: " + std::to_string(portno));
+Server::Server(int portno, Logger* logger, Config* config) {
+    this->logger = logger;
+    this->config = config;
+    this->logger->debug("Using portno: " + std::to_string(portno));
     this->portno = portno;
 };
 
@@ -101,34 +99,34 @@ void Server::run() {
     }
 }
 
-Response* getResponder(Request *request) {
+Response* getResponder(Request *request, Config *config, Logger *logger) {
     std::string responderName = config->hosts[request->getVirtualHost()]["responder"];
 
     if (responderName == "file") {
-        return new FileResponse(request);
+        return new FileResponse(request, config, logger);
     }
     else if (responderName == "python") {
-        return new PyResponse(request);
+        return new PyResponse(request, config, logger);
     }
     else {
-        return new Response(request);
+        return new Response(request, config, logger);
     }
 }
 
 std::string Server::getReplyMessage(std::string incomingMessage) {
-        Request *request = new Request(incomingMessage);
-        logger->debug("RequestMethod: " + request->getMethod());
-        logger->debug("RequestHost: " + request->getHost());
-        logger->debug("RequestTarget: " + request->getTarget());
-        Response* response = getResponder(request);
+        Request *request = new Request(incomingMessage, this->config, this->logger);
+        this->logger->debug("RequestMethod: " + request->getMethod());
+        this->logger->debug("RequestHost: " + request->getHost());
+        this->logger->debug("RequestTarget: " + request->getTarget());
+        Response* response = getResponder(request, this->config, this->logger);
         return response->get();
 }
 
 void Server::sendReply(std::string replyMessage, int newsockfd) {
 
     int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
-    logger->debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
-    logger->debug("Server::sendReply replyMessage: " + replyMessage);
+    this->logger->debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
+    this->logger->debug("Server::sendReply replyMessage: " + replyMessage);
 
     if (outMessageLen < 0) {
         error("Error: Writing to socket");

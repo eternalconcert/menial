@@ -32,9 +32,8 @@ void DefaultLogHandler::log(std::string level, std::string message) {
 
 
 void FileLogHandler::log(std::string level, std::string message) {
-    Config* config = Config::getConfig();
     std::ofstream logfile;
-    logfile.open(config->logFilePath + "menial.log", std::ios_base::app);
+    logfile.open(this->config->logFilePath + "menial.log", std::ios_base::app);
     std::string logLine = "# [" + level + "]: " + message + "\n";
     logfile << logLine;
 };
@@ -80,20 +79,20 @@ void Logger::critical(std::string message) {
 
 Logger* Logger::_instance = 0;
 
-Logger* Logger::getLogger() {
+Logger* Logger::getLogger(Config* config) {
     if (_instance != 0) {
+        _instance->config = config;
         return _instance;
     }
-    Config* config = Config::getConfig();
     _instance = new Logger;
     _instance->setLevel(config->logLevel);
 
     LogHandler* handler;
     if (config->logger == "console") {
-        handler = new DefaultLogHandler();
+        handler = new DefaultLogHandler(/*config*/);
     }
     else if (config->logger == "file") {
-        handler = new FileLogHandler();
+        handler = new FileLogHandler(/*config*/);
     }
     else {
         throw ConfigException("No valid LogHandler defined.");

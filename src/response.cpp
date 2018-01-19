@@ -1,7 +1,9 @@
 #include "response.h"
 
-Response::Response(Request *request) {
+Response::Response(Request *request, Config *config, Logger *logger) {
     this->request = request;
+    this->config = config;
+    this->logger = logger;
     this->setStatus(200);
 }
 

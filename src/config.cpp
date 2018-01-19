@@ -7,8 +7,9 @@
 using namespace rapidjson;
 
 
-void Config::update(std::string path) {
-    std::string config = readFile(path);
+void Config::update() {
+    std::string config = readFile(this->logFilePath);
+
     Document document;
     ParseResult result = document.Parse(config.c_str());
     if (!result) {
@@ -71,13 +72,14 @@ void Config::update(std::string path) {
 Config* Config::_instance = 0;
 
 Config::Config() {
-    this->update("menial.json");
 };
 
 
-Config* Config::getConfig() {
+Config* Config::getConfig(std::string path) {
     if (_instance == 0) {
         _instance = new Config();
+        _instance->logFilePath = path;
+        _instance->update();
     }
     return _instance;
 }

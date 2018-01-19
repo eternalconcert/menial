@@ -1,12 +1,7 @@
-#include "config.h"
-#include "logger.h"
 #include "request.h"
 
 
-static Config* config = Config::getConfig();
-Logger* requestLogger = Logger::getLogger();
-
-Request::Request(std::string message) {
+Request::Request(std::string message, Config* config, Logger* logger) {
     this->message = message;
     this->setHeader();
     this->setBody();
@@ -14,7 +9,9 @@ Request::Request(std::string message) {
     this->setHost();
     this->setTarget();
     this->setUserAgent();
-    requestLogger->info("Incoming " + this->getMethod() + " request | "
+    this->config = config;
+    this->logger = logger;
+    this->logger->info("Incoming " + this->getMethod() + " request | "
                         "Host: " + this->getHost() + " | "
                         "Target: " + this->getTarget() + " | "
                         "User-Agent: " + this->getUserAgent());

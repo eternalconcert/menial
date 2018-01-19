@@ -1,6 +1,7 @@
 #ifndef REQUEST_H
 #define REQUEST_H
-
+#include "config.h"
+#include "logger.h"
 
 class Request {
     public:
@@ -19,8 +20,10 @@ class Request {
         std::string getPort();
         std::string getTarget();
         std::string getUserAgent();
+        Config *config;
+        Logger* logger;
 
-        Request(std::string fullMessage);
+        Request(std::string message, Config* config, Logger* logger);
 
     private:
         std::string message;

@@ -7,14 +7,14 @@
 
 class Config {
     public:
-        void update(std::string path);
+        void update();
         LogLevel logLevel;
         std::string logFilePath;
         std::string logger;
         std::map<std::string, std::map<std::string, std::string>> hosts;
         std::set<int> ports;
         std::string responder;
-        static Config* getConfig();
+        static Config* getConfig(std::string path);
 
     private:
         static Config *_instance;

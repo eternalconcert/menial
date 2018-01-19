@@ -3,27 +3,23 @@
 #include "exceptions.h"
 #include "logger.h"
 #include "fileresponse.h"
-#include "config.h"
 
 
-Logger* responseLogger = Logger::getLogger();
-
-
-std::string getGetParamsString(Request *request) {
+std::string getGetParamsString(Request *request, Logger *logger) {
     std::string target = request->getHeader();
     target.erase(0, target.find(" ") + 1);
     target.erase(target.find(" "), target.length());
 
     std::string paramString = target;
     paramString.erase(0, target.find("?"));
-    responseLogger->debug("Get Request params " + paramString);
+    logger->debug("Get Request params " + paramString);
     return paramString;
 };
 
 
 std::string FileResponse::get() {
     std::string target = this->getRequest()->getTarget();
-    std::string getParams = getGetParamsString(this->getRequest());
+    std::string getParams = getGetParamsString(this->getRequest(), this->logger);
 
     if (getParams.length() > 0) {
         target.erase(target.find(getParams));
@@ -32,16 +28,15 @@ std::string FileResponse::get() {
     if (target == "/") {
         target = "index.html";
     }
-    Config* config = Config::getConfig();
     std::string content;
     std::string hostName = this->getRequest()->getVirtualHost();
 
     try {
-        content += readFile(config->hosts[hostName]["root"] + target);
+        content += readFile(this->config->hosts[hostName]["root"] + target);
     } catch (FileNotFoundException) {
-        content += readFile(config->hosts[hostName]["errorPagesDir"] + "404.html");
+        content += readFile(this->config->hosts[hostName]["errorPagesDir"] + "404.html");
         this->setStatus(404);
-        responseLogger->error("404: Unknown target requested: " + target);
+        this->logger->error("404: Unknown target requested: " + target);
     }
 
     std::string fileName = this->getFileName(target);
@@ -76,7 +71,7 @@ std::string FileResponse::guessFileType(std::string fileName) {
 
     std::string extension = fileName.substr(fileName.find_last_of(".") + 1, fileName.length());
 
-    responseLogger->debug("Filename extension: " + extension);
+    this->logger->debug("Filename extension: " + extension);
     if (extension == "css") {
         fileType = "text/css";
     }

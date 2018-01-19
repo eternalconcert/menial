@@ -6,6 +6,7 @@
 class LogHandler {
     public:
         virtual void log(std::string level, std::string message) {};
+        Config *config;
 };
 
 
@@ -32,9 +33,10 @@ class Logger {
         void error(std::string message);
         void critical(std::string message);
 
-        static Logger* getLogger();
+        static Logger* getLogger(Config* config);
 
     private:
+        Config *config;
         Logger() {};
         LogLevel level;
         LogHandler *handler;

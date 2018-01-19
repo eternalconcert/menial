@@ -6,8 +6,6 @@
 #include <set>
 #include <thread>
 
-static Config* config = Config::getConfig();
-Logger* mainLogger = Logger::getLogger();
 
 
 void spawnThread(Server server) {
@@ -16,14 +14,19 @@ void spawnThread(Server server) {
 
 
 int main(int argc, char *argv[]) {
-    mainLogger->info("Starting menial");
-    mainLogger->info("Initializing servers");
-    mainLogger->info("Starting servers");
+    std::string configPath = argv[1];
+    static Config* config = Config::getConfig(configPath);
+    Logger* logger = Logger::getLogger(config);
+
+    logger->info("Starting menial");
+    logger->info("Initializing servers");
+    logger->info("Starting servers");
+
     std::list<std::thread> threads;
 
     std::set<int>::iterator portItr = config->ports.begin();
     for (portItr = config->ports.begin(); portItr != config->ports.end(); portItr++) {
-        Server server = Server(*portItr);
+        Server server = Server(*portItr, logger, config);
         threads.push_back(std::thread(spawnThread, server));
     }
 
