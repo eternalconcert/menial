@@ -9,6 +9,11 @@
             "responder": "file",
             "root": "testdata/threaded/",
             "errorpagesdir": "testdata/testhost/errorpages/"
+        },
+        "*:8888": {
+            "responder": "python",
+            "root": "testdata/testhost/pyresponse.py",
+            "errorpagesdir": "testdata/testhost/errorpages/"
         }
     },
     "loglevel": "debug",

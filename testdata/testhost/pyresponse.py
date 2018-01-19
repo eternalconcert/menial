@@ -3,7 +3,7 @@ import json
 
 
 class Resquest(object):
-    def __init__(self, host, url, header, body):
+    def __init__(self, host, url, header, body=None):
         self.host = host
         self.url = url
         self.header = header
@@ -36,11 +36,10 @@ class Resquest(object):
                     params[item] = None
         return params
 
-print(sys.argv)
 
 try:
-    request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
-    print(request.host, request.url, request.get, request.header, request.method)
+    request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3])
+
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
 
@@ -62,7 +61,10 @@ template = """
             <p>
                 If you see this page, the menial webserver is up and running with the python extension.
             </p>
-
+            <p>
+                <h2>Get paramters</h2>
+                {0}
+            </p>
             <form action='.' method='POST' >
                 <input type='text' name='name' />
                 <input type='password' name='password' />
@@ -76,6 +78,6 @@ template = """
     </body>
 </html>
 
-"""
+""".format(request._get_get_params())
 
 print(template)
