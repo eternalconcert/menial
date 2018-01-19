@@ -14,6 +14,10 @@ void spawnThread(Server server) {
 
 
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("%s\n", "Please provide a config file.");
+        exit(1);
+    };
     std::string configPath = argv[1];
     static Config* config = Config::getConfig(configPath);
     Logger* logger = Logger::getLogger(config);
