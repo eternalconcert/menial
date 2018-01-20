@@ -2,6 +2,8 @@
 
 
 Request::Request(std::string message, Config* config, Logger* logger) {
+    this->config = config;
+    this->logger = logger;
     this->message = message;
     this->setHeader();
     this->setBody();
@@ -9,8 +11,6 @@ Request::Request(std::string message, Config* config, Logger* logger) {
     this->setHost();
     this->setTarget();
     this->setUserAgent();
-    this->config = config;
-    this->logger = logger;
     this->logger->info("Incoming " + this->getMethod() + " request | "
                         "Host: " + this->getHost() + " | "
                         "Target: " + this->getTarget() + " | "
@@ -27,6 +27,7 @@ void Request::setBody() {
     std::string message = this->message;
     message.erase(0, message.find("\n\r\n") + 3);
     this->body = message;
+    this->logger->debug("RequestBody: " + this->body);
 }
 
 void Request::setMethod() {
@@ -80,7 +81,7 @@ std::string Request::getVirtualHost() {
         virtualHost += ":80";
     }
 
-    if (config->hosts[virtualHost]["responder"] == "") {
+    if (this->config->hosts[virtualHost]["responder"] == "") {
         virtualHost.erase(0, virtualHost.find(":"));
         virtualHost = "*" + virtualHost;
     };

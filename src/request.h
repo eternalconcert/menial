@@ -12,6 +12,8 @@ class Request {
         void setTarget();
         void setUserAgent();
 
+        Config *config;
+        Logger *logger;
         std::string getMethod();
         std::string getHeader();
         std::string getBody();
@@ -20,8 +22,6 @@ class Request {
         std::string getPort();
         std::string getTarget();
         std::string getUserAgent();
-        Config *config;
-        Logger* logger;
 
         Request(std::string message, Config* config, Logger* logger);
 

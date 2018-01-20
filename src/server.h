@@ -8,7 +8,7 @@ class Server {
     public:
         void run();
         void sendReply(std::string replyMessage, int newsockfd);
-        Server(int portno, Logger *logger, Config *config);
+        Server(int portno, Config* config, Logger* logger);
 
 
     private:

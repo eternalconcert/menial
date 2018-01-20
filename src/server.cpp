@@ -62,13 +62,13 @@ std::string Server::getIncomingRequest(int newsockfd) {
     }
 
     result = result.substr(0, result.size());
-    this->logger->debug("Server::getIncomingRequest result len: " + std::to_string(result.size()));
-    this->logger->debug("Server::getIncomingRequest result: " + result);
+    this->logger->debug("Server::getIncomingRequest length: " + std::to_string(result.size()));
+    this->logger->debug("Server::getIncomingRequest content:\n" + result);
     return result;
 }
 
 
-Server::Server(int portno, Logger* logger, Config* config) {
+Server::Server(int portno, Config* config, Logger* logger) {
     this->logger = logger;
     this->config = config;
     this->logger->debug("Using portno: " + std::to_string(portno));

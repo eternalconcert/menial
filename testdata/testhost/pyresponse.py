@@ -3,7 +3,7 @@ import json
 
 
 class Resquest(object):
-    def __init__(self, host, url, header, body=None):
+    def __init__(self, host, url, header, body):
         self.host = host
         self.url = url
         self.header = header
@@ -38,7 +38,11 @@ class Resquest(object):
 
 
 try:
-    request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3])
+    body = ""
+
+    if len(sys.argv) > 4:
+        body = sys.argv[4]
+    request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3], body)
 
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))

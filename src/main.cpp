@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 
     std::set<int>::iterator portItr = config->ports.begin();
     for (portItr = config->ports.begin(); portItr != config->ports.end(); portItr++) {
-        Server server = Server(*portItr, logger, config);
+        Server server = Server(*portItr, config, logger);
         threads.push_back(std::thread(spawnThread, server));
     }
 
