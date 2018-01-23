@@ -3,17 +3,22 @@
         "*:8000": {
             "responder": "file",
             "root": "testdata/testhost/",
-            "errorpagesdir": "testdata/testhost/errorpages/"
+            "errorpagesdir": "deployment/default/errorpages/"
+        },
+        "test.localhost:8000": {
+            "responder": "file",
+            "root": "testdata/threaded/",
+            "errorpagesdir": "deployment/default/errorpages/"
         },
         "*:8080": {
             "responder": "file",
             "root": "testdata/threaded/",
-            "errorpagesdir": "testdata/testhost/errorpages/"
+            "errorpagesdir": "deployment/default/errorpages/"
         },
         "*:8888": {
             "responder": "python",
             "root": "testdata/testhost/pyresponse.py",
-            "errorpagesdir": "testdata/testhost/errorpages/"
+            "errorpagesdir": "deployment/default/errorpages/"
         }
     },
     "loglevel": "debug",

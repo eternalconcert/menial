@@ -1,5 +1,14 @@
 import sys
-import json
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+
+parser.add_argument('-s', dest='host')
+parser.add_argument('-t', dest='target')
+parser.add_argument('-p', dest='header')
+parser.add_argument('-b', dest='body')
+
+args = parser.parse_args()
 
 
 class Resquest(object):
@@ -82,6 +91,6 @@ template = """
     </body>
 </html>
 
-""".format(request._get_get_params())
+""".format("request._get_get_params()")
 
 print(template)

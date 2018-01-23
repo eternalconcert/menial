@@ -19,10 +19,10 @@ std::string PyResponse::getHeader(std::string content) {
 std::string PyResponse::get() {
     std::string hostName = this->getRequest()->getVirtualHost();
     std::string interfaceCall = "python " + this->config->hosts[hostName]["root"];
-    interfaceCall += " " + hostName;
-    interfaceCall += " " + this->getRequest()->getTarget();
-    interfaceCall += " '" + this->getRequest()->getHeader() + "'";
-    interfaceCall += this->getRequest()->getBody();
+    interfaceCall += " -s='" + hostName + "'";
+    interfaceCall += " -t='" + this->getRequest()->getTarget() + "'";
+    interfaceCall += " -p='" + this->getRequest()->getHeader() + "'";
+    interfaceCall += " -b='" + this->getRequest()->getBody() + "'";
 
     FILE *f;
     char path[BUFFER_SIZE];
