@@ -6,7 +6,7 @@ body, html {
     width: 600px;
     position: relative;
     margin: 0 auto;
-    height: 100%;
+    min-height: 500px;
 }
 
 h1 {
@@ -25,8 +25,8 @@ h2 {
 }
 
 #footer {
-    position: absolute;
-    bottom: 50px;
+    width: 800px;
+    margin: auto;
 }
 
 #info {
@@ -35,4 +35,8 @@ h2 {
 
 #info-table {
     width: 350px;
+}
+
+#content-table {
+    display: none;
 }

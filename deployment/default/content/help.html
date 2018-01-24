@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>menial: Always at your service!</title>
+        <link rel="icon" href="/static/favicon.png" type="image/png" />
+        <link rel="stylesheet" type="text/css" href="/style/main.css">
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+
+    <body>
+        <div id="main">
+            <h1>menial</h1>
+            <p id="claim">
+                Always at your service!
+            </p>
+            <h2>Help</h2>
+            <h3>Content</h3>
+            <a id="toggle-content" href="">Show table of contents</a>
+            <ul id="content-table">
+                <li>
+                    <a href="#config">Configuration</a>
+                </li>
+            </ul>
+
+            <h3 id="config">Configuration</h3>
+            <p>
+                You can find the default config file in the root installation folder of your menial installation. It contains all configuration directives you need to customize menial.
+            </p>
+            <p>
+                The content is in the JSON format and has the following structure:
+            </p>
+            <pre>
+                {
+                    "hosts": {
+                        "*:80": {
+                            "responder": "file",
+                            "root": "default/",
+                            "errorpagesdir": "default/errorpages/"
+                        }
+                    },
+                    "loglevel": "debug",
+                    "logfilepath": "/tmp/",
+                    "logger": "console"
+                }
+            </pre>
+
+            <p>
+                <ul>
+                    <li>
+                        <b>hosts:</b> A dictionary which contains a key for each virtual host.
+                        <ul>
+                            <li>
+                                <b>*:80:</b> The * represents the hostname and the 80 the port. You can also use a specific hostname if your server has multiple hostnames or if you need to use subdomains.
+                                <br>
+                                Example: sub.localhost:8080
+                                <br>
+                                The value is a dictionary which contains the host specific configuration.
+                            </li>
+                            <ul>
+
+                            <li>
+                                <b>responder:</b> The responder is used to specify the request handler. Default is "file", which means, static content will be delivered. There are other types of responders, like "python".
+                            </li>
+                            <li>
+                                <b>root:</b> The document root folder. When the responder is set to "file", the content of the document root will be delivered.
+                            </li>
+                            <li>
+                                <b>errorpagesdir:</b> The directory where the error pages like 404 are stored. These will be delivere when the responder is "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. The must be named in the following way: http_error_code.html
+                                <br>
+                                Example: 404.html
+                            </li>
+
+                            </ul>
+                        </ul>
+                    </li>
+                </ul>
+            </p>
+        </div>
+        <div id=footer>
+            Licensed under <br /> <a href="https://www.gnu.org/licenses/gpl.html">
+            <image src="/static/gplv3-127x51.png" width="100" /></a>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $('#toggle-content').click(
+            function(e) {
+                e.preventDefault();
+                $('#content-table').toggle();
+            }
+        )
+    </script>
+
+</html>
