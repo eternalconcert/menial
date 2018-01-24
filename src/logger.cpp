@@ -31,6 +31,10 @@ void DefaultLogHandler::log(std::string level, std::string message) {
 };
 
 
+FileLogHandler::FileLogHandler(Config* config) {
+    this->config = config;
+}
+
 void FileLogHandler::log(std::string level, std::string message) {
     std::ofstream logfile;
     logfile.open(this->config->logFilePath + "menial.log", std::ios_base::app);
@@ -81,10 +85,10 @@ Logger* Logger::_instance = 0;
 
 Logger* Logger::getLogger(Config* config) {
     if (_instance != 0) {
-        _instance->config = config;
         return _instance;
     }
     _instance = new Logger;
+    _instance->config = config;
     _instance->setLevel(config->logLevel);
 
     LogHandler* handler;
@@ -92,7 +96,7 @@ Logger* Logger::getLogger(Config* config) {
         handler = new DefaultLogHandler(/*config*/);
     }
     else if (config->logger == "file") {
-        handler = new FileLogHandler(/*config*/);
+        handler = new FileLogHandler(config);
     }
     else {
         throw ConfigException("No valid LogHandler defined.");

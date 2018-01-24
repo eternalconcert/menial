@@ -6,7 +6,6 @@
 class LogHandler {
     public:
         virtual void log(std::string level, std::string message) {};
-        Config *config;
 };
 
 
@@ -19,7 +18,8 @@ class DefaultLogHandler: public LogHandler {
 class FileLogHandler: public LogHandler {
     public:
         void log(std::string level, std::string message);
-        FileLogHandler() {};
+        FileLogHandler(Config* config);
+        Config *config;
 };
 
 class Logger {

@@ -7,8 +7,8 @@
 using namespace rapidjson;
 
 
-void Config::update() {
-    std::string config = readFile(this->logFilePath);
+void Config::update(std::string configPath) {
+    std::string config = readFile(configPath);
 
     Document document;
     ParseResult result = document.Parse(config.c_str());
@@ -29,9 +29,10 @@ void Config::update() {
     if (!logFilePath.IsString()) {
         throw ConfigException("No valid config value for logfilepath defined.");
     }
+
     this->logFilePath = logFilePath.GetString();
 
-    // logFilePath
+    // logger
     Value& logger = document["logger"];
     if (!logger.IsString()) {
         throw ConfigException("No valid config value for logger defined.");
@@ -78,8 +79,7 @@ Config::Config() {
 Config* Config::getConfig(std::string path) {
     if (_instance == 0) {
         _instance = new Config();
-        _instance->logFilePath = path;
-        _instance->update();
+        _instance->update(path);
     }
     return _instance;
 }

@@ -18,6 +18,10 @@ h2 {
     font-size: 20px;
 }
 
+h1 a {
+    color: green;
+    text-decoration: none;
+}
 
 #claim {
     font-style: italic;
@@ -25,7 +29,8 @@ h2 {
 }
 
 #footer {
-    width: 800px;
+    padding-top: 100px;
+    width: 600px;
     margin: auto;
 }
 

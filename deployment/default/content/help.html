@@ -2,15 +2,15 @@
 <html>
     <head>
         <title>menial: Always at your service!</title>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <link rel="icon" href="/static/favicon.png" type="image/png" />
         <link rel="stylesheet" type="text/css" href="/style/main.css">
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     </head>
 
     <body>
         <div id="main">
-            <h1>menial</h1>
+            <h1><a href="/">menial</a></h1>
             <p id="claim">
                 Always at your service!
             </p>
@@ -30,7 +30,7 @@
             <p>
                 The content is in the JSON format and has the following structure:
             </p>
-            <pre>
+            <pre class="prettyprint lang-python prettyprinted">
                 {
                     "hosts": {
                         "*:80": {
@@ -44,7 +44,6 @@
                     "logger": "console"
                 }
             </pre>
-
             <p>
                 <ul>
                     <li>
@@ -70,12 +69,63 @@
                                 <br>
                                 Example: 404.html
                             </li>
-
                             </ul>
                         </ul>
                     </li>
-                </ul>
+                    <li>
+                        <b>loglevel:</b> The level of priority of log messages. Choices are:<br>
+                        - debug: The most verbose level. For development and debug purposes.<br>
+                        - info: Still a verbose level. For normal use.<br>
+                        - warning: Shows only messages which contain warnings.<br>
+                        - error: Messages are only logged when they were caused by an error.<br>
+                        - critical: When things go really bad, this level kicks in.<br>
+                        Each level shows the messages of its own level and the message of the from the following levels.<br>
+                        All other option will supress every logging. So be careful when you change the level to another value.
+
+                    </li>
+                    <li>
+                        <b>logfilepath:</b> Folder to store log files in.
+                    </li>
+                    <li>
+                        <b>logger:</b> Specifies the logger. Loggers are "console" or "file". "console" prints the log entries to the console and "file" creates a "menial.log" in the "logfilepath".
+                    </li>
+                 </ul>
             </p>
+            <p>
+                You can add a lot of hosts to the config. If you do so, you need to configure each hosts responder, root and errorpagesdir. The other configuration directives (loglevel, logfilepath and logger) are global.
+            </p>
+            <p>
+                A more sophisticated example:
+            </p>
+            <pre>
+                {
+                    "hosts": {
+                        "*:80": {
+                            "responder": "file",
+                            "root": "/var/www/html/myhomepage/",
+                            "errorpagesdir": "/etc/menial/errorpages/"
+                        }
+                        "myfriend:80": {
+                            "responder": "file",
+                            "root": "/var/www/html/myfriendshomepage/",
+                            "errorpagesdir": "/etc/menial/errorpages/"
+                        },
+                        "myfriendscousin:80": {
+                            "responder": "file",
+                            "root": "/var/www/html/myfriendscousinshomepage/"
+                            "errorpagesdir": "/etc/menial/errorpages/"
+                        },
+                        "*:8000": {
+                            "responder": "python",
+                            "root": "pyresponse.py",
+                            "errorpagesdir": "/can/be/blank/because/python/must/handle/errors/"
+                        }
+                    },
+                    "loglevel": "info",
+                    "logfilepath": "/var/log/menial/",
+                    "logger": "file"
+                }
+            </pre>
         </div>
         <div id=footer>
             Licensed under <br /> <a href="https://www.gnu.org/licenses/gpl.html">
@@ -90,5 +140,4 @@
             }
         )
     </script>
-
 </html>

@@ -9,7 +9,7 @@
 
     <body>
         <div id="main">
-            <h1>menial</h1>
+            <h1><a href="/">menial</a></h1>
             <p id="claim">
                 Always at your service!
             </p>
