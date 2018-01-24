@@ -43,5 +43,15 @@ h1 a {
 }
 
 #content-table {
-    display: none;
+    list-style-type: none;
+    padding: 0;
+}
+
+.content-table-main {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.content-table-sub {
+    margin-left: 20px;
 }

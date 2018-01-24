@@ -64,6 +64,7 @@ std::string Server::getIncomingRequest(int newsockfd) {
     result = result.substr(0, result.size());
     this->logger->debug("Server::getIncomingRequest length: " + std::to_string(result.size()));
     this->logger->debug("Server::getIncomingRequest content:\n" + result);
+
     return result;
 }
 

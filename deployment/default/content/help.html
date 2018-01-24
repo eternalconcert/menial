@@ -2,7 +2,6 @@
 <html>
     <head>
         <title>menial: Always at your service!</title>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <link rel="icon" href="/static/favicon.png" type="image/png" />
         <link rel="stylesheet" type="text/css" href="/style/main.css">
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
@@ -16,14 +15,23 @@
             </p>
             <h2>Help</h2>
             <h3>Content</h3>
-            <a id="toggle-content" href="">Show table of contents</a>
             <ul id="content-table">
-                <li>
+                <li class="content-table-main">
                     <a href="#config">Configuration</a>
+                </li>
+                <li class="content-table-sub">
+                    <a href="#config-basic">Basic</a>
+                </li>
+                <li class="content-table-sub">
+                    <a href="#config-directives">Directives</a>
+                </li>
+                <li class="content-table-sub">
+                    <a href="#config-custom-config">Custom config</a>
                 </li>
             </ul>
 
-            <h3 id="config">Configuration</h3>
+            <h2 id="config">Configuration</h2>
+            <h3 id="config-basic">Basic</h3>
             <p>
                 You can find the default config file in the root installation folder of your menial installation. It contains all configuration directives you need to customize menial.
             </p>
@@ -44,6 +52,7 @@
                     "logger": "console"
                 }
             </pre>
+            <h3 id="config-directives">Directives</h3>
             <p>
                 <ul>
                     <li>
@@ -126,18 +135,13 @@
                     "logger": "file"
                 }
             </pre>
+            <h3 id="config-custom-config">Custom config</h3>
+                When you run menial you need to pass the location to the config file as first parameter.<br>
+                You can create your own config file (e.g. copying the exsting one) and save it at any accessible locatation. Handover the new file to menial on startup.
         </div>
         <div id=footer>
             Licensed under <br /> <a href="https://www.gnu.org/licenses/gpl.html">
             <image src="/static/gplv3-127x51.png" width="100" /></a>
         </div>
     </body>
-    <script type="text/javascript">
-        $('#toggle-content').click(
-            function(e) {
-                e.preventDefault();
-                $('#content-table').toggle();
-            }
-        )
-    </script>
 </html>
