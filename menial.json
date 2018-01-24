@@ -1,5 +1,10 @@
 {
     "hosts": {
+        "default.localhost:8000": {
+            "responder": "file",
+            "root": "deployment/default/",
+            "errorpagesdir": "deployment/default/errorpages/"
+        },
         "*:8000": {
             "responder": "file",
             "root": "testdata/testhost/",

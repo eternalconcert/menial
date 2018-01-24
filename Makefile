@@ -6,6 +6,9 @@ compile:
 	@mkdir -p build
 	g++ $(SOURCES) -o build/menial -std=c++14 -pthread -Wall -I src/include/
 
+index:
+	@deployment/create_index.sh
+
 serve:
 	@build/menial menial.json
 
