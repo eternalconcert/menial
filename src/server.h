@@ -2,6 +2,7 @@
 #define SERVER_H
 #include "config.h"
 #include "logger.h"
+#include "request.h"
 
 
 class Server {
@@ -15,9 +16,6 @@ class Server {
         int portno;
         Logger *logger;
         Config *config;
-        std::string getIncomingRequest(int newsockfd);
-        std::string getReplyMessage(std::string incomingMessage);
-
 };
 
 #endif

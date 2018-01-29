@@ -15,5 +15,8 @@ class ConfigException: public Exception {
         ConfigException(std::string message = "");
 };
 
+class RequestHeaderFieldTooLarge: public Exception {
+    using Exception::Exception;
+};
 
 #endif

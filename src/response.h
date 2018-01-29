@@ -10,6 +10,7 @@ class Response {
         virtual std::string get() {
             return "";
         };
+
         Request* getRequest();
         void setStatus(int status);
         int getStatus();
@@ -22,6 +23,5 @@ class Response {
         Request *request;
         int status;
 };
-
 
 #endif

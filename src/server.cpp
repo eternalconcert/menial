@@ -2,10 +2,9 @@
 #include <string.h>
 #include <unistd.h>
 #include "common.h"
+#include "exceptions.h"
 #include "server.h"
 #include "request.h"
-#include "fileresponse.h"
-#include "pyresponse.h"
 
 const int QUEUE_LENGTH = 5;
 
@@ -38,37 +37,6 @@ int setNewSockFd(int sockfd) {
 }
 
 
-std::string Server::getIncomingRequest(int newsockfd) {
-    char buffer[BUFFER_SIZE];
-
-    if (newsockfd < 0) {
-        error("Error: Cannot accept");
-    }
-
-    std::string result;
-    char curChar  = ' ';
-    while (curChar != '\0') {
-        bzero(buffer, BUFFER_SIZE);
-        int messageSize;
-        messageSize = read(newsockfd, buffer, BUFFER_LIMIT);
-        if (messageSize < 0) {
-            error("Error: Reading from socket");
-        }
-
-        for (int i = 0; i < BUFFER_LIMIT; i++) {
-            curChar = buffer[i];
-            result += curChar;
-        }
-    }
-
-    result = result.substr(0, result.size());
-    this->logger->debug("Server::getIncomingRequest length: " + std::to_string(result.size()));
-    this->logger->debug("Server::getIncomingRequest content:\n" + result);
-
-    return result;
-}
-
-
 Server::Server(int portno, Config* config, Logger* logger) {
     this->logger = logger;
     this->config = config;
@@ -87,12 +55,13 @@ void Server::run() {
         listen(sockfd, QUEUE_LENGTH);
 
         int newsockfd = setNewSockFd(sockfd);
+        try {
+            Request *request = new Request(newsockfd, this->config, this->logger);
+            this->sendReply(request->getResponse(), newsockfd);
+        } catch (RequestHeaderFieldTooLarge) {
+            this->logger->error("No handler for request errors implemented. Request caused a 431.");
+        }
 
-        // Message
-        std::string incomingMessage = this->getIncomingRequest(newsockfd);
-
-        std::string replyMessage = this->getReplyMessage(incomingMessage);
-        this->sendReply(replyMessage, newsockfd);
 
         // Close sockets
         close(sockfd);
@@ -100,32 +69,9 @@ void Server::run() {
     }
 }
 
-Response* getResponder(Request *request, Config *config, Logger *logger) {
-    std::string responderName = config->hosts[request->getVirtualHost()]["responder"];
+void Server::sendReply(std::string replyMessage, int sockfd) {
 
-    if (responderName == "file") {
-        return new FileResponse(request, config, logger);
-    }
-    else if (responderName == "python") {
-        return new PyResponse(request, config, logger);
-    }
-    else {
-        return new Response(request, config, logger);
-    }
-}
-
-std::string Server::getReplyMessage(std::string incomingMessage) {
-        Request *request = new Request(incomingMessage, this->config, this->logger);
-        this->logger->debug("RequestMethod: " + request->getMethod());
-        this->logger->debug("RequestHost: " + request->getHost());
-        this->logger->debug("RequestTarget: " + request->getTarget());
-        Response* response = getResponder(request, this->config, this->logger);
-        return response->get();
-}
-
-void Server::sendReply(std::string replyMessage, int newsockfd) {
-
-    int outMessageLen = write(newsockfd, replyMessage.c_str(), replyMessage.length());
+    int outMessageLen = write(sockfd, replyMessage.c_str(), replyMessage.length());
     this->logger->debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
     this->logger->debug("Server::sendReply replyMessage: " + replyMessage);
 

@@ -5,12 +5,13 @@
 
 class Request {
     public:
-        void setHeader();
-        void setBody();
+        void setHeaders(int sockfd);
+
         void setMethod();
         void setHost();
         void setTarget();
         void setUserAgent();
+        void setBody();
 
         Config *config;
         Logger *logger;
@@ -23,11 +24,12 @@ class Request {
         std::string getTarget();
         std::string getUserAgent();
 
-        Request(std::string message, Config* config, Logger* logger);
+        std::string getResponse();
+
+        Request(int sockfd, Config* config, Logger* logger);
 
     private:
-        std::string message;
-        std::string header;
+        std::string headers;
         std::string body;
         std::string method;
         std::string target;

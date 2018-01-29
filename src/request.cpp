@@ -1,62 +1,119 @@
+#include <netinet/in.h>
+#include "common.h"
+#include "exceptions.h"
+#include "response.h"
 #include "request.h"
+#include "fileresponse.h"
+#include "pyresponse.h"
 
 
-Request::Request(std::string message, Config* config, Logger* logger) {
+Response* _getResponder(Request *request, Config *config, Logger *logger) {
+    /* Helper method to get the correct responder */
+    std::string responderName = config->hosts[request->getVirtualHost()]["responder"];
+    if (responderName == "file") {
+        return new FileResponse(request, config, logger);
+    }
+    else if (responderName == "python") {
+        return new PyResponse(request, config, logger);
+    }
+    else {
+        return new Response(request, config, logger);
+    }
+}
+
+Request::Request(int sockfd, Config* config, Logger* logger) {
     this->config = config;
     this->logger = logger;
-    this->message = message;
-    this->setHeader();
-    this->setBody();
+
+    this->setHeaders(sockfd);
     this->setMethod();
     this->setHost();
     this->setTarget();
     this->setUserAgent();
-    this->logger->info("Incoming " + this->getMethod() + " request | "
-                        "Host: " + this->getHost() + " | "
-                        "Target: " + this->getTarget() + " | "
-                        "User-Agent: " + this->getUserAgent());
 }
 
-void Request::setHeader() {
-    std::string message = this->message;
-    message.erase(message.find("\n\r\n"), message.length() - 3);
-    this->header = message;
-}
 
-void Request::setBody() {
-    std::string message = this->message;
-    message.erase(0, message.find("\n\r\n") + 3);
-    this->body = message;
-    this->logger->debug("RequestBody: " + this->body);
+void Request::setHeaders(int sockfd) {
+    char buffer[BUFFER_SIZE];
+
+    if (sockfd < 0) {
+        error("Error: Cannot accept");
+    }
+
+    std::string headers;
+    bool foundEnd = false;
+    int bytesReceived;
+
+    int headerIdx = 0;
+    do {
+        bytesReceived = recv(sockfd, buffer, BUFFER_LIMIT, 0);
+        if (bytesReceived < 0) {
+            error("Error: Reading from socket");
+        }
+
+        for (int j = 0; j < bytesReceived; j++) {
+            headers += buffer[j];
+            if(headers[headerIdx] == '\n' and headers[headerIdx-1] == '\r' and headers[headerIdx-2] == '\n') {
+                foundEnd = true;
+                break;
+            }
+            headerIdx++;
+        }
+
+    } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
+
+    if (headerIdx > MAX_HEADER_LENGTH) {
+        this->logger->warning(
+            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
+        );
+        throw RequestHeaderFieldTooLarge();
+    }
+    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
+    this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
+
+    this->headers = headers;
 }
 
 void Request::setMethod() {
-    std::string header = this->header;
-    this->method = header.substr(0, header.find(" "));
+    std::string headers = this->headers;
+    this->method = headers.substr(0, headers.find(" "));
 }
 
 void Request::setHost() {
-    std::string header = this->header;
+    std::string headers = this->headers;
     std::string fieldName = "Host: ";
-    header.erase(0, header.find(fieldName) + fieldName.length());
-    std::string host = header.substr(0, header.find("\n") - 1);
+    headers.erase(0, headers.find(fieldName) + fieldName.length());
+    std::string host = headers.substr(0, headers.find("\n") - 1);
     this->host = host;
 }
 
-void Request::setUserAgent() {
-    std::string header = this->header;
-    std::string fieldName = "User-Agent: ";
-    header.erase(0, header.find(fieldName) + fieldName.length());
-    std::string userAgent = header.substr(0, header.find("\n") - 1);
-    this->userAgent = userAgent;
-}
-
 void Request::setTarget() {
-    std::string target = this->header;
+    std::string target = this->headers;
     target.erase(0, target.find(" ") + 1);
     target.erase(target.find(" "), target.length());
 
     this->target = target;
+}
+
+void Request::setUserAgent() {
+    std::string headers = this->headers;
+    std::string fieldName = "User-Agent: ";
+    headers.erase(0, headers.find(fieldName) + fieldName.length());
+    std::string userAgent = headers.substr(0, headers.find("\n") - 1);
+    this->userAgent = userAgent;
+}
+
+void Request::setBody() {
+    this->body = "";
+    // std::string message = this->message;
+    // message.erase(0, message.find("\n\r\n") + 3);
+    // this->body = message;
+    this->logger->debug("RequestBody: " + this->body);
+}
+
+std::string Request::getResponse() {
+    Response* response = _getResponder(this, this->config, this->logger);
+    return response->get();
 }
 
 std::string Request::getMethod() {
@@ -64,7 +121,7 @@ std::string Request::getMethod() {
 };
 
 std::string Request::getHeader() {
-    return this->header;
+    return this->headers;
 };
 
 std::string Request::getBody() {
