@@ -1,22 +1,22 @@
 {
     "hosts": {
         "default.localhost:8000": {
-            "responder": "file",
+            "handler": "file",
             "root": "deployment/default/",
             "errorpagesdir": "deployment/default/errorpages/"
         },
         "*:8000": {
-            "responder": "file",
+            "handler": "file",
             "root": "testdata/testhost/",
             "errorpagesdir": "deployment/default/errorpages/"
         },
         "*:8080": {
-            "responder": "file",
+            "handler": "file",
             "root": "testdata/threaded/",
             "errorpagesdir": "deployment/default/errorpages/"
         },
         "*:8888": {
-            "responder": "python",
+            "handler": "python",
             "root": "testdata/testhost/pyresponse.py",
             "errorpagesdir": "deployment/default/errorpages/"
         }

@@ -7,13 +7,13 @@
 #include "pyresponse.h"
 
 
-Response* _getResponder(Request *request, Config *config, Logger *logger) {
-    /* Helper method to get the correct responder */
-    std::string responderName = config->hosts[request->getVirtualHost()]["responder"];
-    if (responderName == "file") {
+Response* _getHandler(Request *request, Config *config, Logger *logger) {
+    /* Helper method to get the correct handler */
+    std::string handlerName = config->hosts[request->getVirtualHost()]["handler"];
+    if (handlerName == "file") {
         return new FileResponse(request, config, logger);
     }
-    else if (responderName == "python") {
+    else if (handlerName == "python") {
         return new PyResponse(request, config, logger);
     }
     else {
@@ -112,7 +112,7 @@ void Request::setBody() {
 }
 
 std::string Request::getResponse() {
-    Response* response = _getResponder(this, this->config, this->logger);
+    Response* response = _getHandler(this, this->config, this->logger);
     return response->get();
 }
 
@@ -138,7 +138,7 @@ std::string Request::getVirtualHost() {
         virtualHost += ":80";
     }
 
-    if (this->config->hosts[virtualHost]["responder"] == "") {
+    if (this->config->hosts[virtualHost]["handler"] == "") {
         virtualHost.erase(0, virtualHost.find(":"));
         virtualHost = "*" + virtualHost;
     };

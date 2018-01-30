@@ -13,7 +13,7 @@ class Config {
         std::string logger;
         std::map<std::string, std::map<std::string, std::string>> hosts;
         std::set<int> ports;
-        std::string responder;
+        std::string handler;
         static Config* getConfig(std::string path);
 
     private:

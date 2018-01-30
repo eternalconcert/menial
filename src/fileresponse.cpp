@@ -44,8 +44,6 @@ std::string FileResponse::get() {
     std::string result;
     result = this->getHeader(content, fileName) + content;
     return result;
-
-    return content;
 }
 
 

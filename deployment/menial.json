@@ -1,7 +1,7 @@
 {
     "hosts": {
         "*:80": {
-            "responder": "file",
+            "handler": "file",
             "root": "default/",
             "errorpagesdir": "default/errorpages/"
         }

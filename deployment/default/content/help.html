@@ -42,7 +42,7 @@
                 {
                     "hosts": {
                         "*:80": {
-                            "responder": "file",
+                            "handler": "file",
                             "root": "default/",
                             "errorpagesdir": "default/errorpages/"
                         }
@@ -68,13 +68,13 @@
                             <ul>
 
                             <li>
-                                <b>responder:</b> The responder is used to specify the request handler. Default is "file", which means, static content will be delivered. There are other types of responders, like "python".
+                                <b>handler:</b> The handler is used to specify the request handler. Default is "file", which means, static content will be delivered. There are other types of handlers, like "python".
                             </li>
                             <li>
-                                <b>root:</b> The document root folder. When the responder is set to "file", the content of the document root will be delivered.
+                                <b>root:</b> The document root folder. When the handler is set to "file", the content of the document root will be delivered.
                             </li>
                             <li>
-                                <b>errorpagesdir:</b> The directory where the error pages like 404 are stored. These will be delivere when the responder is "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. The must be named in the following way: http_error_code.html
+                                <b>errorpagesdir:</b> The directory where the error pages like 404 are stored. These will be delivere when the handler is "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. The must be named in the following way: http_error_code.html
                                 <br>
                                 Example: 404.html
                             </li>
@@ -101,7 +101,7 @@
                  </ul>
             </p>
             <p>
-                You can add a lot of hosts to the config. If you do so, you need to configure each hosts responder, root and errorpagesdir. The other configuration directives (loglevel, logfilepath and logger) are global.
+                You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler, root and errorpagesdir. The other configuration directives (loglevel, logfilepath and logger) are global.
             </p>
             <p>
                 A more sophisticated example:
@@ -110,22 +110,22 @@
                 {
                     "hosts": {
                         "*:80": {
-                            "responder": "file",
+                            "handler": "file",
                             "root": "/var/www/html/myhomepage/",
                             "errorpagesdir": "/etc/menial/errorpages/"
                         }
                         "myfriend:80": {
-                            "responder": "file",
+                            "handler": "file",
                             "root": "/var/www/html/myfriendshomepage/",
                             "errorpagesdir": "/etc/menial/errorpages/"
                         },
                         "myfriendscousin:80": {
-                            "responder": "file",
+                            "handler": "file",
                             "root": "/var/www/html/myfriendscousinshomepage/"
                             "errorpagesdir": "/etc/menial/errorpages/"
                         },
                         "*:8000": {
-                            "responder": "python",
+                            "handler": "python",
                             "root": "pyresponse.py",
                             "errorpagesdir": "/can/be/blank/because/python/must/handle/errors/"
                         }

@@ -59,7 +59,8 @@ void Server::run() {
             Request *request = new Request(newsockfd, this->config, this->logger);
             this->sendReply(request->getResponse(), newsockfd);
         } catch (RequestHeaderFieldTooLarge) {
-            this->logger->error("No handler for request errors implemented. Request caused a 431.");
+            this->sendError(431, newsockfd);
+            this->logger->error("Client sent too many headers. Request caused a 431.");
         }
 
 
@@ -76,6 +77,32 @@ void Server::sendReply(std::string replyMessage, int sockfd) {
     this->logger->debug("Server::sendReply replyMessage: " + replyMessage);
 
     if (outMessageLen < 0) {
+        error("Error: Writing to socket");
+    }
+}
+
+std::string getErrorMessage(int status) {
+    std::string errorMessage;
+    switch (status) {
+        case 431:
+            errorMessage = "431 Request Header Fields Too Large";
+            break;
+    }
+    return errorMessage;
+}
+
+void Server::sendError(int status, int sockfd) {
+
+    std::string header = "HTTP/1.0 ";
+    header += getErrorMessage(status);;
+    header += "\n\r\n";
+
+    int errorMessageLen = write(sockfd, header.c_str(), header.length());
+
+    this->logger->debug("Server::sendError errorMessageLen: " + std::to_string(errorMessageLen));
+    this->logger->debug("Server::sendError replyMessage: " + header);
+
+    if (errorMessageLen < 0) {
         error("Error: Writing to socket");
     }
 }
