@@ -1,9 +1,6 @@
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 
-fn handle_stream(stream: TcpStream) {
-    println!("Incoming connection on local address {:?} from: {:?}", stream.local_addr(), stream.peer_addr());
-}
 
 struct Server {
     port: u16,
@@ -14,12 +11,15 @@ impl Server {
     fn run(&self) {
         let listener = TcpListener::bind(("127.0.0.1", self.port)).unwrap();
         for stream in listener.incoming() {
-            handle_stream(stream.unwrap());
+            self.handle_stream(stream.unwrap());
         }
     }
 
-}
+    fn handle_stream(&self, stream: TcpStream) {
+        println!("Incoming connection on local address {:?} from: {:?}", stream.local_addr(), stream.peer_addr());
+    }
 
+}
 fn main() {
 
     let mut threads = vec![];
