@@ -71,6 +71,10 @@ void Request::setHeaders(int sockfd) {
     this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
     this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
 
+    if (headers.length() == 0) {
+        throw CouldNotParseHeaders();
+    }
+
     this->headers = headers;
 }
 

@@ -19,4 +19,8 @@ class RequestHeaderFieldTooLarge: public Exception {
     using Exception::Exception;
 };
 
+class CouldNotParseHeaders: public Exception {
+    using Exception::Exception;
+};
+
 #endif

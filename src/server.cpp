@@ -61,8 +61,10 @@ void Server::run() {
         } catch (RequestHeaderFieldTooLarge) {
             this->sendError(431, newsockfd);
             this->logger->error("Client sent too many headers. Request caused a 431.");
+        } catch (CouldNotParseHeaders) {
+            this->sendError(500, newsockfd);
+            this->logger->error("Could not parse headers.");
         }
-
 
         // Close sockets
         close(sockfd);
