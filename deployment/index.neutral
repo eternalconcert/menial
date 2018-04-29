@@ -29,6 +29,10 @@
                     <td>0.0.1</td>
                 </tr>
                 <tr>
+                    <td>Build:</td>
+                    <td>{{ BUILDNO }}</td>
+                </tr>
+                <tr>
                     <td>Compiled on:</td>
                     <td>{{ OS_INFO }}</td>
                 </tr>

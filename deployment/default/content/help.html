@@ -33,10 +33,10 @@
             <h2 id="config">Configuration</h2>
             <h3 id="config-basic">Basic</h3>
             <p>
-                You can find the default config file in the root installation folder of your menial installation. It contains all configuration directives you need to customize menial.
+                You can find the default config file in the root folder of your menial installation. It contains all configuration directives you need to customize menial.
             </p>
             <p>
-                The content is in the JSON format and has the following structure:
+                The content is JSON formated and has the following structure:
             </p>
             <pre class="prettyprint lang-python prettyprinted">
                 {
@@ -44,7 +44,7 @@
                         "*:80": {
                             "handler": "file",
                             "root": "default/",
-                            "errorpagesdir": "default/errorpages/"
+                            "errorpages": "default/errorpages/"
                         }
                     },
                     "loglevel": "debug",
@@ -71,10 +71,10 @@
                                 <b>handler:</b> The handler is used to specify the request handler. Default is "file", which means, static content will be delivered. There are other types of handlers, like "python".
                             </li>
                             <li>
-                                <b>root:</b> The document root folder. When the handler is set to "file", the content of the document root will be delivered.
+                                <b>root:</b> The document root directory. When the handler is set to "file", the content of the document root will be delivered.
                             </li>
                             <li>
-                                <b>errorpagesdir:</b> The directory where the error pages like 404 are stored. These will be delivere when the handler is "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. The must be named in the following way: http_error_code.html
+                                <b>errorpages:</b> The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
                                 <br>
                                 Example: 404.html
                             </li>
@@ -82,26 +82,27 @@
                         </ul>
                     </li>
                     <li>
-                        <b>loglevel:</b> The level of priority of log messages. Choices are:<br>
-                        - debug: The most verbose level. For development and debug purposes.<br>
-                        - info: Still a verbose level. For normal use.<br>
-                        - warning: Shows only messages which contain warnings.<br>
-                        - error: Messages are only logged when they were caused by an error.<br>
-                        - critical: When things go really bad, this level kicks in.<br>
-                        Each level shows the messages of its own level and the message of the from the following levels.<br>
-                        All other option will supress every logging. So be careful when you change the level to another value.
-
+                        <b>loglevel:</b> The priority level of log messages. Choices are:
+                        <ul>
+                            <li><i>debug:</i> The most verbose level. For development and debug purposes.</li>
+                            <li><i>info:</i> Still a verbose level. For normal use.</li>
+                            <li><i>warning:</i> Only messages which contain warnings are logged.</li>
+                            <li><i>error:</i> Messages are only logged when they were caused by an error.</li>
+                            <li><i>critical:</i> When things go really bad, this level kicks in.</li>
+                        </ul>
+                        Each level shows the messages of its own level and the messages of the from the subsequent levels.<br>
+                        Other values for the loglevel directive will supress logging. So be careful when you change the level to another value.
                     </li>
                     <li>
-                        <b>logfilepath:</b> Folder to store log files in.
+                        <b>logfilepath:</b> Directory to store log files.
                     </li>
                     <li>
-                        <b>logger:</b> Specifies the logger. Loggers are "console" or "file". "console" prints the log entries to the console and "file" creates a "menial.log" in the "logfilepath".
+                        <b>logger:</b> Specifies the logger. Loggers can be one of "console" or "file". "console" writes the log entries to stdout and "file" creates a "menial.log" in the "logfilepath".
                     </li>
                  </ul>
             </p>
             <p>
-                You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler, root and errorpagesdir. The other configuration directives (loglevel, logfilepath and logger) are global.
+                You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler, root and errorpages directory. The other configuration directives (loglevel, logfilepath and logger) are considered as global.
             </p>
             <p>
                 A more sophisticated example:
@@ -112,22 +113,22 @@
                         "*:80": {
                             "handler": "file",
                             "root": "/var/www/html/myhomepage/",
-                            "errorpagesdir": "/etc/menial/errorpages/"
+                            "errorpages": "/etc/menial/errorpages/"
                         }
                         "myfriend:80": {
                             "handler": "file",
                             "root": "/var/www/html/myfriendshomepage/",
-                            "errorpagesdir": "/etc/menial/errorpages/"
+                            "errorpages": "/etc/menial/errorpages/"
                         },
                         "myfriendscousin:80": {
                             "handler": "file",
                             "root": "/var/www/html/myfriendscousinshomepage/"
-                            "errorpagesdir": "/etc/menial/errorpages/"
+                            "errorpages": "/etc/menial/errorpages/"
                         },
                         "*:8000": {
                             "handler": "python",
                             "root": "pyresponse.py",
-                            "errorpagesdir": "/can/be/blank/because/python/must/handle/errors/"
+                            "errorpages": "/can/be/blank/because/python/must/handle/errors/"
                         }
                     },
                     "loglevel": "info",

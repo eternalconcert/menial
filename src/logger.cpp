@@ -93,7 +93,7 @@ Logger* Logger::getLogger(Config* config) {
 
     LogHandler* handler;
     if (config->logger == "console") {
-        handler = new DefaultLogHandler(/*config*/);
+        handler = new DefaultLogHandler();
     }
     else if (config->logger == "file") {
         handler = new FileLogHandler(config);

@@ -3,42 +3,42 @@
         "default.localhost:8000": {
             "handler": "file",
             "root": "deployment/default/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "*:8000": {
             "handler": "file",
             "root": "testdata/testhost/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "*:8080": {
             "handler": "file",
             "root": "testdata/threaded/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "*:8888": {
             "handler": "python",
             "root": "testdata/testhost/pyresponse.py",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "softcreate.localhost:9000": {
             "handler": "file",
             "root": "/home/christian/Projekte/softcreate/build/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "tmmk.localhost:9000": {
             "handler": "file",
             "root": "/home/christian/Projekte/tmmk/build/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "cpc464.localhost:9000": {
             "handler": "file",
             "root": "/home/christian/Projekte/cpc464/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         },
         "mona.localhost:9000": {
             "handler": "file",
             "root": "/home/christian/Projekte/mona/build/",
-            "errorpagesdir": "deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         }
     },
     "loglevel": "debug",

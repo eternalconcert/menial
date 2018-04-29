@@ -49,7 +49,7 @@ void Config::update(std::string configPath) {
         std::string host = itr->name.GetString();
 
         std::string root = document["hosts"][host.c_str()]["root"].GetString();
-        std::string errorPagesDir = document["hosts"][host.c_str()]["errorpagesdir"].GetString();
+        std::string errorPagesDir = document["hosts"][host.c_str()]["errorpages"].GetString();
         std::string handler = document["hosts"][host.c_str()]["handler"].GetString();
 
         this->hosts[host]["root"] = root;
