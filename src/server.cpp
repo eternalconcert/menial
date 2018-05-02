@@ -67,8 +67,21 @@ void Server::run() {
         }
 
         // Close sockets
-        close(sockfd);
-        close(newsockfd);
+        /*
+        int shutdown(int s, int how); // s is socket descriptor
+        int how can be:
+        SHUT_RD or 0 Further receives are disallowed
+        SHUT_WR or 1 Further sends are disallowed
+        SHUT_RDWR or 2 Further sends and receives are disallowed
+
+        https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
+        */
+
+        shutdown(sockfd, SHUT_RDWR);
+        // close(sockfd);
+
+        shutdown(newsockfd, SHUT_RDWR);
+        // close(newsockfd);
     }
 }
 
