@@ -51,10 +51,15 @@ void Config::update(std::string configPath) {
         std::string root = document["hosts"][host.c_str()]["root"].GetString();
         std::string errorPagesDir = document["hosts"][host.c_str()]["errorpages"].GetString();
         std::string handler = document["hosts"][host.c_str()]["handler"].GetString();
+        std::string additionalHeaders = "";
+        if (document["hosts"][host.c_str()].HasMember("additionalHeaders")) {
+            additionalHeaders = document["hosts"][host.c_str()]["additionalHeaders"].GetString();
+        };
 
         this->hosts[host]["root"] = root;
         this->hosts[host]["errorPagesDir"] = errorPagesDir;
         this->hosts[host]["handler"] = handler;
+        this->hosts[host]["additionalHeaders"] = additionalHeaders;
 
         int newPort;
         std::string port = host;

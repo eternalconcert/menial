@@ -5,6 +5,7 @@
         <link rel="icon" href="favicon.png" type="image/png" />
         <link rel="stylesheet" type="text/css" href="main.css">
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <script type="text/javascript" src="https://forum.rockhard.de/assets/javascript/jquery.min.js?assets_version=15"></script>
     </head>
 
     <body>
@@ -16,6 +17,8 @@
             <p>
                 If you see this page, the menial webserver is up and running.
             </p>
+            <img src="gplv3-127x51.png" id="9_nGz_I4MMU" />
+
             <p>
                 If you like to add your own content instead of this placeholder page, please take a look at the configuration file <i>menial.conf</i> in the root installation directory of menial.
             </p>
@@ -25,4 +28,11 @@
             </div>
         </div>
     </body>
+    <script type="text/javascript">
+        var frame = '<iframe width="560" height="315" src="https://www.youtube.com/embed/9_nGz_I4MMU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+        $('#9_nGz_I4MMU').click( function() {
+                $(this).replaceWith(frame);
+            }
+        );
+    </script>
 </html>

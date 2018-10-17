@@ -78,6 +78,9 @@
                                 <br>
                                 Example: 404.html
                             </li>
+                                <b>additionalHeaders:</b> If you wish to add headers to each response, you can add them here. Please note: You have to add a line break (\n) at the end of each header. It will be implemented as a list of headers in future version.
+                            <li>
+                            </li>
                             </ul>
                         </ul>
                     </li>
@@ -123,7 +126,8 @@
                         "myfriendscousin:80": {
                             "handler": "file",
                             "root": "/var/www/html/myfriendscousinshomepage/"
-                            "errorpages": "/etc/menial/errorpages/"
+                            "errorpages": "/etc/menial/errorpages/",
+                            "additionalHeaders": "Access-Control-Allow-Origin: *\n"
                         },
                         "*:8000": {
                             "handler": "python",

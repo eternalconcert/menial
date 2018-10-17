@@ -39,6 +39,17 @@
             "handler": "file",
             "root": "/home/christian/Projekte/mona/build/",
             "errorpages": "deployment/default/errorpages/"
+        },
+        "my-app.localhost:7777": {
+            "handler": "file",
+            "root": "/home/christian/my-app/build/",
+            "errorpages": "deployment/default/errorpages/"
+        },
+        "api.localhost:7777": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/pax-musica/api/testdata/",
+            "errorpages": "deployment/default/errorpages/",
+            "additionalHeaders": "Access-Control-Allow-Origin: *\n"
         }
     },
     "loglevel": "debug",

@@ -53,6 +53,8 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += "\n";
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
+    std::string hostName = this->getRequest()->getVirtualHost();
+    header += this->config->hosts[hostName]["additionalHeaders"];
     header += "\r\n";
     return header;
 }
