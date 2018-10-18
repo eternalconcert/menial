@@ -68,8 +68,8 @@ void Config::update(std::string configPath) {
         std::string handler = "file";
         if (document["hosts"][host.c_str()].HasMember("handler")) {
             handler = document["hosts"][host.c_str()]["handler"].GetString();
-            this->hosts[host]["handler"] = handler;
         };
+        this->hosts[host]["handler"] = handler;
 
         std::string additionalHeaders = "";
         if (document["hosts"][host.c_str()].HasMember("additionalHeaders")) {
