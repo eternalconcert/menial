@@ -43,5 +43,7 @@
             "errorpages": "deployment/default/errorpages/",
             "additionalHeaders": "Access-Control-Allow-Origin: *\n"
         }
-    }
+    },
+    "logger": "file",
+    "logfilepath": "/tmp/"
 }

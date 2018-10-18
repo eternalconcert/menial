@@ -38,7 +38,20 @@ FileLogHandler::FileLogHandler(Config* config) {
 void FileLogHandler::log(std::string level, std::string message) {
     std::ofstream logfile;
     logfile.open(this->config->logFilePath + "menial.log", std::ios_base::app);
-    std::string logLine = "# [" + level + "]: " + message + "\n";
+
+    time_t t = time(0);
+    struct tm *now = localtime(&t);
+
+    std::string logLine = "[" + level + "][" +
+                          std::to_string(now->tm_year + 1900) +
+                          "-" + std::to_string(now->tm_mon + 1) +
+                          "-" + std::to_string(now->tm_mday) +
+                          "-" + std::to_string(now->tm_hour) +
+                          ":" + std::to_string(now->tm_min) +
+                          ":" + std::to_string(now->tm_sec) +
+                          "]: " + message + "\n";
+
+
     logfile << logLine;
 };
 

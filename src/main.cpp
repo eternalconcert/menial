@@ -1,3 +1,4 @@
+#include <signal.h>
 #include "config.h"
 #include "logger.h"
 #include "server.h"
@@ -7,6 +8,11 @@
 #include <thread>
 
 
+void signalHandler(int signal) {
+    printf("\n%s\n", "Terminated");
+    exit(0);
+};
+
 
 void spawnThread(Server server) {
     server.run();
@@ -14,6 +20,9 @@ void spawnThread(Server server) {
 
 
 int main(int argc, char *argv[]) {
+    signal(SIGINT, signalHandler);
+    signal(SIGTERM, signalHandler);
+
     if (argc < 2) {
         printf("%s\n", "Please provide a config file.");
         exit(1);
@@ -38,6 +47,5 @@ int main(int argc, char *argv[]) {
     for (threadItr = threads.begin(); threadItr != threads.end(); threadItr++) {
         threadItr->join();
     }
-
     return 0;
 }
