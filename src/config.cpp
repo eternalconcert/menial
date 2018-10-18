@@ -17,27 +17,40 @@ void Config::update(std::string configPath) {
     }
 
     // logLevel
-    Value& logLevel = document["loglevel"];
-    if (!logLevel.IsString()) {
-        throw ConfigException("No valid config value for loglevel defined.");
+    LogLevel level = logLevelByName("info");
+    if (document.HasMember("loglevel")) {
+        Value& logLevel = document["loglevel"];
+        if (!logLevel.IsString()) {
+            throw ConfigException("No valid config value for loglevel defined.");
+        }
+        level = logLevelByName(logLevel.GetString());
+        if (level == NOTSET) {
+            throw ConfigException("Unknown loglevel.");
+        }
     }
-    LogLevel level = logLevelByName(logLevel.GetString());
     this->logLevel = level;
 
     // logFilePath
-    Value& logFilePath = document["logfilepath"];
-    if (!logFilePath.IsString()) {
-        throw ConfigException("No valid config value for logfilepath defined.");
+    std::string logFilePath = "/dev/null";
+    if (document.HasMember("logfilepath")) {
+        Value& logFilePathValue = document["logfilepath"];
+        if (!logFilePathValue.IsString()) {
+            throw ConfigException("No valid config value for logfilepath defined.");
+        }
+        logFilePath = logFilePathValue.GetString();
     }
-
-    this->logFilePath = logFilePath.GetString();
+    this->logFilePath = logFilePath;
 
     // logger
-    Value& logger = document["logger"];
-    if (!logger.IsString()) {
-        throw ConfigException("No valid config value for logger defined.");
+    std::string logger = "console";
+    if (document.HasMember("logger")) {
+        Value& loggerValue = document["logger"];
+        if (!loggerValue.IsString()) {
+            throw ConfigException("No valid config value for logger defined.");
+        }
+        logger = loggerValue.GetString();
     }
-    this->logger = logger.GetString();
+    this->logger = logger;
 
     // hosts
     Value& hosts = document["hosts"];
@@ -49,17 +62,26 @@ void Config::update(std::string configPath) {
         std::string host = itr->name.GetString();
 
         std::string root = document["hosts"][host.c_str()]["root"].GetString();
-        std::string errorPagesDir = document["hosts"][host.c_str()]["errorpages"].GetString();
-        std::string handler = document["hosts"][host.c_str()]["handler"].GetString();
+        this->hosts[host]["root"] = root;
+
+
+        std::string handler = "file";
+        if (document["hosts"][host.c_str()].HasMember("handler")) {
+            handler = document["hosts"][host.c_str()]["handler"].GetString();
+            this->hosts[host]["handler"] = handler;
+        };
+
         std::string additionalHeaders = "";
         if (document["hosts"][host.c_str()].HasMember("additionalHeaders")) {
             additionalHeaders = document["hosts"][host.c_str()]["additionalHeaders"].GetString();
         };
-
-        this->hosts[host]["root"] = root;
-        this->hosts[host]["errorPagesDir"] = errorPagesDir;
-        this->hosts[host]["handler"] = handler;
         this->hosts[host]["additionalHeaders"] = additionalHeaders;
+
+        std::string errorPagesDir = "default/errorpages/";
+        if (document["hosts"][host.c_str()].HasMember("errorpages")) {
+            errorPagesDir = document["hosts"][host.c_str()]["errorpages"].GetString();
+        }
+        this->hosts[host]["errorPagesDir"] = errorPagesDir;
 
         int newPort;
         std::string port = host;

@@ -6,12 +6,10 @@
             "errorpages": "deployment/default/errorpages/"
         },
         "*:8000": {
-            "handler": "file",
             "root": "testdata/testhost/",
             "errorpages": "deployment/default/errorpages/"
         },
         "*:8080": {
-            "handler": "file",
             "root": "testdata/threaded/",
             "errorpages": "deployment/default/errorpages/"
         },
@@ -21,38 +19,29 @@
             "errorpages": "deployment/default/errorpages/"
         },
         "softcreate.localhost:9000": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/softcreate/build/",
+            "root": "/home/xgwschk/Projekte/softcreate/build/",
             "errorpages": "deployment/default/errorpages/"
         },
         "tmmk.localhost:9000": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/tmmk/build/",
+            "root": "/home/xgwschk/Projekte/tmmk/build/",
             "errorpages": "deployment/default/errorpages/"
         },
         "cpc464.localhost:9000": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/cpc464/",
+            "root": "/home/xgwschk/Projekte/cpc464/",
             "errorpages": "deployment/default/errorpages/"
         },
         "mona.localhost:9000": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/mona/build/",
+            "root": "/home/xgwschk/Projekte/mona/build/",
             "errorpages": "deployment/default/errorpages/"
         },
         "my-app.localhost:7777": {
-            "handler": "file",
-            "root": "/home/christian/my-app/build/",
+            "root": "/home/xgwschk/my-app/build/",
             "errorpages": "deployment/default/errorpages/"
         },
         "api.localhost:7777": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/pax-musica/api/testdata/",
+            "root": "/home/xgwschk/Projekte/pax-musica/api/testdata/",
             "errorpages": "deployment/default/errorpages/",
             "additionalHeaders": "Access-Control-Allow-Origin: *\n"
         }
-    },
-    "loglevel": "debug",
-    "logfilepath": "/tmp/",
-    "logger": "console"
+    }
 }

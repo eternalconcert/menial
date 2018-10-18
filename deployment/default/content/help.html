@@ -44,7 +44,8 @@
                         "*:80": {
                             "handler": "file",
                             "root": "default/",
-                            "errorpages": "default/errorpages/"
+                            "errorpages": "default/errorpages/",
+                            "additionalHeaders": "Access-Control-Allow-Origin: *\n"
                         }
                     },
                     "loglevel": "debug",
@@ -68,24 +69,24 @@
                             <ul>
 
                             <li>
-                                <b>handler:</b> The handler is used to specify the request handler. Default is "file", which means, static content will be delivered. There are other types of handlers, like "python".
+                                <b>handler:</b> (Optional, default: "file") The handler is used to specify the request handler. The default handler is "file", which means, static content will be delivered. There are other types of handlers, like "python".
                             </li>
                             <li>
-                                <b>root:</b> The document root directory. When the handler is set to "file", the content of the document root will be delivered.
+                                <b>root:</b> The document root directory. When the handler is set to "file", the content of the document root will be delivered. Path can be absolute or relative to the menial binary.
                             </li>
                             <li>
-                                <b>errorpages:</b> The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
+                                <b>errorpages:</b> (Optional, default: "default/errorpages/") The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
                                 <br>
                                 Example: 404.html
                             </li>
-                                <b>additionalHeaders:</b> If you wish to add headers to each response, you can add them here. Please note: You have to add a line break (\n) at the end of each header. It will be implemented as a list of headers in future version.
                             <li>
+                                <b>additionalHeaders:</b> (Optional, default: blank) If you wish to add headers to each response, you can add them here. Please note: You have to add a line break (\n) at the end of each header. It will be implemented as a list of headers in future version.
                             </li>
                             </ul>
                         </ul>
                     </li>
                     <li>
-                        <b>loglevel:</b> The priority level of log messages. Choices are:
+                        <b>loglevel:</b> (Optional, default: "info") The priority level of log messages. Choices are:
                         <ul>
                             <li><i>debug:</i> The most verbose level. For development and debug purposes.</li>
                             <li><i>info:</i> Still a verbose level. For normal use.</li>
@@ -97,10 +98,10 @@
                         Other values for the loglevel directive will supress logging. So be careful when you change the level to another value.
                     </li>
                     <li>
-                        <b>logfilepath:</b> Directory to store log files.
+                        <b>logfilepath:</b> (Optional, default: "/dev/null") Directory to store log files.
                     </li>
                     <li>
-                        <b>logger:</b> Specifies the logger. Loggers can be one of "console" or "file". "console" writes the log entries to stdout and "file" creates a "menial.log" in the "logfilepath".
+                        <b>logger:</b> (Optional, default: "console") Specifies the logger. Loggers can be one of "console" or "file". "console" writes the log entries to stdout and "file" creates a "menial.log" in the "logfilepath".
                     </li>
                  </ul>
             </p>
