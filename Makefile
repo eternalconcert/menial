@@ -7,7 +7,13 @@ BUILD_NUMBER_FILE=deployment/buildno.txt
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o build/menial -std=c++14 -pthread -Wall -I src/include/
+	g++ $(SOURCES) -o build/menial -std=c++11 -pthread -Wall -I src/include/
+	$(MAKE) index
+
+compile_static:
+	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
+	@mkdir -p build
+	g++ $(SOURCES) -o build/menial -Wall -std=c++11 -O3 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -I src/include/
 	$(MAKE) index
 
 index:
