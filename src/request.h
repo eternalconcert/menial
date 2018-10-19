@@ -8,7 +8,7 @@ class Request {
         void setHeaders(int sockfd);
 
         void setMethod();
-        void setHost();
+        void setHostAndPort();
         void setTarget();
         void setUserAgent();
         void setBody();
@@ -18,9 +18,7 @@ class Request {
         std::string getMethod();
         std::string getHeader();
         std::string getBody();
-        std::string getHost();
         std::string getVirtualHost();
-        std::string getPort();
         std::string getTarget();
         std::string getUserAgent();
 
@@ -34,6 +32,7 @@ class Request {
         std::string method;
         std::string target;
         std::string host;
+        std::string port;
         std::string userAgent;
 };
 

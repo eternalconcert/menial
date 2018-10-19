@@ -1,49 +1,16 @@
 {
     "hosts": {
-        "default.localhost:8000": {
+        "*:8000": {
             "handler": "file",
             "root": "deployment/default/",
             "errorpages": "deployment/default/errorpages/"
         },
-        "*:8000": {
-            "root": "testdata/testhost/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "*:8080": {
+        "mail.localhost:8000": {
+            "handler": "file",
             "root": "testdata/threaded/",
             "errorpages": "deployment/default/errorpages/"
-        },
-        "*:8888": {
-            "handler": "python",
-            "root": "testdata/testhost/pyresponse.py",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "softcreate.localhost:9000": {
-            "root": "/home/xgwschk/Projekte/softcreate/build/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "tmmk.localhost:9000": {
-            "root": "/home/xgwschk/Projekte/tmmk/build/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "cpc464.localhost:9000": {
-            "root": "/home/xgwschk/Projekte/cpc464/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "mona.localhost:9000": {
-            "root": "/home/xgwschk/Projekte/mona/build/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "my-app.localhost:7777": {
-            "root": "/home/xgwschk/my-app/build/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "api.localhost:7777": {
-            "root": "/home/xgwschk/Projekte/pax-musica/api/testdata/",
-            "errorpages": "deployment/default/errorpages/",
-            "additionalHeaders": "Access-Control-Allow-Origin: *\n"
         }
     },
-    "logger": "file",
-    "logfilepath": "/tmp/"
+    "logger": "console",
+    "loglevel": "debug"
 }

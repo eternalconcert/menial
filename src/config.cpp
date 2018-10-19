@@ -83,18 +83,20 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["errorPagesDir"] = errorPagesDir;
 
-        int newPort;
+        int portNum;
         std::string port = host;
         if (port.find(":") == std::string::npos) {
             throw ConfigException("No port defined for host " + host);
         }
         else {
             port.erase(0, port.find(":") + 1);
-            newPort = atoi(port.c_str());
+            portNum = atoi(port.c_str());
+            if (this->defaultHosts[port] == "") {
+                this->defaultHosts[port] = host;
+            }
         }
-        this->ports.insert(newPort);
+        this->ports.insert(portNum);
     }
-
 }
 
 Config* Config::_instance = 0;

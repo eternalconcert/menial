@@ -27,7 +27,7 @@ Request::Request(int sockfd, Config* config, Logger* logger) {
 
     this->setHeaders(sockfd);
     this->setMethod();
-    this->setHost();
+    this->setHostAndPort();
     this->setTarget();
     this->setUserAgent();
 }
@@ -83,12 +83,20 @@ void Request::setMethod() {
     this->method = headers.substr(0, headers.find(" "));
 }
 
-void Request::setHost() {
+void Request::setHostAndPort() {
     std::string headers = this->headers;
     std::string fieldName = "Host: ";
     headers.erase(0, headers.find(fieldName) + fieldName.length());
     std::string host = headers.substr(0, headers.find("\n") - 1);
+    std::string port = "80";
+
+    if (host.find(":") != std::string::npos) {
+        port = host;
+        host = host.substr(0, host.find(":"));
+        port = port.erase(0, host.length() + 1);
+    }
     this->host = host;
+    this->port = port;
 }
 
 void Request::setTarget() {
@@ -132,19 +140,15 @@ std::string Request::getBody() {
     return this->body;
 };
 
-std::string Request::getHost() {
-    return this->host;
-};
-
 std::string Request::getVirtualHost() {
-    std::string virtualHost = this->host;
-    if (virtualHost.find(":") == std::string::npos) {
-        virtualHost += ":80";
-    }
+    std::string virtualHost = this->host + ":" + this->port;
 
     if (this->config->hosts[virtualHost]["handler"] == "") {
         virtualHost.erase(0, virtualHost.find(":"));
         virtualHost = "*" + virtualHost;
+    };
+    if (this->config->hosts[virtualHost]["handler"] == "") {
+        virtualHost = this->config->defaultHosts[this->port];
     };
     return virtualHost;
 };
