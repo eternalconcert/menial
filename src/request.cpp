@@ -125,7 +125,12 @@ void Request::setBody() {
 
 std::string Request::getResponse() {
     Response* response = _getHandler(this, this->config, this->logger);
-    return response->get();
+    if (this->getMethod() == "GET") {
+        return response->get();
+    }
+    else {
+        return response->methodNotAllowed();
+    }
 }
 
 std::string Request::getMethod() {

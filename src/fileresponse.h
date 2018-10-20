@@ -8,7 +8,9 @@
 
 class FileResponse: public Response {
     public:
+        std::string headerBase();
         std::string get();
+        std::string methodNotAllowed();
         std::string getHeader(std::string content, std::string fileName);
         std::string getFileName(std::string target);
         FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {};

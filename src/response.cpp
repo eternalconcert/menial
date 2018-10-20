@@ -28,6 +28,9 @@ std::string Response::getStatusMessage() {
         case 404:
             statusMessage = "404 Not Found";
             break;
+        case 405:
+            statusMessage = "405 Method Not Allowed";
+            break;
         case 500:
             statusMessage = "500 Internal Server Error";
             break;

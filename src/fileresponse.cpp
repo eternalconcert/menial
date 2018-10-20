@@ -17,6 +17,15 @@ std::string getGetParamsString(Request *request, Logger *logger) {
 };
 
 
+std::string FileResponse::headerBase() {
+    std::string header = "HTTP/1.0 ";
+    header += this->getStatusMessage();
+    header += "\n";
+    header += "Server: menial\n";
+    return header;
+}
+
+
 std::string FileResponse::get() {
     std::string target = this->getRequest()->getTarget();
     std::string getParams = getGetParamsString(this->getRequest(), this->logger);
@@ -46,11 +55,16 @@ std::string FileResponse::get() {
     return result;
 }
 
+std::string FileResponse::methodNotAllowed() {
+    this->setStatus(405);
+    std::string header = this->headerBase();
+    header += "\r\n";
+    return header;
+}
+
 
 std::string FileResponse::getHeader(std::string content, std::string fileName) {
-    std::string header = "HTTP/1.0 ";
-    header += this->getStatusMessage();
-    header += "\n";
+    std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     std::string hostName = this->getRequest()->getVirtualHost();
