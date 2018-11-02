@@ -77,11 +77,23 @@ void Server::run() {
         https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
         */
 
-        shutdown(sockfd, SHUT_RDWR);
-        // close(sockfd);
+        shutdown(sockfd, SHUT_RD);
+        shutdown(newsockfd, SHUT_RD);
 
-        shutdown(newsockfd, SHUT_RDWR);
-        // close(newsockfd);
+        // Desprate tries..
+        char buffer[BUFFER_SIZE];
+        int bytesReceived;
+        bytesReceived = recv(sockfd, buffer, 10000, 0);
+        while (bytesReceived >= 1) {
+            bytesReceived = recv(sockfd, buffer, 10000, 0);
+            printf("%d\n", bytesReceived);
+        }
+
+        shutdown(sockfd, SHUT_WR);
+        shutdown(newsockfd, SHUT_WR);
+
+
+
     }
 }
 
