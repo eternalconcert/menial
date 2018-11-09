@@ -83,6 +83,13 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["errorPagesDir"] = errorPagesDir;
 
+        std::string defaultDoc = "index.html";
+        if (document["hosts"][host.c_str()].HasMember("defaultdocument")) {
+            defaultDoc = document["hosts"][host.c_str()]["defaultdocument"].GetString();
+        }
+        this->hosts[host]["defaultdocument"] = defaultDoc;
+
+
         int portNum;
         std::string port = host;
         if (port.find(":") == std::string::npos) {

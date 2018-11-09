@@ -1,13 +1,8 @@
 {
     "hosts": {
-        "*:8000": {
+        "*:3434": {
             "handler": "file",
-            "root": "deployment/default/",
-            "errorpages": "deployment/default/errorpages/"
-        },
-        "mail.localhost:8000": {
-            "handler": "file",
-            "root": "testdata/threaded/",
+            "root": "/tmp/css/",
             "errorpages": "deployment/default/errorpages/"
         }
     },

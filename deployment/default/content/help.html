@@ -45,6 +45,7 @@
                             "handler": "file",
                             "root": "default/",
                             "errorpages": "default/errorpages/",
+                            "defaultdocument": "index.html",
                             "additionalHeaders": "Access-Control-Allow-Origin: *\n"
                         }
                     },
@@ -78,6 +79,9 @@
                                 <b>errorpages:</b> (Optional, default: "default/errorpages/") The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
                                 <br>
                                 Example: 404.html
+                            </li>
+                            <li>
+                                <b>defaultdocument:</b> (Optional, default: "index.html") Filename of the document which should be served when no file is specified in the URL. All requests for / will get the file with the specified name (if existend in the requested directory).
                             </li>
                             <li>
                                 <b>additionalHeaders:</b> (Optional, default: blank) If you wish to add headers to each response, you can add them here. Please note: You have to add a line break (\n) at the end of each header. It will be implemented as a list of headers in future version.

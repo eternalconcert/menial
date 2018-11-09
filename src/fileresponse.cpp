@@ -34,12 +34,18 @@ std::string FileResponse::get() {
         target.erase(target.find(getParams));
     }
 
-    if (target == "/") {
-        target = "index.html";
-    }
-    std::string content;
     std::string hostName = this->getRequest()->getVirtualHost();
 
+    if (target == "/") {
+        target = this->config->hosts[hostName]["defaultdocument"];
+        this->logger->debug("No file on / requested, using default target: " + target);
+    }
+    else if (target.back() == '/') {
+            target = target + this->config->hosts[hostName]["defaultdocument"];
+            this->logger->debug("No file on subdir requested, using default target: " + target);
+    }
+
+    std::string content;
     try {
         content += readFile(this->config->hosts[hostName]["root"] + target);
     } catch (FileNotFoundException) {
