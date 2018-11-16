@@ -3,6 +3,7 @@
 #include "exceptions.h"
 #include "response.h"
 #include "request.h"
+#include "redirectresponse.h"
 #include "fileresponse.h"
 #include "pyresponse.h"
 
@@ -16,10 +17,14 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
     else if (handlerName == "python") {
         return new PyResponse(request, config, logger);
     }
+    else if (handlerName == "redirect") {
+        return new RedirectResponse(request, config, logger);
+    }
     else {
         return new Response(request, config, logger);
     }
 }
+
 
 Request::Request(int sockfd, Config* config, Logger* logger) {
     this->config = config;

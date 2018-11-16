@@ -4,6 +4,12 @@
             "handler": "file",
             "root": "/tmp/css/",
             "errorpages": "deployment/default/errorpages/"
+        },
+        "*:3435": {
+            "handler": "redirect",
+            "root": "/tmp/css/",
+            "target": "http://google.de/",
+            "permanent": false
         }
     },
     "logger": "console",

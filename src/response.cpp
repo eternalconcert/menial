@@ -25,6 +25,12 @@ std::string Response::getStatusMessage() {
         case 200:
             statusMessage = "200 OK";
             break;
+        case 301:
+            statusMessage = "301 Moved Permanently";
+            break;
+        case 302:
+            statusMessage = "302 Moved Temporary";
+            break;
         case 404:
             statusMessage = "404 Not Found";
             break;

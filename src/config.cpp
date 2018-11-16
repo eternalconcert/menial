@@ -90,6 +90,19 @@ void Config::update(std::string configPath) {
         this->hosts[host]["defaultdocument"] = defaultDoc;
 
 
+        std::string target = "";
+        if (document["hosts"][host.c_str()].HasMember("target")) {
+            target = document["hosts"][host.c_str()]["target"].GetString();
+        }
+        this->hosts[host]["target"] = target;
+
+        bool permanent = false;
+        if (document["hosts"][host.c_str()].HasMember("permanent")) {
+            permanent = document["hosts"][host.c_str()]["permanent"].GetBool();
+        }
+        this->hosts[host]["permanent"] = permanent ? "true" : "false";
+
+
         int portNum;
         std::string port = host;
         if (port.find(":") == std::string::npos) {

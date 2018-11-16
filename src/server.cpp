@@ -91,6 +91,8 @@ void Server::run() {
 
         shutdown(sockfd, SHUT_WR);
         shutdown(newsockfd, SHUT_WR);
+        close(sockfd);
+        close(newsockfd);
 
 
 
