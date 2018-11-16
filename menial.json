@@ -1,15 +1,15 @@
 {
     "hosts": {
         "*:3434": {
-            "handler": "file",
-            "root": "/tmp/css/",
-            "errorpages": "deployment/default/errorpages/"
+            "handler": "redirect",
+            "root": "",
+            "target": "http://localhost:3435/",
+            "permanent": false
         },
         "*:3435": {
-            "handler": "redirect",
-            "root": "/tmp/css/",
-            "target": "http://google.de/",
-            "permanent": false
+            "handler": "file",
+            "root": "deployment/default/",
+            "errorpages": "deployment/default/errorpages/"
         }
     },
     "logger": "console",
