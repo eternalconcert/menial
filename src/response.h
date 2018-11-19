@@ -21,6 +21,7 @@ class Response {
         Response(Request *request, Config *config, Logger *logger);
         Config *config;
         Logger *logger;
+        std::string hostName;
 
     protected:
         Request *request;

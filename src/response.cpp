@@ -4,6 +4,7 @@ Response::Response(Request *request, Config *config, Logger *logger) {
     this->request = request;
     this->config = config;
     this->logger = logger;
+    this->hostName = this->getRequest()->getVirtualHost();
     this->setStatus(200);
 }
 

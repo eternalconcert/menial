@@ -34,22 +34,21 @@ std::string FileResponse::get() {
         target.erase(target.find(getParams));
     }
 
-    std::string hostName = this->getRequest()->getVirtualHost();
 
     if (target == "/") {
-        target = this->config->hosts[hostName]["defaultdocument"];
+        target = this->config->hosts[this->hostName]["defaultdocument"];
         this->logger->debug("No file on / requested, using default target: " + target);
     }
     else if (target.back() == '/') {
-            target = target + this->config->hosts[hostName]["defaultdocument"];
+            target = target + this->config->hosts[this->hostName]["defaultdocument"];
             this->logger->debug("No file on subdir requested, using default target: " + target);
     }
 
     std::string content;
     try {
-        content += readFile(this->config->hosts[hostName]["root"] + target);
+        content += readFile(this->config->hosts[this->hostName]["root"] + target);
     } catch (FileNotFoundException) {
-        content += readFile(this->config->hosts[hostName]["errorPagesDir"] + "404.html");
+        content += readFile(this->config->hosts[this->hostName]["errorPagesDir"] + "404.html");
         this->setStatus(404);
         this->logger->warning("404: Unknown target requested: " + target);
     }
@@ -73,8 +72,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
-    std::string hostName = this->getRequest()->getVirtualHost();
-    header += this->config->hosts[hostName]["additionalHeaders"];
+    header += this->config->hosts[this->hostName]["additionalHeaders"];
     header += "\r\n";
     return header;
 }
