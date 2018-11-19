@@ -104,6 +104,9 @@ std::string FileResponse::guessFileType(std::string fileName) {
     else if (extension == "mp3") {
         fileType = "audio/mpeg";
     }
+    else if (extension == "flac") {
+        fileType = "audio/flac";
+    }
     return fileType;
 
 }
