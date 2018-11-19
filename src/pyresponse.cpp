@@ -18,7 +18,7 @@ std::string PyResponse::getHeader(std::string content) {
 
 std::string PyResponse::get() {
     std::string hostName = this->getRequest()->getVirtualHost();
-    std::string interfaceCall = "python " + this->config->hosts[hostName]["root"];
+    std::string interfaceCall = "python " + this->config["root"];
     interfaceCall += " -s='" + hostName + "'";
     interfaceCall += " -t='" + this->getRequest()->getTarget() + "'";
     interfaceCall += " -p='" + this->getRequest()->getHeader() + "'";
@@ -33,7 +33,7 @@ std::string PyResponse::get() {
     }
     int status = pclose(f);
     if (WEXITSTATUS(status) != 0) {
-        content += readFile(this->config->hosts[hostName]["errorPagesDir"] + "500.html");
+        content += readFile(this->config["errorPagesDir"] + "500.html");
         this->setStatus(500);
         this->logger->error("500: Error while reading from python");
     }

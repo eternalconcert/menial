@@ -6,10 +6,11 @@
 #include "server.h"
 #include "request.h"
 
-const int QUEUE_LENGTH = 5;
+const int QUEUE_LENGTH = 100;
 
 
-void setUp(int sockfd, int portno) {
+int setUpSockFd(int portno) {
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     int option = 1;
     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
     struct sockaddr_in serv_addr;
@@ -26,6 +27,10 @@ void setUp(int sockfd, int portno) {
     if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         error("Error: Cannot bind");
     }
+    // Wait for connections
+    listen(sockfd, QUEUE_LENGTH);
+
+    return sockfd;
 }
 
 
@@ -48,11 +53,7 @@ Server::Server(int portno, Config* config, Logger* logger) {
 void Server::run() {
 
     while (true) {
-        int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-        setUp(sockfd, this->portno);
-
-        // Wait for connections
-        listen(sockfd, QUEUE_LENGTH);
+        int sockfd = setUpSockFd(this->portno);
 
         int newsockfd = setNewSockFd(sockfd);
         try {
@@ -67,20 +68,10 @@ void Server::run() {
         }
 
         // Close sockets
-        /*
-        int shutdown(int s, int how); // s is socket descriptor
-        int how can be:
-        SHUT_RD or 0 Further receives are disallowed
-        SHUT_WR or 1 Further sends are disallowed
-        SHUT_RDWR or 2 Further sends and receives are disallowed
-
-        https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
-        */
-
         shutdown(sockfd, SHUT_RD);
         shutdown(newsockfd, SHUT_RD);
 
-        // Desprate tries..
+        // Keep alive
         char buffer[BUFFER_SIZE];
         int bytesReceived;
         bytesReceived = recv(sockfd, buffer, 10000, 0);
@@ -93,9 +84,6 @@ void Server::run() {
         shutdown(newsockfd, SHUT_WR);
         close(sockfd);
         close(newsockfd);
-
-
-
     }
 }
 

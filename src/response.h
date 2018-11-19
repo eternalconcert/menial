@@ -18,10 +18,10 @@ class Response {
         void setStatus(int status);
         int getStatus();
         std::string getStatusMessage();
-        Response(Request *request, Config *config, Logger *logger);
-        Config *config;
+        std::map<std::string, std::string> config;
         Logger *logger;
         std::string hostName;
+        Response(Request *request, Config *config, Logger *logger);
 
     protected:
         Request *request;

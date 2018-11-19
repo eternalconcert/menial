@@ -1,15 +1,14 @@
 {
     "hosts": {
-        "*:3434": {
-            "handler": "redirect",
-            "root": "",
-            "target": "http://localhost:3435/",
-            "permanent": false
-        },
-        "*:3435": {
+        "*:8000": {
             "handler": "file",
-            "root": "/media/sf_Desktop/",
-            "errorpages": "deployment/default/errorpages/"
+            "root": "deployment/default/",
+            "errorpages": "/home/christian/Projekte/menial/deployment/default/errorpages/"
+        },
+        "mail.localhost:8080": {
+            "handler": "file",
+            "root": "testdata/threaded/",
+            "errorpages": "/home/christian/Projekte/menial/deployment/default/errorpages/"
         }
     },
     "logger": "console",
