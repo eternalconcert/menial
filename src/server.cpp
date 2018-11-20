@@ -74,11 +74,9 @@ void Server::run() {
         // Keep alive
         char buffer[BUFFER_SIZE];
         int bytesReceived;
-        bytesReceived = recv(sockfd, buffer, 10000, 0);
-        while (bytesReceived >= 1) {
-            bytesReceived = recv(sockfd, buffer, 10000, 0);
-            printf("%d\n", bytesReceived);
-        }
+        do {
+            bytesReceived = recv(sockfd, buffer, BUFFER_SIZE, MSG_DONTWAIT);
+        } while (bytesReceived > 0);
 
         shutdown(sockfd, SHUT_WR);
         shutdown(newsockfd, SHUT_WR);
