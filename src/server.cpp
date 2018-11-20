@@ -54,8 +54,8 @@ void Server::run() {
 
     while (true) {
         int sockfd = setUpSockFd(this->portno);
-
         int newsockfd = setNewSockFd(sockfd);
+
         try {
             Request *request = new Request(newsockfd, this->config, this->logger);
             this->sendReply(request->getResponse(), newsockfd);
@@ -68,18 +68,19 @@ void Server::run() {
         }
 
         // Close sockets
-        shutdown(sockfd, SHUT_RD);
-        shutdown(newsockfd, SHUT_RD);
+        shutdown(sockfd, SHUT_WR);
+        shutdown(newsockfd, SHUT_WR);
 
         // Keep alive
         char buffer[BUFFER_SIZE];
         int bytesReceived;
         do {
             bytesReceived = recv(sockfd, buffer, BUFFER_SIZE, MSG_DONTWAIT);
+            this->logger->debug("Client sending " + std::to_string(bytesReceived) + " bytes.");
         } while (bytesReceived > 0);
 
-        shutdown(sockfd, SHUT_WR);
-        shutdown(newsockfd, SHUT_WR);
+        shutdown(sockfd, SHUT_RD);
+        shutdown(newsockfd, SHUT_RD);
         close(sockfd);
         close(newsockfd);
     }
