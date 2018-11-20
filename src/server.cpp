@@ -1,3 +1,4 @@
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
@@ -51,40 +52,86 @@ Server::Server(int portno, Config* config, Logger* logger) {
 
 
 void Server::run() {
+    // SELECT
+    fd_set readfds;
+    int addrlen;
+    int client_socket[30];
+    int max_clients = 30;
+    int max_sd;
+    int new_socket;
+    int option = 1;
+    int sd;
+    int valread;
+    char buffer[BUFFER_SIZE];
 
-    while (true) {
-        int sockfd = setUpSockFd(this->portno);
-        int newsockfd = setNewSockFd(sockfd);
+    for (int i = 0; i < max_clients; i++) {
+        client_socket[i] = 0;
+    }
 
-        try {
-            Request *request = new Request(newsockfd, this->config, this->logger);
-            this->sendReply(request->getResponse(), newsockfd);
-        } catch (RequestHeaderFieldTooLarge) {
-            this->sendError(431, newsockfd);
-            this->logger->error("Client sent too many headers. Request caused a 431.");
-        } catch (CouldNotParseHeaders) {
-            this->sendError(500, newsockfd);
-            this->logger->error("Could not parse headers.");
+    int master_socket = socket(AF_INET, SOCK_STREAM, 0);
+    setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(this->portno);
+    if (bind(master_socket, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        error("Error: Cannot bind");
+    }
+    listen(master_socket, QUEUE_LENGTH);
+    addrlen = sizeof(serv_addr);
+
+    while(true) {
+        FD_ZERO(&readfds);
+        FD_SET(master_socket, &readfds);
+        max_sd = master_socket;
+
+        for (int i = 0; i < max_clients; i++) {
+            sd = client_socket[i];
+            if (sd > 0) {
+                FD_SET(sd, &readfds);
+            }
+            if (sd > max_sd) {
+                max_sd = sd;
+            }
         }
 
-        // Close sockets
-        shutdown(sockfd, SHUT_WR);
-        shutdown(newsockfd, SHUT_WR);
-
-        // Keep alive
-        char buffer[BUFFER_SIZE];
-        int bytesReceived;
-        do {
-            bytesReceived = recv(sockfd, buffer, BUFFER_SIZE, MSG_DONTWAIT);
-            this->logger->debug("Client sending " + std::to_string(bytesReceived) + " bytes.");
-        } while (bytesReceived > 0);
-
-        shutdown(sockfd, SHUT_RD);
-        shutdown(newsockfd, SHUT_RD);
-        close(sockfd);
-        close(newsockfd);
+        select(max_sd + 1, &readfds, NULL, NULL, NULL);
+        if (FD_ISSET(master_socket, &readfds)) {
+            new_socket = accept(master_socket, (struct sockaddr *) &serv_addr, (socklen_t*)&addrlen);
+            for (int i = 0; i < max_clients; i++) {
+                if (client_socket[i] == 0) {
+                    client_socket[i] = new_socket;
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < max_clients; i++) {
+            sd = client_socket[i];
+            if (FD_ISSET(sd, &readfds)) {
+                // if ((valread = read(sd, buffer, BUFFER_SIZE)) <= 0) {
+                //     getpeername(sd, (struct sockaddr*)&serv_addr, (socklen_t*)&addrlen);
+                //     printf("Host disconnected, IP %s, port %d\n",
+                //            inet_ntoa(serv_addr.sin_addr), ntohs(serv_addr.sin_port));
+                // }
+                // else {
+                    try {
+                        Request *request = new Request(sd, this->config, this->logger);
+                        this->sendReply(request->getResponse(), sd);
+                    } catch (RequestHeaderFieldTooLarge) {
+                        this->sendError(431, sd);
+                        this->logger->error("Client sent too many headers. Request caused a 431.");
+                    } catch (CouldNotParseHeaders) {
+                        this->sendError(500, sd);
+                        this->logger->error("Could not parse headers.");
+                    }
+                    close(sd);
+                    client_socket[i] = 0;
+                }
+            // }
+        }
     }
 }
+
 
 void Server::sendReply(std::string replyMessage, int sockfd) {
 
