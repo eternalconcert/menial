@@ -78,12 +78,12 @@ void Server::run() {
                 try {
                     Request *request = new Request(sd, this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
-                } catch (RequestHeaderFieldTooLarge) {
+                } catch (RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
-                    this->logger->error("Client sent too many headers. Request caused a 431.");
-                } catch (CouldNotParseHeaders) {
+                    this->logger->error(e.message);
+                } catch (CouldNotParseHeaders& e) {
                     this->sendError(500, sd);
-                    this->logger->error("Could not parse headers.");
+                    this->logger->error(e.message);
                 }
                 // Keep alive
                 do {

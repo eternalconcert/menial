@@ -2,10 +2,11 @@
 #define EXCEPTIONS_H
 
 
-class Exception: public std::exception {};
+class Exception: public std::exception {
 
-class FileNotFoundException: public Exception {
-    using Exception::Exception;
+    public:
+        std::string message;
+        Exception(std::string message = "");
 };
 
 class ConfigException: public Exception {
@@ -13,6 +14,10 @@ class ConfigException: public Exception {
 
     public:
         ConfigException(std::string message = "");
+};
+
+class FileNotFoundException: public Exception {
+    using Exception::Exception;
 };
 
 class RequestHeaderFieldTooLarge: public Exception {

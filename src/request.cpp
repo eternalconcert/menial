@@ -64,20 +64,24 @@ void Request::setHeaders(int sockfd) {
             }
             headerIdx++;
         }
-
+        // Make sure it is not an TLS connection
+        if (not isupper(headers[0])) {
+            throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
+        }
     } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
 
+    // Check header length
     if (headerIdx > MAX_HEADER_LENGTH) {
         this->logger->warning(
             "Server::getIncomingRequest header length exceeded! Client sent too many headers."
         );
-        throw RequestHeaderFieldTooLarge();
+        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
     }
     this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
     this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
 
     if (headers.length() == 0) {
-        throw CouldNotParseHeaders();
+        throw CouldNotParseHeaders("Could not parse headers.");
     }
 
     this->headers = headers;
