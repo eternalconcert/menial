@@ -2,4 +2,5 @@ syntax: glob
 
 build/*
 target/*
+deployment/buildno.txt
 deployment/default/index.html
