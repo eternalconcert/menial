@@ -10,39 +10,6 @@
 const int QUEUE_LENGTH = 100;
 
 
-int setUpSockFd(int portno) {
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    int option = 1;
-    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
-    struct sockaddr_in serv_addr;
-
-    if (sockfd < 0) {
-        error("Error: Cannot open socket");
-    }
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(portno);
-
-    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        error("Error: Cannot bind");
-    }
-    // Wait for connections
-    listen(sockfd, QUEUE_LENGTH);
-
-    return sockfd;
-}
-
-
-int setNewSockFd(int sockfd) {
-    socklen_t clilen;
-    struct sockaddr_in cli_addr;
-    clilen = sizeof(cli_addr);
-    return accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-}
-
-
 Server::Server(int portno, Config* config, Logger* logger) {
     this->logger = logger;
     this->config = config;
@@ -61,7 +28,7 @@ void Server::run() {
     int new_socket;
     int option = 1;
     int sd;
-    int valread;
+    int bytesReceived;
     char buffer[BUFFER_SIZE];
 
     for (int i = 0; i < max_clients; i++) {
@@ -108,26 +75,27 @@ void Server::run() {
         for (int i = 0; i < max_clients; i++) {
             sd = client_socket[i];
             if (FD_ISSET(sd, &readfds)) {
-                // if ((valread = read(sd, buffer, BUFFER_SIZE)) <= 0) {
-                //     getpeername(sd, (struct sockaddr*)&serv_addr, (socklen_t*)&addrlen);
-                //     printf("Host disconnected, IP %s, port %d\n",
-                //            inet_ntoa(serv_addr.sin_addr), ntohs(serv_addr.sin_port));
-                // }
-                // else {
-                    try {
-                        Request *request = new Request(sd, this->config, this->logger);
-                        this->sendReply(request->getResponse(), sd);
-                    } catch (RequestHeaderFieldTooLarge) {
-                        this->sendError(431, sd);
-                        this->logger->error("Client sent too many headers. Request caused a 431.");
-                    } catch (CouldNotParseHeaders) {
-                        this->sendError(500, sd);
-                        this->logger->error("Could not parse headers.");
-                    }
-                    close(sd);
-                    client_socket[i] = 0;
+                try {
+                    Request *request = new Request(sd, this->config, this->logger);
+                    this->sendReply(request->getResponse(), sd);
+                } catch (RequestHeaderFieldTooLarge) {
+                    this->sendError(431, sd);
+                    this->logger->error("Client sent too many headers. Request caused a 431.");
+                } catch (CouldNotParseHeaders) {
+                    this->sendError(500, sd);
+                    this->logger->error("Could not parse headers.");
                 }
-            // }
+                // Keep alive
+                do {
+                    bytesReceived = recv(sd, buffer, BUFFER_SIZE, MSG_DONTWAIT);
+                    this->logger->debug("Client sending " + std::to_string(bytesReceived) + " bytes.");
+                } while (bytesReceived > 0);
+
+                shutdown(sd, SHUT_RD);
+                close(sd);
+                client_socket[i] = 0;
+            }
+
         }
     }
 }
