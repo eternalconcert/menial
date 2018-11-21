@@ -2,13 +2,13 @@
     "hosts": {
         "*:8000": {
             "handler": "file",
-            "root": "deployment/default/",
-            "errorpages": "/home/xgwschk/projects/menial/deployment/default/errorpages/"
+            "root": "website/build/",
+            "errorpages": "deployment/default/errorpages/"
         },
         "mail.localhost:8080": {
             "handler": "file",
             "root": "testdata/threaded/",
-            "errorpages": "/home/xgwschk/projects/menial/deployment/default/errorpages/"
+            "errorpages": "deployment/default/errorpages/"
         }
     },
     "logger": "console",
