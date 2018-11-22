@@ -6,12 +6,14 @@
             "errorpages": "deployment/default/errorpages/",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
         },
-        "mail.localhost:8080": {
+        "*:8080": {
             "handler": "file",
-            "root": "testdata/threaded/",
+            "root": "/tmp/",
+            "defaultdocument": "menial.log",
             "errorpages": "deployment/default/errorpages/"
         }
     },
-    "logger": "console",
+    "logger": "file",
+    "logfilepath": "/tmp/",
     "loglevel": "debug"
 }

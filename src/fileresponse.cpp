@@ -93,6 +93,9 @@ std::string FileResponse::guessFileType(std::string fileName) {
     if (extension == "css") {
         fileType = "text/css";
     }
+    else if (extension == "log") {
+        fileType = "text/plain";
+    }
     else if (extension == "png") {
         fileType = "image/png";
     }

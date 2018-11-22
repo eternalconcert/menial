@@ -62,9 +62,31 @@ import urllib2
 import os
 import json
 
-message = urllib2.unquote(request._get_get_params().get('message', '')).decode('utf-8')
+message = request._get_get_params().get('message', '').replace('+', ' ')
+message = urllib2.unquote(message).decode('utf-8')
 read = request._get_get_params().get('read', False)
 
+
+template = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Post2Pi</title>
+    </head>
+    <body>
+        <h1>Post2Pi</h1>
+        {confirmation}
+        <form>
+            <input type="text" name="message" placeholder="Deine Nachricht" />
+            <button>Senden</button>
+        </form>
+        <br>
+        <div style="font-size: 0.7em; margin-top: 50px;">
+            Powered by <a href="http://menial.softcreate.de" style="color: green;">menial</a>
+        </div>
+    </body>
+</html>
+"""
 
 if read:
     if not os.path.isfile('index.db'):
@@ -85,29 +107,14 @@ if read:
                 message = {'message': lines[index]}
             print(json.dumps(message))
 
-
-
 elif not message:
-    template = """
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <title>Post2Pi</title>
-        </head>
-        <body>
-            <form>
-                Deine Nachricht: <input type="text" name="message" />
-                <button>Senden</button>
-            </form>
-        </body>
-    </html>
-    """
-    print(template)
+    print(template.format(confirmation=''))
 
 
 else:
     with open('messages.db', 'a+') as f:
         f.write(message + '\n')
 
-    template = "{}".format(message)
-    print("Vielen Dank! Deine Nachricht wird geposted:<br>%s" % template)
+    confirmation = '<div style="color: green; margin: 10px 0 30px 0">Vielen Dank! Deine Nachricht wird geposted:<br>{message}</div>'.format(message=message)
+
+    print(template.format(confirmation=confirmation))
