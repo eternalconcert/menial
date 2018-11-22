@@ -11,7 +11,7 @@ parser.add_argument('-b', dest='body')
 args = parser.parse_args()
 
 
-class Resquest(object):
+class Request(object):
     def __init__(self, host, url, header, body):
         self.host = host
         self.url = url
@@ -25,7 +25,7 @@ class Resquest(object):
         params = {}
         if len(self.url.split('?')) > 1:
             query_string = self.url.split('?')[1]
-            for item in query_string.split('#'):
+            for item in query_string.split('&'):
                 try:
                     key, value = item.split('=')
                     params[key] = value
@@ -51,7 +51,7 @@ try:
 
     if len(sys.argv) > 4:
         body = sys.argv[4]
-    request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3], body)
+    request = Request(sys.argv[1], sys.argv[2], sys.argv[3], body)
 
 
 except Exception as e:

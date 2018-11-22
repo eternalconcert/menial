@@ -13,7 +13,7 @@
             "errorpages": "deployment/default/errorpages/"
         }
     },
-    "logger": "file",
+    "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug"
 }
