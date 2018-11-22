@@ -71,11 +71,11 @@ void Config::update(std::string configPath) {
         };
         this->hosts[host]["handler"] = handler;
 
-        std::string additionalHeaders = "";
-        if (document["hosts"][host.c_str()].HasMember("additionalHeaders")) {
-            additionalHeaders = document["hosts"][host.c_str()]["additionalHeaders"].GetString();
+        std::string additionalheaders = "";
+        if (document["hosts"][host.c_str()].HasMember("additionalheaders")) {
+            additionalheaders = document["hosts"][host.c_str()]["additionalheaders"].GetString();
         };
-        this->hosts[host]["additionalHeaders"] = additionalHeaders;
+        this->hosts[host]["additionalheaders"] = additionalheaders;
 
         std::string errorPagesDir = "default/errorpages/";
         if (document["hosts"][host.c_str()].HasMember("errorpages")) {

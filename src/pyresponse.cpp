@@ -11,6 +11,7 @@ std::string PyResponse::getHeader(std::string content) {
     header += "\n";
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: text/html\n";
+    header += this->config["additionalheaders"];
     header += "\r\n";
     return header;
 }
@@ -23,6 +24,7 @@ std::string PyResponse::get() {
     interfaceCall += " -t='" + this->getRequest()->getTarget() + "'";
     interfaceCall += " -p='" + this->getRequest()->getHeader() + "'";
     interfaceCall += " -b='" + this->getRequest()->getBody() + "'";
+    this->logger->debug("Calling Python with: " + interfaceCall);
 
     FILE *f;
     char path[BUFFER_SIZE];
@@ -41,5 +43,4 @@ std::string PyResponse::get() {
     std::string result;
     result = this->getHeader(content) + content;
     return result;
-
 }

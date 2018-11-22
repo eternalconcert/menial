@@ -1,9 +1,10 @@
 {
     "hosts": {
         "*:8000": {
-            "handler": "file",
-            "root": "website/build/",
-            "errorpages": "deployment/default/errorpages/"
+            "handler": "python",
+            "root": "testdata/testhost/pyresponse.py",
+            "errorpages": "deployment/default/errorpages/",
+            "additionalheaders": "Access-Control-Allow-Origin: *\n"
         },
         "mail.localhost:8080": {
             "handler": "file",

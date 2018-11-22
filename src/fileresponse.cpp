@@ -72,7 +72,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
-    header += this->config["additionalHeaders"];
+    header += this->config["additionalheaders"];
     header += "\r\n";
     return header;
 }

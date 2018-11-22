@@ -32,7 +32,7 @@ std::string RedirectResponse::headerBase() {
 
 std::string RedirectResponse::getHeader() {
     std::string header = this->headerBase();
-    header += this->config["additionalHeaders"];
+    header += this->config["additionalheaders"];
     header += "\r\n";
     return header;
 }

@@ -53,44 +53,61 @@ try:
         body = sys.argv[4]
     request = Resquest(sys.argv[1], sys.argv[2], sys.argv[3], body)
 
+
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
 
 
-template = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>menial: Always at your service!</title>
-        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-    </head>
+import urllib2
+import os
+import json
 
-    <body>
-        <div id="main">
-            <h1>menial</h1>
-            <p id="claim">
-                Always at your service!
-            </p>
-            <p>
-                If you see this page, the menial webserver is up and running with the python extension.
-            </p>
-            <p>
-                <h2>Get paramters</h2>
-                {0}
-            </p>
-            <form action='.' method='POST' >
-                <input type='text' name='name' />
-                <input type='password' name='password' />
+message = urllib2.unquote(request._get_get_params().get('message', '')).decode('utf-8')
+read = request._get_get_params().get('read', False)
+
+
+if read:
+    if not os.path.isfile('index.db'):
+        open('index.db', 'w')
+    if not os.path.isfile('messages.db'):
+        open('messages.db', 'w')
+
+    with open('messages.db', 'r') as f:
+        lines = f.readlines()
+        maxindex = len(lines) - 1
+
+    with open('index.db', 'r') as f:
+        index = int(f.read() or "-1")
+        index += 1
+        if index <= maxindex:
+            with open('index.db', 'w') as f:
+                f.write(str(index))
+                message = {'message': lines[index]}
+            print(json.dumps(message))
+
+
+
+elif not message:
+    template = """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Post2Pi</title>
+        </head>
+        <body>
+            <form>
+                Deine Nachricht: <input type="text" name="message" />
                 <button>Senden</button>
             </form>
+        </body>
+    </html>
+    """
+    print(template)
 
-            <div id=footer>
-                Licensed under <a href="https://www.gnu.org/licenses/gpl.html">GPLv3</a>
-            </div>
-        </div>
-    </body>
-</html>
 
-""".format("request._get_get_params()")
+else:
+    with open('messages.db', 'a+') as f:
+        f.write(message + '\n')
 
-print(template)
+    template = "{}".format(message)
+    print("Vielen Dank! Deine Nachricht wird geposted:<br>%s" % template)
