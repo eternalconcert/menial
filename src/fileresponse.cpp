@@ -51,7 +51,7 @@ std::string FileResponse::get() {
     } catch (FileNotFoundException) {
         content += readFile(this->config["errorPagesDir"] + "404.html");
         this->setStatus(404);
-        this->logger->warning("404: Unknown target requested: " + target);
+        this->logger->info("404: Unknown target requested: " + target);
     }
 
     std::string fileName = this->getFileName(target);
