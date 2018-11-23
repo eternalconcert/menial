@@ -43,6 +43,7 @@ std::string FileResponse::get() {
             target = target + this->config["defaultdocument"];
             this->logger->debug("No file on subdir requested, using default target: " + target);
     }
+    this->logger->info("Requested document: " + target);
 
     std::string content;
     try {

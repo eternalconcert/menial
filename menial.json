@@ -8,8 +8,7 @@
         },
         "*:8080": {
             "handler": "file",
-            "root": "/tmp/",
-            "defaultdocument": "menial.log",
+            "root": "deployment/default/",
             "errorpages": "deployment/default/errorpages/"
         }
     },

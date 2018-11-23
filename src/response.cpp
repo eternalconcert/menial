@@ -42,5 +42,6 @@ std::string Response::getStatusMessage() {
             statusMessage = "500 Internal Server Error";
             break;
     }
+    this->logger->info("Reply status: " + statusMessage);
     return statusMessage;
 };

@@ -106,6 +106,7 @@ void Request::setHostAndPort() {
     }
     this->host = host;
     this->port = port;
+    this->logger->info("Request on: " + host + ":" + port);
 }
 
 void Request::setTarget() {

@@ -12,7 +12,6 @@ class Server {
         void sendError(int status, int sockfd);
         Server(int portno, Config* config, Logger* logger);
 
-
     private:
         int portno;
         Logger *logger;
