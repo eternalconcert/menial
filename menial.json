@@ -12,6 +12,7 @@
             "errorpages": "deployment/default/errorpages/"
         }
     },
+    "iplogging": false,
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug"

@@ -36,15 +36,26 @@ void Server::run() {
     }
 
     int master_socket = socket(AF_INET, SOCK_STREAM, 0);
-    setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+    if (master_socket == 0) {
+        this->logger->error("Unable to setup master_socket");
+        throw SocketError();
+    }
+    if(setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option))) {
+        this->logger->error("Unable to setup socket options");
+        throw SocketError();
+    }
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(this->portno);
     if (bind(master_socket, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        error("Error: Cannot bind");
+        this->logger->error("Cannot bind");
+        throw SocketError();
     }
-    listen(master_socket, QUEUE_LENGTH);
+    if (listen(master_socket, QUEUE_LENGTH) < 0) {
+        this->logger->error("Failed to listen");
+        throw SocketError();
+    }
     addrlen = sizeof(serv_addr);
 
     while(true) {
@@ -62,9 +73,17 @@ void Server::run() {
             }
         }
 
-        select(max_sd + 1, &readfds, NULL, NULL, NULL);
+        int activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
+        if ((activity < 0) && (errno != EINTR)) {
+            this->logger->error("Select failed");
+            throw SocketError();
+        }
         if (FD_ISSET(master_socket, &readfds)) {
             new_socket = accept(master_socket, (struct sockaddr *) &serv_addr, (socklen_t*)&addrlen);
+            if (new_socket < 0) {
+                this->logger->error("Failed to accept new socket");
+                throw SocketError();
+            }
             for (int i = 0; i < max_clients; i++) {
                 if (client_socket[i] == 0) {
                     client_socket[i] = new_socket;
@@ -76,12 +95,15 @@ void Server::run() {
             sd = client_socket[i];
             if (FD_ISSET(sd, &readfds)) {
                 try {
-                    Request *request = new Request(sd, this->config, this->logger);
+                    Request *request = new Request(sd, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
                 } catch (RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
                     this->logger->error(e.message);
                 } catch (CouldNotParseHeaders& e) {
+                    this->sendError(500, sd);
+                    this->logger->error(e.message);
+                } catch (SocketError& e) {
                     this->sendError(500, sd);
                     this->logger->error(e.message);
                 }
@@ -103,7 +125,7 @@ void Server::run() {
 
 void Server::sendReply(std::string replyMessage, int sockfd) {
 
-    int outMessageLen = write(sockfd, replyMessage.c_str(), replyMessage.length());
+    int outMessageLen = send(sockfd, replyMessage.c_str(), replyMessage.length(), 0);
     this->logger->debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
     this->logger->debug("Server::sendReply replyMessage: " + replyMessage);
 

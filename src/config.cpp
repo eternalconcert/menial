@@ -52,6 +52,13 @@ void Config::update(std::string configPath) {
     }
     this->logger = logger;
 
+    // IP logging
+    this->iplogging = false;
+    if (document.HasMember("iplogging")) {
+        this->iplogging = document["iplogging"].GetBool();
+    }
+
+
     // hosts
     Value& hosts = document["hosts"];
     if (!hosts.IsObject()) {

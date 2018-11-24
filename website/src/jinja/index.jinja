@@ -47,9 +47,10 @@
                         "target": "http://localhost/"
                     }
                 },
+                "logger": "console",
                 "loglevel": "debug",
-                "logfilepath": "/tmp/",
-                "logger": "console"
+                "iplogging": false,
+                "logfilepath": "/tmp/"
             }
         </pre>
         <h3 id="config-directives">Directives</h3>
@@ -94,6 +95,9 @@
                     </ul>
                 </li>
                 <li>
+                    <b>logger:</b> (Optional, default: "console") Specifies the logger. Loggers can be one of "console" or "file". "console" writes the log entries to stdout and "file" creates a "menial.log" in the "logfilepath".
+                </li>
+                <li>
                     <b>loglevel:</b> (Optional, default: "info") The priority level of log messages. Choices are:
                     <ul>
                         <li><i>debug:</i> The most verbose level. For development and debug purposes.</li>
@@ -106,10 +110,10 @@
                     Other values for the loglevel directive will supress logging. So be careful when you change the level to another value.
                 </li>
                 <li>
-                    <b>logfilepath:</b> (Optional, default: "/dev/null") Directory to store log files.
+                    <b>iplogging:</b> (Optional, default: false) If present and set to true, client IP addresses will be logged. Else they will be replaced by xxx.xxx.xxx.xxx in all logfiles.
                 </li>
                 <li>
-                    <b>logger:</b> (Optional, default: "console") Specifies the logger. Loggers can be one of "console" or "file". "console" writes the log entries to stdout and "file" creates a "menial.log" in the "logfilepath".
+                    <b>logfilepath:</b> (Optional, default: "/dev/null") Directory to store log files.
                 </li>
              </ul>
         </p>
@@ -144,9 +148,10 @@
                         "errorpages": "/can/be/blank/because/python/must/handle/errors/"
                     }
                 },
+                "logger": "file",
                 "loglevel": "info",
-                "logfilepath": "/var/log/menial/",
-                "logger": "file"
+                "iplogging": true,
+                "logfilepath": "/var/log/menial/"
             }
         </pre>
         <h3 id="config-custom-config">Custom config</h3>

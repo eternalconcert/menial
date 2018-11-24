@@ -26,10 +26,11 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
 }
 
 
-Request::Request(int sockfd, Config* config, Logger* logger) {
+Request::Request(int sockfd, std::string client_ip, Config* config, Logger* logger) {
     this->config = config;
     this->logger = logger;
 
+    this->setClientIp(client_ip);
     this->setHeaders(sockfd);
     this->setMethod();
     this->setHostAndPort();
@@ -38,11 +39,20 @@ Request::Request(int sockfd, Config* config, Logger* logger) {
 }
 
 
+void Request::setClientIp(std::string ip) {
+    this->clientIp = "xxx.xxx.xxx.xxx";
+    if (this->config->iplogging) {
+        this->clientIp = ip;
+    }
+    this->logger->info("Requesting client IP: " + this->clientIp);
+}
+
+
 void Request::setHeaders(int sockfd) {
     char buffer[BUFFER_SIZE];
 
     if (sockfd < 0) {
-        error("Error: Cannot accept");
+        throw SocketError("Error: Cannot accept");
     }
 
     std::string headers;
@@ -53,7 +63,7 @@ void Request::setHeaders(int sockfd) {
     do {
         bytesReceived = recv(sockfd, buffer, BUFFER_LIMIT, 0);
         if (bytesReceived < 0) {
-            error("Error: Reading from socket");
+            throw SocketError("Error: Reading from socket");
         }
 
         for (int j = 0; j < bytesReceived; j++) {

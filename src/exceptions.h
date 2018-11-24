@@ -28,4 +28,8 @@ class CouldNotParseHeaders: public Exception {
     using Exception::Exception;
 };
 
+class SocketError: public Exception {
+    using Exception::Exception;
+};
+
 #endif
