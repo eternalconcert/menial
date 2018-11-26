@@ -9,8 +9,15 @@
 
 
 void signalHandler(int signal) {
-    printf("\n%s\n", "Terminated");
-    exit(0);
+
+    switch (signal) {
+        case SIGINT:
+            printf("\nReceived SIGINT, %s\n", "terminated.");
+            exit(0);
+        case SIGTERM:
+            printf("\nReceived SIGTERM, %s\n", "terminated.");
+            exit(0);
+    }
 };
 
 
@@ -22,6 +29,9 @@ void spawnThread(Server server) {
 int main(int argc, char *argv[]) {
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
+
+    // Ignore SIGPIPE
+    signal(SIGPIPE, SIG_IGN);
 
     if (argc < 2) {
         printf("%s\n", "Please provide a config file.");

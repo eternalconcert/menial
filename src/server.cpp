@@ -117,7 +117,6 @@ void Server::run() {
                 close(sd);
                 client_socket[i] = 0;
             }
-
         }
     }
 }
@@ -125,7 +124,7 @@ void Server::run() {
 
 void Server::sendReply(std::string replyMessage, int sockfd) {
 
-    int outMessageLen = send(sockfd, replyMessage.c_str(), replyMessage.length(), 0);
+    int outMessageLen = send(sockfd, replyMessage.c_str(), replyMessage.length(), MSG_NOSIGNAL);
     this->logger->debug("Server::sendReply outMessageLen: " + std::to_string(outMessageLen));
     this->logger->debug("Server::sendReply replyMessage: " + replyMessage);
 
@@ -150,7 +149,7 @@ void Server::sendError(int status, int sockfd) {
     header += getErrorMessage(status);;
     header += "\n\r\n";
 
-    int errorMessageLen = write(sockfd, header.c_str(), header.length());
+    int errorMessageLen = send(sockfd, header.c_str(), header.length(), MSG_NOSIGNAL);
 
     this->logger->debug("Server::sendError errorMessageLen: " + std::to_string(errorMessageLen));
     this->logger->debug("Server::sendError replyMessage: " + header);
