@@ -17,7 +17,7 @@ void DefaultLogHandler::log(std::string level, std::string message) {
 
     time_t t = time(0);
     struct tm *now = localtime(&t);
-    printf("%s[%s][%i-%i-%i %i:%i:%i]: %s%s\n",
+    printf("%s[%s][%i-%02i-%02i %02i:%02i:%02i]: %s%s\n",
            logColors.find(level)->second.c_str(),
            level.c_str(),
            (now->tm_year + 1900),

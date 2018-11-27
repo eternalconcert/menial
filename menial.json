@@ -1,7 +1,9 @@
 {
     "hosts": {
         "*:8000": {
-            "handler": "python",
+            "handler": "redirect",
+            "target": "http://google.de/",
+            "permanent": false,
             "root": "testdata/testhost/pyresponse.py",
             "errorpages": "deployment/default/errorpages/",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
