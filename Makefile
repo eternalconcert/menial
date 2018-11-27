@@ -23,6 +23,22 @@ serve:
 	@build/menial menial.json
 
 clean:
-	rm build/*
+	rm -rf build/*
+	rm -rf website/build/*
+	rm -rf menial.tar.gz
+	rm -rf menial_pkg.tar.gz
 
-.PHONY: clean compile serve
+website:
+	@mkdir -p website/build/styles
+	anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial"
+
+src: clean
+	tar -zcvf menial.tar.gz --exclude src/include/rapidjson src/
+
+deploy: clean compile_static src website
+	tar -zcvf menial_pkg.tar.gz website/build/ build/menial/ deployment/default/errorpages/
+	scp menial_pkg.tar.gz christian@softcreate.de://tmp/
+	scp menial.tar.gz christian@softcreate.de://tmp/
+	ssh -t christian@softcreate.de "tar -xvf /tmp/menial_pkg.tar.gz -C /tmp/; /home/christian/.deploy_menial.sh"
+
+.PHONY: clean compile serve website src deploy

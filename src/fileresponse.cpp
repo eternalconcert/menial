@@ -109,6 +109,12 @@ std::string FileResponse::guessFileType(std::string fileName) {
     else if (extension == "flac") {
         fileType = "audio/flac";
     }
+    else if (extension == "tar") {
+        fileType = "application/x-tar";
+    }
+    else if (extension == "gz") {
+        fileType = "application/gzip";
+    }
     return fileType;
 
 }

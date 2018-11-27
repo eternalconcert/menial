@@ -6,7 +6,22 @@
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div id="main">
+            <h1><a href="/">menial</a></h1>
+            <p id="claim">
+                Always at your service!
+            </p>
+            {% block body %}{% endblock %}
+        </div>
+        <div id=footer>
+            <p>
+                <a href="impress.html">Impress</a> - <a href="privacy.html">Privacy policy</a>
+            </p>
+            <p>
+                Licensed under <br /> <a href="https://www.gnu.org/licenses/gpl.html">
+                <image src="/static/gplv3-127x51.png" width="100" /></a>
+            </p>
+        </div>
     </body>
 </html>
 

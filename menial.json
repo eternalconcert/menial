@@ -10,7 +10,7 @@
         },
         "*:8080": {
             "handler": "file",
-            "root": "deployment/default/",
+            "root": "website/build/",
             "errorpages": "deployment/default/errorpages/"
         }
     },

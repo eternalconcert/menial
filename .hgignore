@@ -4,3 +4,5 @@ build/*
 target/*
 deployment/buildno.txt
 deployment/default/index.html
+menial_pkg.tar.gz
+menial.tar.gz
