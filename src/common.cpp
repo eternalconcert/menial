@@ -1,17 +1,10 @@
 #include <fstream>
 #include "common.h"
 #include "exceptions.h"
-
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
-
-void error(const char *msg)
-{
-    perror(msg);
-    exit(1);
-}
 
 
 std::string readFile(std::string path) {

@@ -99,7 +99,7 @@ void Server::run() {
                     this->sendReply(request->getResponse(), sd);
                 } catch (RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
-                    this->logger->error(e.message);
+                    this->logger->warning(e.message);
                 } catch (CouldNotParseHeaders& e) {
                     this->sendError(500, sd);
                     this->logger->error(e.message);
@@ -129,7 +129,7 @@ void Server::sendReply(std::string replyMessage, int sockfd) {
     this->logger->debug("Server::sendReply replyMessage: " + replyMessage);
 
     if (outMessageLen < 0) {
-        error("Error: Writing to socket");
+        this->logger->error("Error: Writing to socket");
     }
 }
 
@@ -155,6 +155,6 @@ void Server::sendError(int status, int sockfd) {
     this->logger->debug("Server::sendError replyMessage: " + header);
 
     if (errorMessageLen < 0) {
-        error("Error: Writing to socket");
+        this->logger->error("Error: Writing to socket");
     }
 }
