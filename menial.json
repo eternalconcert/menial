@@ -10,7 +10,7 @@
         },
         "*:8080": {
             "handler": "file",
-            "root": "website/build/",
+            "root": "/home/christian/Projekte/tmmk/build/",
             "errorpages": "deployment/default/errorpages/"
         }
     },

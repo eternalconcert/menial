@@ -8,16 +8,16 @@
 #include "fileresponse.h"
 
 
-std::string getGetParamsString(Request *request, Logger *logger) {
+void FileResponse::setGetParamsString() {
 
-    std::string target = request->getHeader();
+    std::string target = this->getRequest()->getHeader();
     target.erase(0, target.find(" ") + 1);
     target.erase(target.find(" "), target.length());
 
     std::string paramString = target;
     paramString.erase(0, target.find("?"));
-    logger->debug("Get Request params " + paramString);
-    return paramString;
+    this->logger->debug("Get Request params " + paramString);
+    this->paramString = paramString;
 };
 
 
@@ -48,10 +48,9 @@ std::string FileResponse::headerBase() {
 
 std::string FileResponse::get() {
     std::string target = this->getRequest()->getTarget();
-    std::string getParams = getGetParamsString(this->getRequest(), this->logger);
 
-    if (getParams.length() > 0) {
-        target.erase(target.find(getParams));
+    if (this->paramString.length() > 0) {
+        target.erase(target.find(this->paramString));
     }
 
     std::string content;

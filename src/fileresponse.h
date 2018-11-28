@@ -14,11 +14,13 @@ class FileResponse: public Response {
         std::string getHeader(std::string content, std::string fileName);
         std::string getFileName(std::string target);
         std::string getLastModified(std::string filePath);
+        void setGetParamsString();
         void setFilePath();
         FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
             setFilePath();
         };
 
+        std::string paramString;
         std::string filePath;
 
 
