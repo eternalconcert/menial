@@ -1,3 +1,4 @@
+#include <ctime>
 #include <stdio.h>
 #include "common.h"
 #include "exceptions.h"
@@ -6,6 +7,7 @@
 
 
 std::string getGetParamsString(Request *request, Logger *logger) {
+
     std::string target = request->getHeader();
     target.erase(0, target.find(" ") + 1);
     target.erase(target.find(" "), target.length());
@@ -14,6 +16,22 @@ std::string getGetParamsString(Request *request, Logger *logger) {
     paramString.erase(0, target.find("?"));
     logger->debug("Get Request params " + paramString);
     return paramString;
+};
+
+
+void FileResponse::setFilePath() {
+    std::string target = this->getRequest()->getTarget();
+    if (target == "/") {
+        target = this->config["defaultdocument"];
+        this->logger->debug("No file on / requested, using default target: " + target);
+    }
+    else if (target.back() == '/') {
+            target = target + this->config["defaultdocument"];
+            this->logger->debug("No file on subdir requested, using default target: " + target);
+    }
+    this->logger->info("Requested document: " + target);
+
+    this->filePath = this->config["root"] + target;
 };
 
 
@@ -34,20 +52,9 @@ std::string FileResponse::get() {
         target.erase(target.find(getParams));
     }
 
-
-    if (target == "/") {
-        target = this->config["defaultdocument"];
-        this->logger->debug("No file on / requested, using default target: " + target);
-    }
-    else if (target.back() == '/') {
-            target = target + this->config["defaultdocument"];
-            this->logger->debug("No file on subdir requested, using default target: " + target);
-    }
-    this->logger->info("Requested document: " + target);
-
     std::string content;
     try {
-        content += readFile(this->config["root"] + target);
+        content += readFile(filePath);
     } catch (FileNotFoundException) {
         content += readFile(this->config["errorPagesDir"] + "404.html");
         this->setStatus(404);
@@ -61,6 +68,7 @@ std::string FileResponse::get() {
     return result;
 }
 
+
 std::string FileResponse::methodNotAllowed() {
     this->setStatus(405);
     std::string header = this->headerBase();
@@ -73,6 +81,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
+    header += this->getLastModified(this->filePath);
     header += this->config["additionalheaders"];
     header += "\r\n";
     return header;
@@ -118,3 +127,26 @@ std::string FileResponse::guessFileType(std::string fileName) {
     return fileType;
 
 }
+
+
+std::string FileResponse::getLastModified(std::string filePath) {
+    // Last-Modified: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
+
+    std::string lastModified;
+
+    time_t t = time(0);
+    struct tm *now = localtime(&t);
+    //printf("%s[%s][%i-%02i-%02i %02i:%02i:%02i]: %s%s\n",
+    //       logColors.find(level)->second.c_str(),
+    //       level.c_str(),
+    //       (now->tm_year + 1900),
+    //       (now->tm_mon + 1),
+    //       now->tm_mday,
+    //       now->tm_hour,
+    //       now->tm_min,
+    //       now->tm_sec,
+    //       message.c_str(),
+    //       logColors["reset"].c_str());
+
+    return "Last-Modified: \n";
+};

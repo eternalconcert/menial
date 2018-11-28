@@ -13,7 +13,14 @@ class FileResponse: public Response {
         std::string methodNotAllowed();
         std::string getHeader(std::string content, std::string fileName);
         std::string getFileName(std::string target);
-        FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {};
+        std::string getLastModified(std::string filePath);
+        void setFilePath();
+        FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
+            setFilePath();
+        };
+
+        std::string filePath;
+
 
     private:
         std::string guessFileType(std::string fileName);
