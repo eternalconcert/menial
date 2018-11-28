@@ -1,5 +1,6 @@
 #include <ctime>
 #include <stdio.h>
+#include <sys/stat.h>
 #include "common.h"
 #include "exceptions.h"
 #include "logger.h"
@@ -131,22 +132,13 @@ std::string FileResponse::guessFileType(std::string fileName) {
 
 std::string FileResponse::getLastModified(std::string filePath) {
     // Last-Modified: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
+    char mtime[61];
+    struct stat fileInfo;
+    stat(filePath.c_str(), &fileInfo);
+    time_t t = fileInfo.st_mtime;
+    struct tm lt;
+    localtime_r(&t, &lt);
+    strftime(mtime, sizeof(mtime), "Last-Modified: %a, %d %m %Y %H:%M:%S GMT\n", &lt);
 
-    std::string lastModified;
-
-    time_t t = time(0);
-    struct tm *now = localtime(&t);
-    //printf("%s[%s][%i-%02i-%02i %02i:%02i:%02i]: %s%s\n",
-    //       logColors.find(level)->second.c_str(),
-    //       level.c_str(),
-    //       (now->tm_year + 1900),
-    //       (now->tm_mon + 1),
-    //       now->tm_mday,
-    //       now->tm_hour,
-    //       now->tm_min,
-    //       now->tm_sec,
-    //       message.c_str(),
-    //       logColors["reset"].c_str());
-
-    return "Last-Modified: \n";
+    return std::string(mtime);
 };
