@@ -1,4 +1,5 @@
 #include <ctime>
+#include <cstring>
 #include <stdio.h>
 #include <sys/stat.h>
 #include "common.h"
@@ -82,7 +83,9 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
-    header += this->getLastModified(this->filePath);
+    if (this->status == 200) {
+        header += this->getLastModified(this->filePath);
+    }
     header += this->config["additionalheaders"];
     header += "\r\n";
     return header;
@@ -132,13 +135,13 @@ std::string FileResponse::guessFileType(std::string fileName) {
 
 std::string FileResponse::getLastModified(std::string filePath) {
     // Last-Modified: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
-    char mtime[61];
+    char mtime[50];
+    memset(mtime, 0, sizeof(mtime));
     struct stat fileInfo;
     stat(filePath.c_str(), &fileInfo);
     time_t t = fileInfo.st_mtime;
     struct tm lt;
     localtime_r(&t, &lt);
     strftime(mtime, sizeof(mtime), "Last-Modified: %a, %d %m %Y %H:%M:%S GMT\n", &lt);
-
     return std::string(mtime);
 };
