@@ -7,7 +7,7 @@ with open('build/menial', 'r') as menial:
     menial_hash = sha256(menial.read()).hexdigest()
 
 with open('website/hashvalues.json', 'w+') as f:
-    timestamp = datetime.strftime(datetime.now(), "%Y-%m%d %h:%M:%S")
+    timestamp = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
     d = {
         "menial_hash": menial_hash,
         "timestamp": timestamp
