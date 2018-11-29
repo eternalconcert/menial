@@ -31,9 +31,14 @@ void FileResponse::setFilePath() {
             target = target + this->config["defaultdocument"];
             this->logger->debug("No file on subdir requested, using default target: " + target);
     }
-    this->logger->info("Requested document: " + target);
+    this->logger->debug("Requested document: " + target);
+
+    if (this->paramString.length() > 0) {
+        target.erase(target.find(this->paramString));
+    }
 
     this->filePath = this->config["root"] + target;
+    this->logger->debug("Filepath: " + this->filePath);
 };
 
 

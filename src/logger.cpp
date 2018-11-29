@@ -1,3 +1,4 @@
+#include <cstring>
 #include <ctime>
 #include <fstream>
 #include <map>
@@ -38,19 +39,12 @@ FileLogHandler::FileLogHandler(Config* config) {
 void FileLogHandler::log(std::string level, std::string message) {
     std::ofstream logfile;
     logfile.open(this->config->logFilePath + "menial.log", std::ios_base::app);
-
+    char fmtime[24];
+    memset(fmtime, 0, sizeof(fmtime));
     time_t t = time(0);
     struct tm *now = localtime(&t);
-
-    std::string logLine = "[" + level + "][" +
-                          std::to_string(now->tm_year + 1900) +
-                          "-" + std::to_string(now->tm_mon + 1) +
-                          "-" + std::to_string(now->tm_mday) +
-                          "-" + std::to_string(now->tm_hour) +
-                          ":" + std::to_string(now->tm_min) +
-                          ":" + std::to_string(now->tm_sec) +
-                          "]: " + message + "\n";
-
+    strftime(fmtime, sizeof(fmtime), "[%Y-%m-%d %H:%M:%S]: ", now);
+    std::string logLine = "[" + level + "]" + std::string(fmtime) + message + "\n";
 
     logfile << logLine;
 };

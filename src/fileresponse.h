@@ -17,6 +17,7 @@ class FileResponse: public Response {
         void setGetParamsString();
         void setFilePath();
         FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
+            setGetParamsString();
             setFilePath();
         };
 
