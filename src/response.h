@@ -11,6 +11,10 @@ class Response {
             return "";
         };
 
+        virtual std::string head() {
+            return "";
+        };
+
         virtual std::string methodNotAllowed() {
             return "";
         };

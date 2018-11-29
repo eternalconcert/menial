@@ -53,24 +53,22 @@ std::string FileResponse::headerBase() {
 
 std::string FileResponse::get() {
     std::string target = this->getRequest()->getTarget();
-
-    if (this->paramString.length() > 0) {
-        target.erase(target.find(this->paramString));
-    }
-
-    std::string content;
-    try {
-        content += readFile(filePath);
-    } catch (FileNotFoundException) {
-        content += readFile(this->config["errorPagesDir"] + "404.html");
-        this->setStatus(404);
-        this->logger->info("404: Unknown target requested: " + target);
-    }
-
     std::string fileName = this->getFileName(target);
 
     std::string result;
+    std::string content = this->getContent();
     result = this->getHeader(content, fileName) + content;
+    return result;
+}
+
+
+std::string FileResponse::head() {
+    std::string target = this->getRequest()->getTarget();
+    std::string fileName = this->getFileName(target);
+
+    std::string result;
+    std::string content = this->getContent();
+    result = this->getHeader(content, fileName);
     return result;
 }
 
@@ -134,6 +132,23 @@ std::string FileResponse::guessFileType(std::string fileName) {
     }
     return fileType;
 
+}
+
+std::string FileResponse::getContent() {
+    std::string target = this->getRequest()->getTarget();
+    if (this->paramString.length() > 0) {
+        target.erase(target.find(this->paramString));
+    }
+
+    std::string content;
+    try {
+        content += readFile(filePath);
+    } catch (FileNotFoundException) {
+        content += readFile(this->config["errorPagesDir"] + "404.html");
+        this->setStatus(404);
+        this->logger->info("404: Unknown target requested: " + target);
+    }
+    return content;
 }
 
 

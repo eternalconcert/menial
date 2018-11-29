@@ -1,12 +1,9 @@
 {
     "hosts": {
         "*:8000": {
-            "handler": "redirect",
-            "target": "http://google.de/",
-            "permanent": false,
-            "root": "testdata/testhost/pyresponse.py",
-            "errorpages": "deployment/default/errorpages/",
-            "additionalheaders": "Access-Control-Allow-Origin: *\n"
+            "handler": "file",
+            "root": "website/build/",
+            "errorpages": "deployment/default/errorpages/"
         },
         "*:8080": {
             "handler": "file",
@@ -14,7 +11,7 @@
             "errorpages": "deployment/default/errorpages/"
         }
     },
-    "iplogging": false,
+    "iplogging": true,
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug"
