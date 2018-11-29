@@ -2,13 +2,6 @@ body, html {
     height: 100%;
 }
 
-#main {
-    width: 600px;
-    position: relative;
-    margin: 0 auto;
-    min-height: 500px;
-}
-
 h1 {
     color: green;
 }
@@ -16,6 +9,7 @@ h1 {
 h2 {
     color: green;
     font-size: 20px;
+    margin-top: 50px;
 }
 
 h1 a {
@@ -23,35 +17,45 @@ h1 a {
     text-decoration: none;
 }
 
+a {
+    color: blue;
+}
+
+table {
+    text-align: left;
+    width: 500px;
+}
+
+#main {
+    width: 600px;
+    position: relative;
+    margin: 0 auto;
+    min-height: 500px;
+}
+
 #claim {
     font-style: italic;
-    margin-bottom: 70px;
+    margin-bottom: 40px;
 }
 
 #footer {
+    text-align: center;
     padding-top: 100px;
     width: 600px;
-    margin: auto;
+    margin: 50px auto 100px auto;
 }
 
-#info {
-    margin-top: 100px;
+#navigation {
+    text-align: center;
+    padding-inline-start: 0px;
+
+    li {
+        padding-right: 10px;
+        display: inline;
+    }
 }
 
-#info-table {
-    width: 350px;
-}
 
-#content-table {
-    list-style-type: none;
-    padding: 0;
-}
-
-.content-table-main {
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-.content-table-sub {
-    margin-left: 20px;
+.hashvalue {
+    font-size: 0.7em;
 }

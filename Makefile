@@ -30,9 +30,10 @@ clean:
 
 website:
 	@mkdir -p website/build/styles
-	anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial"
+	python website/update_values.py
+	anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
 
-src: clean
+src:
 	tar -zcvf menial.tar.gz --exclude src/include/rapidjson src/
 
 deploy: clean compile_static src website

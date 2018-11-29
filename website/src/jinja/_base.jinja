@@ -11,6 +11,22 @@
             <p id="claim">
                 Always at your service!
             </p>
+            <hr>
+            <ul id="navigation">
+                <li>
+                    <a href="/">About</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('download.html') }}">Download</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('help.html') }}">Help</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('documentation.html') }}">Documentation</a>
+                </li>
+            </ul>
+            <hr>
             {% block body %}{% endblock %}
         </div>
         <div id=footer>

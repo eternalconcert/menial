@@ -1,0 +1,35 @@
+{% extends '_base.jinja' %}
+{% block body %}
+    <h2>Download</h2>
+
+    <h3>Sources</h3>
+    <ul>
+        <li>
+            Download: <a href="{{ url_for('menial.tar.gz') }}">menial.tar.gz</a>
+        </li>
+        <li>
+            Packaged: {{ timestamp }}
+        </li>
+    </ul>
+
+    <h3>Binary (X86_64)</h3>
+    <ul>
+        <li>
+            <a href="{{ url_for('menial') }}">menial</a>
+        </li>
+        <li>
+            Checksum: <span class="hashvalue">{{ menial_hash }} (SHA256)</span>
+        </li>
+        <li>
+            Built: {{ timestamp }}
+        </li>
+    </ul>
+    <p>
+        Menial also runs on ARM machines. Currently there are no precomiled ARM binaries. If there is demand, it will be added.
+    </p>
+    <h3>Disclaimer</h3>
+    <p>
+        This software comes without any warranty. You use it on your own risk. It may contain bugs, viruses or harm your hardware in another way. The developer is not responsible for any consequences which may occur because of using the software.
+    </p>
+
+{% endblock %}
