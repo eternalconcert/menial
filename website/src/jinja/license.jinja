@@ -1,0 +1,26 @@
+{% extends '_base.jinja' %}
+{% block body %}
+    <h2>menial</h2>
+    <p>
+        menial is licensed under a <a href="https://www.gnu.org/licenses/gpl.html">GPLv3 license</a>. The text of this license is included in the downloadable sources.
+    </p>
+
+    <h2>Third-party libraries</h2>
+    <p>
+        We would like to thank the developers of the third-party libraries which are used by menial. The following section gives information about the licenses of the included libraties.
+    </p>
+    <h3>RapidJSON</h3>
+    <p>
+        Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.  All rights reserved.
+    </p>
+    </p>
+    <p>
+        menial uses RapidJSON to parse the configuration file. The necessary parts are included in the downloadable sources on this page. RapidJSON is licensed under an MIT license and it states, that itself uses further third-party libraries with other licenses. Please check the license here: <a href="https://github.com/Tencent/rapidjson/blob/master/license.txt">Tencent on GitHub</a>. The license is also included into the downloadable sources of menial (./src/include/rapidjason/license.txt).
+    </p>
+    <p>
+        Taken from the license notes: "Your integration of RapidJSON into your own projects may require compliance with the MIT License, as well as the other licenses applicable to the third-party components included within RapidJSON. To avoid the problematic JSON license in your own projects, it's sufficient to exclude the bin/jsonchecker/ directory, as it's the only code under the JSON license."
+    </p>
+    <p>
+        The bin/jsonchecker/ directory is not part of menial or the downloadable sources.
+    </p>
+{% endblock %}

@@ -34,7 +34,7 @@ website:
 	anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
 
 src:
-	tar -zcvf menial.tar.gz --exclude src/include/rapidjson src/
+	tar -zcvf menial.tar.gz src/
 
 deploy: clean compile_static src website
 	tar -zcvf menial_pkg.tar.gz website/build/ build/menial/ deployment/default/errorpages/

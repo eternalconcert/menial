@@ -8,6 +8,9 @@
             Download: <a href="{{ url_for('menial.tar.gz') }}">menial.tar.gz</a>
         </li>
         <li>
+            Checksum: <span class="hashvalue">{{ menial_tar_gz_hash }} (SHA256)</span>
+        </li>
+        <li>
             Packaged: {{ timestamp }}
         </li>
     </ul>
@@ -26,6 +29,10 @@
     </ul>
     <p>
         Menial also runs on ARM machines. Currently there are no precomiled ARM binaries. If there is demand, it will be added.
+    </p>
+    <h3>License</h3>
+    <p>
+        Please make sure you have read the license notices on <a href="{{ url_for('license.html') }}">License</a>. menial is licensed under a GPLv3 license but it uses third-party libraries which are licensed under a MIT license.
     </p>
     <h3>Disclaimer</h3>
     <p>
