@@ -5,6 +5,11 @@
             "root": "website/build/",
             "errorpages": "deployment/default/errorpages/"
         },
+        "build.localhost:8000": {
+            "handler": "file",
+            "root": "/tmp/",
+            "errorpages": "deployment/default/errorpages/"
+        },
         "*:8080": {
             "handler": "file",
             "root": "/home/christian/Projekte/tmmk/build/",

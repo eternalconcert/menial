@@ -23,6 +23,10 @@ void FileResponse::setGetParamsString() {
 
 void FileResponse::setFilePath() {
     std::string target = this->getRequest()->getTarget();
+    if (target.find("..") != std::string::npos) {
+        this->logger->warning("Intrusion try detected: " + target + " Resseting target to /");
+        target = "/";
+    }
 
     if (this->paramString.length() > 0) {
         target.erase(target.find(this->paramString));
