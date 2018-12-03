@@ -29,7 +29,7 @@ class FileResponse: public Response {
     private:
         std::string guessFileType(std::string fileName);
         std::string getContent();
-        std::string getLastModified(std::string filePath);
+        std::string getLastModified();
 };
 
 

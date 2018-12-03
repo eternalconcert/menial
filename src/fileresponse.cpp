@@ -23,6 +23,11 @@ void FileResponse::setGetParamsString() {
 
 void FileResponse::setFilePath() {
     std::string target = this->getRequest()->getTarget();
+
+    if (this->paramString.length() > 0) {
+        target.erase(target.find(this->paramString));
+    }
+
     if (target == "/") {
         target = this->config["defaultdocument"];
         this->logger->debug("No file on / requested, using default target: " + target);
@@ -32,10 +37,6 @@ void FileResponse::setFilePath() {
             this->logger->debug("No file on subdir requested, using default target: " + target);
     }
     this->logger->debug("Requested document: " + target);
-
-    if (this->paramString.length() > 0) {
-        target.erase(target.find(this->paramString));
-    }
 
     this->filePath = this->config["root"] + target;
     this->logger->debug("Filepath: " + this->filePath);
@@ -86,7 +87,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     if (this->status == 200) {
-        header += this->getLastModified(this->filePath);
+        header += this->getLastModified();
     }
     header += this->config["additionalheaders"];
     header += "\r\n";
@@ -142,7 +143,7 @@ std::string FileResponse::getContent() {
 
     std::string content;
     try {
-        content += readFile(filePath);
+        content += readFile(this->filePath);
     } catch (FileNotFoundException) {
         content += readFile(this->config["errorPagesDir"] + "404.html");
         this->setStatus(404);
@@ -152,12 +153,12 @@ std::string FileResponse::getContent() {
 }
 
 
-std::string FileResponse::getLastModified(std::string filePath) {
+std::string FileResponse::getLastModified() {
     // Last-Modified: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
     char mtime[50];
     memset(mtime, 0, sizeof(mtime));
     struct stat fileInfo;
-    stat(filePath.c_str(), &fileInfo);
+    stat(this->filePath.c_str(), &fileInfo);
     time_t t = fileInfo.st_mtime;
     struct tm lt;
     localtime_r(&t, &lt);
