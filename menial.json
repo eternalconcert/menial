@@ -2,22 +2,20 @@
     "hosts": {
         "*:8000": {
             "handler": "file",
-            "root": "website/build/",
-            "errorpages": "deployment/default/errorpages/"
+            "root": "website/build/"
         },
         "build.localhost:8000": {
             "handler": "file",
-            "root": "/tmp/",
-            "errorpages": "deployment/default/errorpages/"
+            "root": "/tmp/"
         },
         "*:8080": {
             "handler": "file",
-            "root": "/home/christian/Projekte/tmmk/build/",
-            "errorpages": "deployment/default/errorpages/"
+            "root": "/home/christian/Projekte/tmmk/build/"
         }
     },
     "iplogging": true,
     "logger": "console",
     "logfilepath": "/tmp/",
-    "loglevel": "debug"
+    "loglevel": "debug",
+    "errorpages": "deployment/default/errorpages/"
 }

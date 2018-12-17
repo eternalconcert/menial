@@ -58,6 +58,12 @@ void Config::update(std::string configPath) {
         this->iplogging = document["iplogging"].GetBool();
     }
 
+    // Error pages
+    std::string globalErrorPagesDir = "default/errorpages/";
+    if (document.HasMember("errorpages")) {
+        globalErrorPagesDir = document["errorpages"].GetString();
+    }
+    this->errorPagesDir = globalErrorPagesDir;
 
     // hosts
     Value& hosts = document["hosts"];
@@ -84,7 +90,7 @@ void Config::update(std::string configPath) {
         };
         this->hosts[host]["additionalheaders"] = additionalheaders;
 
-        std::string errorPagesDir = "default/errorpages/";
+        std::string errorPagesDir = this->errorPagesDir;
         if (document["hosts"][host.c_str()].HasMember("errorpages")) {
             errorPagesDir = document["hosts"][host.c_str()]["errorpages"].GetString();
         }

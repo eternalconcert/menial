@@ -45,7 +45,8 @@
             "logger": "console",
             "loglevel": "debug",
             "iplogging": false,
-            "logfilepath": "/tmp/"
+            "logfilepath": "/tmp/",
+            "errorpages": "default/errorpages/",
         }
     </pre>
     <h3 id="config-directives">Directives</h3>
@@ -70,9 +71,11 @@
                         <b>root:</b> The document root directory. When the handler is set to "file", the content of the document root will be delivered. Path can be absolute or relative to the menial binary.
                     </li>
                     <li>
-                        <b>errorpages:</b> (Optional, default: "default/errorpages/") The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
+                        <b>errorpages:</b> (default: "default/errorpages/") The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
                         <br>
                         Example: 404.html
+                        <br>
+                        This host specific directive will overwrite global the (optional) global error pages directive (see below).
                     </li>
                     <li>
                         <b>permanent</b> (Mandatory for redirect handlers) Indicates whether the redirect should be temporary (http status 302) or permanent (http status 301). Values must be boolean: true/false.
@@ -110,6 +113,9 @@
             <li>
                 <b>logfilepath:</b> (Optional, default: "/dev/null") Directory to store log files.
             </li>
+            <li>
+                <b>errorpages:</b> (Optional, default: "default/errorpages/") Like the host specific error pages configuration (see above); but global. If there is no error pages directory configured for a host, this global directive will be used. Please be aware, that this is optional, but if no error pages directory is configured nor a host specific error pages directory is set, the server will die with a FileNotFoundExcpetion if a the request needs one of the error pages (e.g. a 404.html).
+            </li>
          </ul>
     </p>
     <p>
@@ -123,18 +129,16 @@
             "hosts": {
                 "*:80": {
                     "handler": "file",
-                    "root": "/var/www/html/myhomepage/",
-                    "errorpages": "/etc/menial/errorpages/"
+                    "root": "/var/www/html/myhomepage/"
                 }
                 "myfriend:80": {
                     "handler": "file",
-                    "root": "/var/www/html/myfriendshomepage/",
-                    "errorpages": "/etc/menial/errorpages/"
+                    "root": "/var/www/html/myfriendshomepage/"
                 },
                 "myfriendscousin:80": {
                     "handler": "file",
                     "root": "/var/www/html/myfriendscousinshomepage/"
-                    "errorpages": "/etc/menial/errorpages/",
+                    "errorpages": "/home/myfriendscousin/menial/errorpages/",
                     "additionalheaders": "Access-Control-Allow-Origin: *\n"
                 },
                 "*:8000": {
@@ -146,7 +150,8 @@
             "logger": "file",
             "loglevel": "info",
             "iplogging": true,
-            "logfilepath": "/var/log/menial/"
+            "logfilepath": "/var/log/menial/",
+            "errorpages": "/etc/menial/errorpages/"
         }
     </pre>
     <h3 id="config-custom-config">Custom config</h3>
