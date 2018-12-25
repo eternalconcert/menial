@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     };
     std::string configPath = argv[1];
     static Config* config = Config::getConfig(configPath);
-    Logger* logger = Logger::getLogger(config);
+    static Logger* logger = Logger::getLogger(config);
 
     logger->info("Starting menial");
     logger->info("Initializing servers");

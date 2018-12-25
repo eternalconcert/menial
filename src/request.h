@@ -14,8 +14,6 @@ class Request {
         void setUserAgent();
         void setBody();
 
-        Config *config;
-        Logger *logger;
         std::string getMethod();
         std::string getHeader();
         std::string getBody();
@@ -36,6 +34,8 @@ class Request {
         std::string port;
         std::string userAgent;
         std::string clientIp;
+        Config *config;
+        Logger *logger;
 };
 
 #endif

@@ -6,7 +6,6 @@
 #include <rapidjson/stringbuffer.h>
 
 
-
 std::string readFile(std::string path) {
     std::ifstream file(path);
 
