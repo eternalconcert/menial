@@ -56,17 +56,6 @@ std::string FileResponse::headerBase() {
 }
 
 
-std::string FileResponse::get() {
-    std::string target = this->getRequest()->getTarget();
-    std::string fileName = this->getFileName(target);
-
-    std::string result;
-    std::string content = this->getContent();
-    result = this->getHeader(content, fileName) + content;
-    return result;
-}
-
-
 std::string FileResponse::head() {
     std::string target = this->getRequest()->getTarget();
     std::string fileName = this->getFileName(target);
@@ -75,6 +64,11 @@ std::string FileResponse::head() {
     std::string content = this->getContent();
     result = this->getHeader(content, fileName);
     return result;
+}
+
+
+std::string FileResponse::get() {
+    return this->head() + this->getContent();
 }
 
 
