@@ -10,39 +10,39 @@
 
 void FileResponse::setGetParamsString() {
 
-    std::string target = this->getRequest()->getHeader();
-    target.erase(0, target.find(" ") + 1);
-    target.erase(target.find(" "), target.length());
+    std::string header = this->getRequest()->getHeader();
+    header.erase(0, header.find(" ") + 1);
+    header.erase(header.find(" "), header.length());
 
-    std::string paramString = target;
-    paramString.erase(0, target.find("?"));
+    std::string paramString = header;
+    paramString.erase(0, header.find("?"));
     this->logger->debug("Get Request params " + paramString);
     this->paramString = paramString;
 };
 
 
 void FileResponse::setFilePath() {
-    std::string target = this->getRequest()->getTarget();
-    if (target.find("..") != std::string::npos) {
-        this->logger->warning("Intrusion try detected: " + target + " Resseting target to /");
-        target = "/";
+    std::string targetPath = this->target;
+    if (targetPath.find("..") != std::string::npos) {
+        this->logger->warning("Intrusion try detected: " + targetPath + " Resseting target to /");
+        targetPath = "/";
     }
 
     if (this->paramString.length() > 0) {
-        target.erase(target.find(this->paramString));
+        targetPath.erase(targetPath.find(this->paramString));
     }
 
-    if (target == "/") {
-        target = this->config["defaultdocument"];
-        this->logger->debug("No file on / requested, using default target: " + target);
+    if (targetPath == "/") {
+        targetPath = this->config["defaultdocument"];
+        this->logger->debug("No file on / requested, using default target: " + targetPath);
     }
-    else if (target.back() == '/') {
-            target = target + this->config["defaultdocument"];
-            this->logger->debug("No file on subdir requested, using default target: " + target);
+    else if (targetPath.back() == '/') {
+            targetPath = targetPath + this->config["defaultdocument"];
+            this->logger->debug("No file on subdir requested, using default target: " + targetPath);
     }
-    this->logger->debug("Requested document: " + target);
+    this->logger->debug("Requested document: " + targetPath);
 
-    this->filePath = this->config["root"] + target;
+    this->filePath = this->config["root"] + targetPath;
     this->logger->debug("Filepath: " + this->filePath);
 };
 
@@ -57,8 +57,7 @@ std::string FileResponse::headerBase() {
 
 
 std::string FileResponse::head() {
-    std::string target = this->getRequest()->getTarget();
-    std::string fileName = this->getFileName(target);
+    std::string fileName = this->fileName;
 
     std::string result;
     std::string content = this->getContent();
@@ -90,11 +89,6 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += this->config["additionalheaders"];
     header += "\r\n";
     return header;
-}
-
-
-std::string FileResponse::getFileName(std::string target) {
-    return target.substr(target.find_last_of("/") + 1, target.length());
 }
 
 

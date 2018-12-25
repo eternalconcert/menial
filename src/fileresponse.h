@@ -14,17 +14,20 @@ class FileResponse: public Response {
         std::string headerBase();
         std::string methodNotAllowed();
         std::string getHeader(std::string content, std::string fileName);
-        std::string getFileName(std::string target);
         void setGetParamsString();
         void setFilePath();
-        FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
-            setGetParamsString();
-            setFilePath();
-        };
 
         std::string paramString;
         std::string filePath;
+        std::string fileName;
+        std::string target;
 
+        FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
+            this->target = getRequest()->getTarget();
+            setGetParamsString();
+            setFilePath();
+            this->fileName = this->target.substr(this->target.find_last_of("/") + 1, this->target.length());
+        };
 
     private:
         std::string guessFileType(std::string fileName);
