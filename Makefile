@@ -37,9 +37,9 @@ src:
 	tar -zcvf menial.tar.gz src/
 
 deploy: clean compile_static src website
-	tar -zcvf menial_pkg.tar.gz website/build/ build/menial/ deployment/default/errorpages/
+	tar -zcvf menial_pkg.tar.gz website/build/ build/menial/ deployment/default/errorpages/ deployment/Dockerfile
 	scp menial_pkg.tar.gz christian@softcreate.de://tmp/
 	scp menial.tar.gz christian@softcreate.de://tmp/
-	ssh -t christian@softcreate.de "tar -xvf /tmp/menial_pkg.tar.gz -C /tmp/; /home/christian/.deploy_menial.sh"
+	ssh -t christian@softcreate.de "tar -xvf /tmp/menial_pkg.tar.gz -C /tmp/; /home/christian/deploymentscripts/menial.sh"
 
 .PHONY: clean compile serve website src deploy

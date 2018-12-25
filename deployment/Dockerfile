@@ -1,8 +1,6 @@
-FROM debian:stretch
+FROM ubuntu:latest
+WORKDIR /data
 
-ADD server /server/
+ADD data .
 
-RUN apt-get update
-RUN apt-get install libstdc++6
-
-CMD ["server/menial", "server/menial.json"]
+CMD /data/menial /conf/menial.json
