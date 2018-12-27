@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM alpine:latest
 WORKDIR /data
 
 ADD data .
