@@ -123,9 +123,12 @@ std::string FileResponse::guessFileType(std::string fileName) {
     else if (extension == "gz") {
         fileType = "application/gzip";
     }
+    else if (extension == "bin" or extension == "file" or extension == "com" or extension == "class") {
+        fileType = "application/octet-stream";
+    }
     return fileType;
-
 }
+
 
 std::string FileResponse::getContent() {
     std::string target = this->getRequest()->getTarget();

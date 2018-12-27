@@ -10,7 +10,7 @@
         },
         "*:8080": {
             "handler": "file",
-            "root": "/home/christian/Projekte/tmmk/build/"
+            "root": "/home/christian/Projekte/softcreate/build/"
         }
     },
     "iplogging": true,

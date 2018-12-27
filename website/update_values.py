@@ -3,7 +3,7 @@ import json
 from hashlib import sha256
 
 
-with open('build/menial', 'r') as menial:
+with open('build/menial.bin', 'r') as menial:
     menial_hash = sha256(menial.read()).hexdigest()
 
 with open('menial.tar.gz', 'r') as menial_tar_gz:

@@ -3,4 +3,4 @@ WORKDIR /data
 
 ADD data .
 
-CMD /data/menial /conf/menial.json
+CMD /data/menial.bin /menial/conf/menial.json
