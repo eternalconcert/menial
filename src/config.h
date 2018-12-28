@@ -15,6 +15,7 @@ class Config {
         std::map<std::string, std::map<std::string, std::string>> hosts;
         std::map<std::string, std::string> defaultHosts;
         std::set<int> ports;
+        std::map<int, std::map<std::string, std::string>> sslPortmap;
         bool iplogging;
         static Config* getConfig(std::string path);
 

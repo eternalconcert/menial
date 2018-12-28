@@ -4,18 +4,25 @@
             "handler": "file",
             "root": "website/build/"
         },
-        "build.localhost:8000": {
-            "handler": "file",
-            "root": "/tmp/"
-        },
         "*:8080": {
             "handler": "file",
             "root": "/home/christian/Projekte/softcreate/build/"
+        },
+        "*:4433": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/tmmk/build/"
         }
     },
     "iplogging": true,
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug",
-    "errorpages": "deployment/default/errorpages/"
+    "errorpages": "deployment/default/errorpages/",
+    "ssl": {
+        "4433": {
+            "on": true,
+            "cert": "/some/path/cert.pem",
+            "key": "/some/path/key.pem"
+        }
+    }
 }

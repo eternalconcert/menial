@@ -13,12 +13,18 @@ const int QUEUE_LENGTH = 100;
 Server::Server(int portno, Config* config, Logger* logger) {
     this->logger = logger;
     this->config = config;
-    this->logger->debug("Using portno: " + std::to_string(portno));
     this->portno = portno;
 };
 
 
 void Server::run() {
+    if (this->config->sslPortmap[this->portno]["on"] == "true") {
+        this->logger->info("Setting up SSL socket for port: " + std::to_string(this->portno));
+    }
+
+    else {
+        this->logger->info("Setting up plain socket for port: " + std::to_string(portno));
+    }
     // SELECT
     fd_set readfds;
     int addrlen;

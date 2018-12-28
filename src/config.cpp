@@ -130,6 +130,39 @@ void Config::update(std::string configPath) {
         }
         this->ports.insert(portNum);
     }
+
+    // ssl
+    if (document.HasMember("ssl")) {
+        Value& ssl = document["ssl"];
+        if (!ssl.IsObject()) {
+            throw ConfigException("No valid config value for hosts defined.");
+        }
+
+        for (Value::MemberIterator itr = ssl.MemberBegin(); itr != ssl.MemberEnd(); ++itr) {
+
+            std::string port = itr->name.GetString();
+            int portNum = atoi(port.c_str());
+
+            if (!document["ssl"][port.c_str()].HasMember("cert")) {
+                throw ConfigException("No certificate path defined for ssl port " + port);
+            }
+            std::string certPath = document["ssl"][port.c_str()]["cert"].GetString();
+
+            if (!document["ssl"][port.c_str()].HasMember("key")) {
+                throw ConfigException("No key path defined for ssl port " + port);
+            }
+            std::string keyPath = document["ssl"][port.c_str()]["key"].GetString();
+
+            if (!document["ssl"][port.c_str()].HasMember("on")) {
+                throw ConfigException("No value defined for activation state of for ssl port " + port);
+            }
+            bool on = document["ssl"][port.c_str()]["on"].GetBool();
+
+            this->sslPortmap[portNum]["cert"] = certPath;
+            this->sslPortmap[portNum]["key"] = keyPath;
+            this->sslPortmap[portNum]["on"] = on ? "true" : "false";
+        }
+    }
 }
 
 Config* Config::_instance = 0;
