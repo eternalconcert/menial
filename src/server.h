@@ -8,6 +8,8 @@
 class Server {
     public:
         void run();
+        void runPlain();
+        void runSSL();
         void sendReply(std::string replyMessage, int newsockfd);
         void sendError(int status, int sockfd);
         Server(int portno, Config* config, Logger* logger);

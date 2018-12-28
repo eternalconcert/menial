@@ -21,8 +21,8 @@
     "ssl": {
         "4433": {
             "on": true,
-            "cert": "/some/path/cert.pem",
-            "key": "/some/path/key.pem"
+            "cert": "/home/christian/Projekte/menial/cert.pem",
+            "key": "/home/christian/Projekte/menial/key.pem"
         }
     }
 }
