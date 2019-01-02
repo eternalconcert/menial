@@ -7,7 +7,7 @@ BUILD_NUMBER_FILE=deployment/buildno.txt
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o build/menial.bin -std=c++11 -pthread -Wall -I src/include/ -lssl
+	g++ $(SOURCES) -o build/menial.bin -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto
 	$(MAKE) index
 
 compile_static:

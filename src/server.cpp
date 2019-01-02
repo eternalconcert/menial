@@ -60,7 +60,7 @@ void Server::runPlain() {
     }
     addrlen = sizeof(serv_addr);
 
-    while(true) {
+    while (true) {
         FD_ZERO(&readfds);
         FD_SET(master_socket, &readfds);
         max_sd = master_socket;
@@ -93,6 +93,7 @@ void Server::runPlain() {
                 }
             }
         }
+
         for (int i = 0; i < max_clients; i++) {
             sd = client_socket[i];
             if (FD_ISSET(sd, &readfds)) {
@@ -124,137 +125,75 @@ void Server::runPlain() {
 
 }
 
+
 void Server::runSSL() {
     this->logger->info("Setting up SSL socket for port: " + std::to_string(this->portno));
-    // Init SSL
-    SSL_CTX *ctx;
+    SSL_load_error_strings();
     OpenSSL_add_ssl_algorithms();
 
-    // Create Context
     const SSL_METHOD *method;
+    SSL_CTX *ctx;
     method = SSLv23_server_method();
     ctx = SSL_CTX_new(method);
+    if (!ctx) {
+        this->logger->error("Unable to create SSL context");
+    }
 
-    // Configure SSL
     SSL_CTX_set_ecdh_auto(ctx, 1);
 
-
-    // Set key and certificate
+    /* Set the key and cert */
     const char *certfile = this->config->sslPortmap[this->portno]["cert"].c_str();
-    if (SSL_CTX_use_certificate_file(ctx, certfile, SSL_FILETYPE_PEM) <= 0) {
-        throw SSLError("Cannot open certfile: " + std::string(certfile));
+    if (SSL_CTX_use_certificate_file(ctx, certfile, SSL_FILETYPE_PEM) <=0) {
+        this->logger->error("Unable to read certfile " + std::string(certfile));
+    }
+    const char *keyfile = config->sslPortmap[portno]["key"].c_str();
+    if (SSL_CTX_use_PrivateKey_file(ctx, keyfile, SSL_FILETYPE_PEM) <=0) {
+        this->logger->error("Unable to read keyfile " + std::string(keyfile));
     }
 
-    const char *keyfile = this->config->sslPortmap[this->portno]["key"].c_str();
-    if (SSL_CTX_use_PrivateKey_file(ctx, keyfile, SSL_FILETYPE_PEM) <= 0) {
-        throw SSLError("Cannot open keyfile: " + std::string(keyfile));
+
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(this->portno);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    int master_socket;
+    master_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (master_socket < 0) {
+        this->logger->error("Unable to create socket");
     }
 
-    // SELECT
-    fd_set readfds;
-    int addrlen;
-    int client_socket[30];
-    int max_clients = 30;
-    int max_sd;
-    int new_socket;
-    int option = 1;
-    int sd;
-    int bytesReceived;
-    char buffer[BUFFER_SIZE];
-
-    for (int i = 0; i < max_clients; i++) {
-        client_socket[i] = 0;
+    if (bind(master_socket, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+        this->logger->error("Unable to bind");
     }
 
-    int master_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (master_socket == 0) {
-        this->logger->error("Unable to setup master_socket");
-        throw SocketError();
+    if (listen(master_socket, 1) < 0) {
+        this->logger->error("Unable to listen");
     }
-    if(setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option))) {
-        this->logger->error("Unable to setup socket options");
-        throw SocketError();
-    }
-    struct sockaddr_in serv_addr;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(this->portno);
-    if (bind(master_socket, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        this->logger->error("Cannot bind");
-        throw SocketError();
-    }
-    if (listen(master_socket, QUEUE_LENGTH) < 0) {
-        this->logger->error("Failed to listen");
-        throw SocketError();
-    }
-    addrlen = sizeof(serv_addr);
 
     while(true) {
-        FD_ZERO(&readfds);
-        SSL *ssl;
-        ssl = SSL_new(ctx);
-
-        FD_SET(master_socket, &readfds);
-        max_sd = master_socket;
-
-        for (int i = 0; i < max_clients; i++) {
-            sd = client_socket[i];
-            if (sd > 0) {
-                FD_SET(sd, &readfds);
-            }
-            if (sd > max_sd) {
-                max_sd = sd;
-            }
+        uint len = sizeof(addr);
+        const char reply[] = "Hello world!\n";
+        int client = accept(master_socket, (struct sockaddr*)&addr, &len);
+        if (client < 0) {
+            this->logger->error("Unable to accept");
         }
 
-        int activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
-        if ((activity < 0) && (errno != EINTR)) {
-            this->logger->error("Select failed");
-            throw SocketError();
+        SSL *ssl = SSL_new(ctx);
+        SSL_set_fd(ssl, client);
+        if (SSL_accept(ssl) <= 0) {
+            ERR_print_errors_fp(stderr);
         }
-        if (FD_ISSET(master_socket, &readfds)) {
-            new_socket = accept(master_socket, (struct sockaddr *) &serv_addr, (socklen_t*)&addrlen);
-            if (new_socket < 0) {
-                this->logger->error("Failed to accept new socket");
-                throw SocketError();
-            }
-            for (int i = 0; i < max_clients; i++) {
-                if (client_socket[i] == 0) {
-                    client_socket[i] = new_socket;
-                    break;
-                }
-            }
+        else {
+            this->logger->debug("Wrting on SSL socket");
+            SSL_write(ssl, reply, strlen(reply));
         }
-        for (int i = 0; i < max_clients; i++) {
-            sd = client_socket[i];
-            if (FD_ISSET(sd, &readfds)) {
-                try {
-                    Request *request = new Request(sd, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
-                    this->sendReply(request->getResponse(), sd);
-                } catch (RequestHeaderFieldTooLarge& e) {
-                    this->sendError(431, sd);
-                    this->logger->warning(e.message);
-                } catch (CouldNotParseHeaders& e) {
-                    this->sendError(500, sd);
-                    this->logger->error(e.message);
-                } catch (SocketError& e) {
-                    this->sendError(500, sd);
-                    this->logger->error(e.message);
-                }
-                // Keep alive
-                do {
-                    bytesReceived = recv(sd, buffer, BUFFER_SIZE, MSG_DONTWAIT);
-                    this->logger->debug("Client sending " + std::to_string(bytesReceived) + " bytes.");
-                } while (bytesReceived > 0);
-
-                shutdown(sd, SHUT_RD);
-                close(sd);
-                SSL_CTX_free(ctx);
-                EVP_cleanup();
-                client_socket[i] = 0;
-            }
-        }
+        SSL_free(ssl);
+        close(client);
     }
+    close(master_socket);
+    SSL_CTX_free(ctx);
+    EVP_cleanup();
 };
 
 
