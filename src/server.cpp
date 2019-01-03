@@ -19,6 +19,104 @@ Server::Server(int portno, Config* config, Logger* logger) {
 };
 
 
+std::string Server::readPlainHeaders(int sockfd) {
+    char buffer[BUFFER_SIZE];
+
+    if (sockfd < 0) {
+        throw SocketError("Error: Cannot accept");
+    }
+
+    std::string headers;
+    bool foundEnd = false;
+    int bytesReceived;
+
+    int headerIdx = 0;
+    do {
+        bytesReceived = recv(sockfd, buffer, BUFFER_LIMIT, 0);
+        if (bytesReceived < 0) {
+            throw SocketError("Error: Reading from socket");
+        }
+
+        for (int j = 0; j < bytesReceived; j++) {
+            headers += buffer[j];
+            if(headers[headerIdx] == '\n' and headers[headerIdx-1] == '\r' and headers[headerIdx-2] == '\n') {
+                foundEnd = true;
+                break;
+            }
+            headerIdx++;
+        }
+        // Make sure it is not an TLS connection
+        if (not isupper(headers[0])) {
+            throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
+        }
+    } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
+
+    // Check header length
+    if (headerIdx > MAX_HEADER_LENGTH) {
+        this->logger->warning(
+            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
+        );
+        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
+    }
+    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
+    this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
+
+    if (headers.length() == 0) {
+        throw CouldNotParseHeaders("Could not parse headers.");
+    }
+    return headers;
+}
+
+
+std::string Server::readSSLHeaders(SSL *sockfd) {
+    char buffer[BUFFER_SIZE];
+
+    if (sockfd < 0) {
+        throw SocketError("Error: Cannot accept");
+    }
+
+    std::string headers;
+    bool foundEnd = false;
+    int bytesReceived;
+    int headerIdx = 0;
+    do {
+        bytesReceived = SSL_read(sockfd, buffer, BUFFER_LIMIT);
+        if (bytesReceived < 0) {
+            throw SocketError("Error: Reading from socket");
+        }
+
+        for (int j = 0; j < bytesReceived; j++) {
+            headers += buffer[j];
+            if(headers[headerIdx] == '\n' and headers[headerIdx-1] == '\r' and headers[headerIdx-2] == '\n') {
+                foundEnd = true;
+                break;
+            }
+            headerIdx++;
+        }
+        // Make sure it is not an TLS connection
+        if (not isupper(headers[0])) {
+            throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
+        }
+    } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
+
+    // Check header length
+    if (headerIdx > MAX_HEADER_LENGTH) {
+        this->logger->warning(
+            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
+        );
+        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
+    }
+    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
+    this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
+
+    if (headers.length() == 0) {
+        throw CouldNotParseHeaders("Could not parse headers.");
+    }
+    return headers;
+}
+
+
+
 void Server::runPlain() {
     this->logger->info("Setting up plain socket for port: " + std::to_string(portno));
     // SELECT
@@ -98,7 +196,8 @@ void Server::runPlain() {
             sd = client_socket[i];
             if (FD_ISSET(sd, &readfds)) {
                 try {
-                    Request *request = new Request(sd, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
+                    std::string headers = this->readPlainHeaders(sd);
+                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
                 } catch (RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
@@ -173,7 +272,6 @@ void Server::runSSL() {
 
     while(true) {
         uint len = sizeof(addr);
-        const char reply[] = "Hello world!\n";
         int client = accept(master_socket, (struct sockaddr*)&addr, &len);
         if (client < 0) {
             this->logger->error("Unable to accept");
@@ -185,8 +283,23 @@ void Server::runSSL() {
             ERR_print_errors_fp(stderr);
         }
         else {
-            this->logger->debug("Wrting on SSL socket");
-            SSL_write(ssl, reply, strlen(reply));
+            this->logger->debug("Reading on SSL socket");
+            try {
+                std::string headers = this->readSSLHeaders(ssl);
+                Request *request = new Request(headers, inet_ntoa(addr.sin_addr), this->config, this->logger);
+                const char *reply = request->getResponse().c_str();
+                SSL_write(ssl, reply, strlen(reply));
+            } catch (RequestHeaderFieldTooLarge& e) {
+                // this->sendError(431, sd);
+                this->logger->warning(e.message);
+            } catch (CouldNotParseHeaders& e) {
+                // this->sendError(500, sd);
+                this->logger->error(e.message);
+            } catch (SocketError& e) {
+                // this->sendError(500, sd);
+                this->logger->error(e.message);
+            }
+
         }
         SSL_free(ssl);
         close(client);

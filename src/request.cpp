@@ -26,12 +26,12 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
 }
 
 
-Request::Request(int sockfd, std::string client_ip, Config* config, Logger* logger) {
+Request::Request(std::string headers, std::string client_ip, Config* config, Logger* logger) {
     this->config = config;
     this->logger = logger;
 
     this->setClientIp(client_ip);
-    this->setHeaders(sockfd);
+    this->headers = headers;
     this->setMethod();
     this->setHostAndPort();
     this->setTarget();
@@ -47,55 +47,6 @@ void Request::setClientIp(std::string ip) {
     this->logger->info("Requesting client IP: " + this->clientIp);
 }
 
-
-void Request::setHeaders(int sockfd) {
-    char buffer[BUFFER_SIZE];
-
-    if (sockfd < 0) {
-        throw SocketError("Error: Cannot accept");
-    }
-
-    std::string headers;
-    bool foundEnd = false;
-    int bytesReceived;
-
-    int headerIdx = 0;
-    do {
-        bytesReceived = recv(sockfd, buffer, BUFFER_LIMIT, 0);
-        if (bytesReceived < 0) {
-            throw SocketError("Error: Reading from socket");
-        }
-
-        for (int j = 0; j < bytesReceived; j++) {
-            headers += buffer[j];
-            if(headers[headerIdx] == '\n' and headers[headerIdx-1] == '\r' and headers[headerIdx-2] == '\n') {
-                foundEnd = true;
-                break;
-            }
-            headerIdx++;
-        }
-        // Make sure it is not an TLS connection
-        if (not isupper(headers[0])) {
-            throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
-        }
-    } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
-
-    // Check header length
-    if (headerIdx > MAX_HEADER_LENGTH) {
-        this->logger->warning(
-            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
-        );
-        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
-    }
-    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
-    this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
-
-    if (headers.length() == 0) {
-        throw CouldNotParseHeaders("Could not parse headers.");
-    }
-
-    this->headers = headers;
-}
 
 void Request::setMethod() {
     std::string headers = this->headers;

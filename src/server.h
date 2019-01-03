@@ -1,5 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
+#include <openssl/ssl.h>
 #include "config.h"
 #include "logger.h"
 #include "request.h"
@@ -9,6 +10,8 @@ class Server {
     public:
         void run();
         void runPlain();
+        std::string readPlainHeaders(int sockfd);
+        std::string readSSLHeaders(SSL *sockfd);
         void runSSL();
         void sendReply(std::string replyMessage, int newsockfd);
         void sendError(int status, int sockfd);

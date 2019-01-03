@@ -7,7 +7,6 @@ class Request {
     public:
 
         void setClientIp(std::string ip);
-        void setHeaders(int sockfd);
         void setMethod();
         void setHostAndPort();
         void setTarget();
@@ -23,7 +22,7 @@ class Request {
 
         std::string getResponse();
 
-        Request(int sockfd, std::string client_ip, Config* config, Logger* logger);
+        Request(std::string headers, std::string client_ip, Config* config, Logger* logger);
 
     private:
         std::string headers;
