@@ -74,7 +74,10 @@ void Config::update(std::string configPath) {
     for (Value::MemberIterator itr = hosts.MemberBegin(); itr != hosts.MemberEnd(); ++itr) {
         std::string host = itr->name.GetString();
 
-        std::string root = document["hosts"][host.c_str()]["root"].GetString();
+        std::string root = "";
+        if (document["hosts"][host.c_str()].HasMember("root")) {
+            root = document["hosts"][host.c_str()]["root"].GetString();
+        }
         this->hosts[host]["root"] = root;
 
 
@@ -83,6 +86,10 @@ void Config::update(std::string configPath) {
             handler = document["hosts"][host.c_str()]["handler"].GetString();
         };
         this->hosts[host]["handler"] = handler;
+
+        if (handler != "redirect" and root == "") {
+            throw ConfigException("No root specified for host: " + host);
+        }
 
         std::string additionalheaders = "";
         if (document["hosts"][host.c_str()].HasMember("additionalheaders")) {

@@ -24,7 +24,7 @@ std::string RedirectResponse::headerBase() {
     std::string header = "HTTP/1.0 ";
     header += this->getStatusMessage();
     header += "\n";
-    header += "Location: " + this->config["target"];
+    header += "Location: " + this->config["target"] + this->getRequest()->getTarget();
     header += "\n";
     header += "Server: menial\n";
     return header;

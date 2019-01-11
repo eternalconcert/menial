@@ -1,8 +1,8 @@
 {
     "hosts": {
         "*:8000": {
-            "handler": "file",
-            "root": "website/build/"
+            "handler": "redirect",
+            "target": "https://localhost:4433"
         },
         "*:8080": {
             "handler": "file",
@@ -14,7 +14,7 @@
         },
         "*:4433": {
             "handler": "file",
-            "root": "/home/christian/Projekte/tmmk/build/"
+            "root": "website/build/"
         }
     },
     "iplogging": true,
