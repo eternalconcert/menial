@@ -93,10 +93,6 @@ std::string Server::readSSLHeaders(SSL *sockfd) {
             }
             headerIdx++;
         }
-        // Make sure it is not an TLS connection
-        if (not isupper(headers[0])) {
-            throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
-        }
     } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
 
     // Check header length
@@ -115,6 +111,7 @@ std::string Server::readSSLHeaders(SSL *sockfd) {
     return headers;
 }
 
+
 int makeMasterSocket(Logger *logger) {
     int master_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (master_socket == 0) {
@@ -128,6 +125,7 @@ int makeMasterSocket(Logger *logger) {
     }
     return master_socket;
 }
+
 
 struct sockaddr_in makeServerAddr(int portno, int master_socket, Logger *logger) {
     struct sockaddr_in serv_addr;
@@ -153,7 +151,7 @@ void Server::runPlain() {
     int max_clients = 30;
     int client_socket[max_clients];
     int max_sd;
-    int new_socket;
+    int client;
     int sd;
     int bytesReceived;
     char buffer[BUFFER_SIZE];
@@ -187,14 +185,14 @@ void Server::runPlain() {
             throw SocketError();
         }
         if (FD_ISSET(master_socket, &readfds)) {
-            new_socket = accept(master_socket, (struct sockaddr *) &serv_addr, (socklen_t*)&addrlen);
-            if (new_socket < 0) {
+            client = accept(master_socket, (struct sockaddr*)&serv_addr, (socklen_t*)&addrlen);
+            if (client < 0) {
                 this->logger->error("Failed to accept new socket");
                 throw SocketError();
             }
             for (int i = 0; i < max_clients; i++) {
                 if (client_socket[i] == 0) {
-                    client_socket[i] = new_socket;
+                    client_socket[i] = client;
                     break;
                 }
             }
@@ -229,7 +227,6 @@ void Server::runPlain() {
             }
         }
     }
-
 }
 
 
@@ -258,29 +255,12 @@ void Server::runSSL() {
         this->logger->error("Unable to read keyfile " + std::string(keyfile));
     }
 
-
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(this->portno);
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    int master_socket;
-    master_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (master_socket < 0) {
-        this->logger->error("Unable to create socket");
-    }
-
-    if (bind(master_socket, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        this->logger->error("Unable to bind");
-    }
-
-    if (listen(master_socket, 1) < 0) {
-        this->logger->error("Unable to listen");
-    }
+    int master_socket = makeMasterSocket(this->logger);
+    struct sockaddr_in serv_addr = makeServerAddr(this->portno, master_socket, this->logger);
+    int addrlen = sizeof(serv_addr);
 
     while(true) {
-        uint len = sizeof(addr);
-        int client = accept(master_socket, (struct sockaddr*)&addr, &len);
+        int client = accept(master_socket, (struct sockaddr*)&serv_addr, (socklen_t*)&addrlen);
         if (client < 0) {
             this->logger->error("Unable to accept");
         }
@@ -294,7 +274,7 @@ void Server::runSSL() {
             this->logger->debug("Reading on SSL socket");
             try {
                 std::string headers = this->readSSLHeaders(ssl);
-                Request *request = new Request(headers, inet_ntoa(addr.sin_addr), this->config, this->logger);
+                Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
                 const char *reply = request->getResponse().c_str();
                 SSL_write(ssl, reply, strlen(reply));
             } catch (RequestHeaderFieldTooLarge& e) {
