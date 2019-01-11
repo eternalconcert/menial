@@ -115,18 +115,45 @@ std::string Server::readSSLHeaders(SSL *sockfd) {
     return headers;
 }
 
+int makeMasterSocket(Logger *logger) {
+    int master_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (master_socket == 0) {
+        logger->error("Unable to setup master_socket");
+        throw SocketError();
+    }
+    int option = 1;
+    if(setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option))) {
+        logger->error("Unable to setup socket options");
+        throw SocketError();
+    }
+    return master_socket;
+}
+
+struct sockaddr_in makeServerAddr(int portno, int master_socket, Logger *logger) {
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(portno);
+    if (bind(master_socket, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        logger->error("Cannot bind");
+        throw SocketError();
+    }
+    if (listen(master_socket, QUEUE_LENGTH) < 0) {
+        logger->error("Failed to listen");
+        throw SocketError();
+    }
+    return serv_addr;
+}
 
 
 void Server::runPlain() {
     this->logger->info("Setting up plain socket for port: " + std::to_string(portno));
     // SELECT
     fd_set readfds;
-    int addrlen;
-    int client_socket[30];
     int max_clients = 30;
+    int client_socket[max_clients];
     int max_sd;
     int new_socket;
-    int option = 1;
     int sd;
     int bytesReceived;
     char buffer[BUFFER_SIZE];
@@ -135,28 +162,9 @@ void Server::runPlain() {
         client_socket[i] = 0;
     }
 
-    int master_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (master_socket == 0) {
-        this->logger->error("Unable to setup master_socket");
-        throw SocketError();
-    }
-    if(setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option))) {
-        this->logger->error("Unable to setup socket options");
-        throw SocketError();
-    }
-    struct sockaddr_in serv_addr;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(this->portno);
-    if (bind(master_socket, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        this->logger->error("Cannot bind");
-        throw SocketError();
-    }
-    if (listen(master_socket, QUEUE_LENGTH) < 0) {
-        this->logger->error("Failed to listen");
-        throw SocketError();
-    }
-    addrlen = sizeof(serv_addr);
+    int master_socket = makeMasterSocket(this->logger);
+    struct sockaddr_in serv_addr = makeServerAddr(this->portno, master_socket, this->logger);
+    int addrlen = sizeof(serv_addr);
 
     while (true) {
         FD_ZERO(&readfds);
