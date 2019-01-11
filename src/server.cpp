@@ -232,6 +232,18 @@ void Server::runPlain() {
 
 void Server::runSSL() {
     this->logger->info("Setting up SSL socket for port: " + std::to_string(this->portno));
+    // SELECT
+    fd_set readfds;
+    int max_clients = 30;
+    int client_socket[max_clients];
+    int max_sd;
+    int client;
+    int sd;
+
+    for (int i = 0; i < max_clients; i++) {
+        client_socket[i] = 0;
+    }
+
     SSL_load_error_strings();
     OpenSSL_add_ssl_algorithms();
 
@@ -260,42 +272,74 @@ void Server::runSSL() {
     int addrlen = sizeof(serv_addr);
 
     while(true) {
-        int client = accept(master_socket, (struct sockaddr*)&serv_addr, (socklen_t*)&addrlen);
-        if (client < 0) {
-            this->logger->error("Unable to accept");
-        }
+        FD_ZERO(&readfds);
+        FD_SET(master_socket, &readfds);
+        max_sd = master_socket;
 
-        SSL *ssl = SSL_new(ctx);
-        SSL_set_fd(ssl, client);
-        if (SSL_accept(ssl) <= 0) {
-            ERR_print_errors_fp(stderr);
-        }
-        else {
-            this->logger->debug("Reading on SSL socket");
-            try {
-                std::string headers = this->readSSLHeaders(ssl);
-                Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
-                const char *reply = request->getResponse().c_str();
-                SSL_write(ssl, reply, strlen(reply));
-            } catch (RequestHeaderFieldTooLarge& e) {
-                // this->sendError(431, sd);
-                this->logger->warning(e.message);
-            } catch (CouldNotParseHeaders& e) {
-                // this->sendError(500, sd);
-                this->logger->error(e.message);
-            } catch (SocketError& e) {
-                // this->sendError(500, sd);
-                this->logger->error(e.message);
+        for (int i = 0; i < max_clients; i++) {
+            sd = client_socket[i];
+            if (sd > 0) {
+                FD_SET(sd, &readfds);
             }
-
+            if (sd > max_sd) {
+                max_sd = sd;
+            }
         }
-        SSL_free(ssl);
-        close(client);
+
+        int activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
+        if ((activity < 0) && (errno != EINTR)) {
+            this->logger->error("Select failed");
+            throw SocketError();
+        }
+        if (FD_ISSET(master_socket, &readfds)) {
+            client = accept(master_socket, (struct sockaddr*)&serv_addr, (socklen_t*)&addrlen);
+            if (client < 0) {
+                this->logger->error("Failed to accept new socket");
+                throw SocketError();
+            }
+            for (int i = 0; i < max_clients; i++) {
+                if (client_socket[i] == 0) {
+                    client_socket[i] = client;
+                    break;
+                }
+            }
+        }
+
+        this->logger->debug("Reading on SSL socket");
+        for (int i = 0; i < max_clients; i++) {
+            sd = client_socket[i];
+            if (FD_ISSET(sd, &readfds)) {
+                SSL *ssl = SSL_new(ctx);
+                SSL_set_fd(ssl, sd);
+                if (SSL_accept(ssl) <= 0) {
+                    ERR_print_errors_fp(stderr);
+                }
+                try {
+                    std::string headers = this->readSSLHeaders(ssl);
+                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
+                    std::string response = request->getResponse();
+                    SSL_write(ssl, response.c_str(), response.length());
+                } catch (RequestHeaderFieldTooLarge& e) {
+                    // this->sendError(431, sd);
+                    this->logger->warning(e.message);
+                } catch (CouldNotParseHeaders& e) {
+                    // this->sendError(500, sd);
+                    this->logger->error(e.message);
+                } catch (SocketError& e) {
+                    // this->sendError(500, sd);
+                    this->logger->error(e.message);
+                }
+
+                SSL_free(ssl);
+                shutdown(sd, SHUT_RD);
+                close(sd);
+                client_socket[i] = 0;
+            }
+        }
     }
-    close(master_socket);
     SSL_CTX_free(ctx);
     EVP_cleanup();
-};
+}
 
 
 void Server::run() {

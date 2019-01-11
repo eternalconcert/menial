@@ -88,6 +88,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     }
     header += this->config["additionalheaders"];
     header += "\r\n";
+    this->logger->debug("FileResponse header: " + header);
     return header;
 }
 
