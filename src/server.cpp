@@ -203,7 +203,7 @@ void Server::runPlain() {
             if (FD_ISSET(sd, &readfds)) {
                 try {
                     std::string headers = this->readPlainHeaders(sd);
-                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
+                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), false, this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
                 } catch (RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
@@ -316,7 +316,7 @@ void Server::runSSL() {
                 }
                 try {
                     std::string headers = this->readSSLHeaders(ssl);
-                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), this->config, this->logger);
+                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), true, this->config, this->logger);
                     std::string response = request->getResponse();
                     SSL_write(ssl, response.c_str(), response.length());
                 } catch (RequestHeaderFieldTooLarge& e) {

@@ -1,22 +1,26 @@
 {
     "hosts": {
-        "*:8000": {
-            "handler": "redirect",
-            "target": "https://localhost:4433",
-            "keeptarget": true
-        },
         "*:8080": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/softcreate/build/"
-        },
-        "*:9000": {
-            "handler": "file",
-            "root": "/home/christian/Projekte/cpc464/build/"
+            "handler": "redirect",
+            "target": "https://localhost"
         },
         "*:4433": {
             "handler": "file",
+            "root": "/home/christian/Projekte/softcreate/build/"
+        },
+        "cpc464.localhost:8080": {
+            "handler": "redirect",
+            "target": "https://cpc464.localhost"
+        },
+        "cpc464.localhost:4433": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/cpc464/build/"
+        },
+        "menial.localhost:8080": {
+            "handler": "file",
             "root": "website/build/"
         }
+
     },
     "iplogging": true,
     "logger": "console",

@@ -22,7 +22,7 @@ class Request {
 
         std::string getResponse();
 
-        Request(std::string headers, std::string client_ip, Config* config, Logger* logger);
+        Request(std::string headers, std::string client_ip, bool ssl, Config* config, Logger* logger);
 
     private:
         std::string headers;
@@ -33,6 +33,7 @@ class Request {
         std::string port;
         std::string userAgent;
         std::string clientIp;
+        bool ssl;
         Config *config;
         Logger *logger;
 };

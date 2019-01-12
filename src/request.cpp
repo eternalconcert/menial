@@ -26,9 +26,10 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
 }
 
 
-Request::Request(std::string headers, std::string client_ip, Config* config, Logger* logger) {
+Request::Request(std::string headers, std::string client_ip, bool ssl, Config* config, Logger* logger) {
     this->config = config;
     this->logger = logger;
+    this->ssl = ssl;
 
     this->setClientIp(client_ip);
     this->headers = headers;
@@ -58,7 +59,7 @@ void Request::setHostAndPort() {
     std::string fieldName = "Host: ";
     headers.erase(0, headers.find(fieldName) + fieldName.length());
     std::string host = headers.substr(0, headers.find("\n") - 1);
-    std::string port = "80";
+    std::string port = ssl ? "443" : "80";
 
     if (host.find(":") != std::string::npos) {
         port = host;

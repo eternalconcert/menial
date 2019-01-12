@@ -39,7 +39,8 @@
                     "handler": "redirect",
                     "root": "",
                     "permanent": true,
-                    "target": "http://localhost/"
+                    "target": "http://localhost/",
+                    "keeptarget": true
                 }
             },
             "logger": "console",
@@ -78,10 +79,13 @@
                         This host specific directive will overwrite global the (optional) global error pages directive (see below).
                     </li>
                     <li>
-                        <b>permanent</b> (Mandatory for redirect handlers) Indicates whether the redirect should be temporary (http status 302) or permanent (http status 301). Values must be boolean: true/false.
+                        <b>target</b> (Mandatory for redirect handlers) The location to which the resource has been moved.
                     </li>
                     <li>
-                        <b>target</b> (Mandatory for redirect handlers) The location to which the resource has been moved.
+                        <b>permanent</b> (Optional, default: false) Indicates whether the redirect should be temporary (http status 302) or permanent (http status 301). Values must be boolean: true/false.
+                    </li>
+                    <li>
+                        <b>keeptarget</b> (Optional, default: false) If set, the original target of the request will be used for the redirection. If http://foo.tld/ redirects to http://bar.tld/ and `keeptarget` is true, the request for http://foo.tld/page/1/ will be redirected to http://bar.tld/page/1/. If `keeptarget` is false, the same request will be redirected to http://foo.tld/.
                     </li>
                     <li>
                         <b>defaultdocument:</b> (Optional, default: "index.html") Filename of the document which should be served when no file is specified in the URL. All requests for / will get the file with the specified name (if existend in the requested directory).
@@ -128,6 +132,11 @@
         {
             "hosts": {
                 "*:80": {
+                    "handler": "redirect",
+                    "target": "myhomepage.tld:443",
+                    "keeptarget": true
+                },
+                "*:443": {
                     "handler": "file",
                     "root": "/var/www/html/myhomepage/"
                 }
