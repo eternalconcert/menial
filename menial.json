@@ -2,7 +2,8 @@
     "hosts": {
         "*:8000": {
             "handler": "redirect",
-            "target": "https://localhost:4433"
+            "target": "https://localhost:4433",
+            "keeptarget": true
         },
         "*:8080": {
             "handler": "file",

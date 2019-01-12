@@ -122,6 +122,11 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["permanent"] = permanent ? "true" : "false";
 
+        bool keeptarget = false;
+        if (document["hosts"][host.c_str()].HasMember("keeptarget")) {
+            keeptarget = document["hosts"][host.c_str()]["keeptarget"].GetBool();
+        }
+        this->hosts[host]["keeptarget"] = keeptarget ? "true" : "false";
 
         int portNum;
         std::string port = host;
