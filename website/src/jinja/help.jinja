@@ -160,7 +160,14 @@
             "loglevel": "info",
             "iplogging": true,
             "logfilepath": "/var/log/menial/",
-            "errorpages": "/etc/menial/errorpages/"
+            "errorpages": "/etc/menial/errorpages/",
+            "ssl": {
+                "443": {
+                    "on": true,
+                    "cert": "/path/to/the/cert.pem",
+                    "key": "/path/to/the/key.pem"
+                }
+            }
         }
     </pre>
     <h3 id="config-custom-config">Custom config</h3>
