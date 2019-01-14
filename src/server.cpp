@@ -205,6 +205,9 @@ void Server::runPlain() {
                     std::string headers = this->readPlainHeaders(sd);
                     Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), false, this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
+                } catch (std::out_of_range) {
+                    this->sendError(400, sd);
+                    this->logger->error("Bad request");
                 } catch (RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
                     this->logger->warning(e.message);
@@ -319,6 +322,9 @@ void Server::runSSL() {
                     Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), true, this->config, this->logger);
                     std::string response = request->getResponse();
                     SSL_write(ssl, response.c_str(), response.length());
+                } catch (std::out_of_range) {
+                    // this->sendError(400, sd);
+                    this->logger->error("Bad request");
                 } catch (RequestHeaderFieldTooLarge& e) {
                     // this->sendError(431, sd);
                     this->logger->warning(e.message);
