@@ -260,14 +260,17 @@ void Server::runSSL() {
 
     SSL_CTX_set_ecdh_auto(ctx, 1);
 
-    /* Set the key and cert */
-    const char *certfile = this->config->sslPortmap[this->portno]["cert"].c_str();
-    if (SSL_CTX_use_certificate_file(ctx, certfile, SSL_FILETYPE_PEM) <=0) {
-        this->logger->error("Unable to read certfile " + std::string(certfile));
+    /* Set the key and cert and chain */
+    // Key
+    const char *keyFile = config->sslPortmap[portno]["key"].c_str();
+    if (SSL_CTX_use_PrivateKey_file(ctx, keyFile, SSL_FILETYPE_PEM) <= 0) {
+        throw (ConfigException("Unable to read keyfile " + std::string(keyFile)));
     }
-    const char *keyfile = config->sslPortmap[portno]["key"].c_str();
-    if (SSL_CTX_use_PrivateKey_file(ctx, keyfile, SSL_FILETYPE_PEM) <=0) {
-        this->logger->error("Unable to read keyfile " + std::string(keyfile));
+
+    // Cert
+    const char *certFile = this->config->sslPortmap[this->portno]["cert"].c_str();
+    if (SSL_CTX_use_certificate_file(ctx, certFile, SSL_FILETYPE_PEM) <= 0) {
+        throw (ConfigException("Unable to read certfile " + std::string(certFile)));
     }
 
     int master_socket = makeMasterSocket(this->logger);
