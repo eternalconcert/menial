@@ -1,4 +1,5 @@
 #include <netinet/in.h>
+#include <sstream>
 #include "common.h"
 #include "exceptions.h"
 #include "response.h"
@@ -99,18 +100,31 @@ std::string Request::getResponse() {
     Response* response = _getHandler(this, this->config, this->logger);
     std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
     if (!authFile.empty()) {
+        bool authenticated = false;
         this->logger->debug("Access is to " + this->getVirtualHost() + " is restricted by " + authFile);
 
-        if (this->headers.find("Authorization: ") != std::string::npos) {
+        std::string headers = this->headers;
+        std::string authDelim = "Authorization: Basic ";
+        if (headers.find(authDelim) != std::string::npos) {
             try {
                 // Authenticate
-                std::string username = "\nchristian";
-                std::string db = readFile(authFile);
-                if (db.find(username + ":") == std::string::npos) {
-                    printf("%s\n", "ENDE");
-                }
-                else {
-                    printf("%s\n", "Found!");
+                std::string credentials = headers.substr(headers.find(authDelim) + authDelim.length()); // End delimiter missing
+                this->logger->debug("Requested raw credentials (base64): " + credentials);
+                credentials = base64decode(credentials);
+                std::string requestedPassword = credentials.substr(credentials.find(":") + 1);
+                std::string requestedUsername = credentials.substr(0, credentials.find(":"));
+                this->logger->debug("Requested username: " + requestedUsername);
+                std::string db_content = readFile(authFile);
+                std::string token;
+                std::stringstream stream(db_content);
+                while (std::getline(stream, token, '\n')) {
+                    if (token.find(requestedUsername + ":") != std::string::npos) {
+                        std::string passwordHash = token.substr(token.find(":") + 1, std::string::npos);
+                        authenticated = passwordHash == sha256hash(requestedPassword);
+                        if (authenticated) {
+                            break;
+                        }
+                    }
                 }
             }
             catch (FileNotFoundException) {
@@ -125,13 +139,13 @@ std::string Request::getResponse() {
                 return header + content;
             }
         }
-        else {
+
+        if (!authenticated) {
             response->setStatus(401);
             std::string header = "HTTP/1.0 ";
             header += response->getStatusMessage() + "\n";
             header += "Server: menial\n";
-            header += "Content-Length: 0\n";
-            header += "WWW-Authenticate: Basic realm = /\r\n";
+            header += "WWW-Authenticate: Basic realm = /\n\n";
             return header;
         }
 

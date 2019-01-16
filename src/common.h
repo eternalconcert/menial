@@ -11,5 +11,7 @@ const int BUFFER_LIMIT = BUFFER_SIZE - 1;
 const int MAX_HEADER_LENGTH = 2000;
 
 std::string readFile(std::string path);
+std::string base64decode(std::string const &encoded);
+std::string sha256hash(const std::string input);
 
 #endif

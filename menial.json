@@ -7,7 +7,8 @@
         },
         "*:4433": {
             "handler": "file",
-            "root": "/home/christian/Projekte/softcreate/build/"
+            "root": "/home/christian/Projekte/softcreate/build/",
+            "authfile": "auth.db"
         },
         "cpc464.localhost:8080": {
             "handler": "redirect",
@@ -30,7 +31,7 @@
     "errorpages": "deployment/default/errorpages/",
     "ssl": {
         "4433": {
-            "on": false,
+            "on": true,
             "cert": "/home/christian/Projekte/menial/cert.pem",
             "key": "/home/christian/Projekte/menial/key.pem"
         }
