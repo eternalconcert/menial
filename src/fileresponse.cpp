@@ -74,7 +74,6 @@ std::string FileResponse::get() {
 std::string FileResponse::methodNotAllowed() {
     this->setStatus(405);
     std::string header = this->headerBase();
-    header += "\r\n";
     return header;
 }
 

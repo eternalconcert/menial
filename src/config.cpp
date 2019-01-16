@@ -109,6 +109,11 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["defaultdocument"] = defaultDoc;
 
+        std::string authFile = "";
+        if (document["hosts"][host.c_str()].HasMember("authfile")) {
+            authFile = document["hosts"][host.c_str()]["authfile"].GetString();
+        }
+        this->hosts[host]["authfile"] = authFile;
 
         std::string target = "";
         if (document["hosts"][host.c_str()].HasMember("target")) {

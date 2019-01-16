@@ -1,8 +1,9 @@
 {
     "hosts": {
         "*:8080": {
-            "handler": "redirect",
-            "target": "https://localhost"
+            "handler": "file",
+            "root": "website/build/",
+            "authfile": "auth.db"
         },
         "*:4433": {
             "handler": "file",
@@ -29,7 +30,7 @@
     "errorpages": "deployment/default/errorpages/",
     "ssl": {
         "4433": {
-            "on": true,
+            "on": false,
             "cert": "/home/christian/Projekte/menial/cert.pem",
             "key": "/home/christian/Projekte/menial/key.pem"
         }

@@ -10,7 +10,6 @@ class FileResponse: public Response {
     public:
         std::string get();
         std::string head();
-
         std::string headerBase();
         std::string methodNotAllowed();
         std::string getHeader(std::string content, std::string fileName);

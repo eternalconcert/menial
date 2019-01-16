@@ -97,6 +97,23 @@ void Request::setBody() {
 
 std::string Request::getResponse() {
     Response* response = _getHandler(this, this->config, this->logger);
+    std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
+    if (!authFile.empty()) {
+        this->logger->debug("Access is to " + this->getVirtualHost() + " is restricted by " + authFile);
+        this->logger->warning(this->headers);
+
+        response->setStatus(401);
+
+        std::string header = "HTTP/1.0 ";
+        header += response->getStatusMessage();
+        header += "\n";
+        header += "Server: menial\n";
+        header += "Content-Length: 0\n";
+        header += "WWW-Authenticate: Basic realm = /\r\n";
+        return header;
+
+        // this->logger->warning(readFile(authFile));
+    }
     if (this->getMethod() == "GET") {
         return response->get();
     }
