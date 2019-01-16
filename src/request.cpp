@@ -100,19 +100,34 @@ std::string Request::getResponse() {
     std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
     if (!authFile.empty()) {
         this->logger->debug("Access is to " + this->getVirtualHost() + " is restricted by " + authFile);
-        this->logger->warning(this->headers);
 
-        response->setStatus(401);
+        if (this->headers.find("Authorization: ") != std::string::npos) {
+            try {
+                // Authenticate
+                this->logger->warning(readFile(authFile));
+            }
+            catch (FileNotFoundException) {
+                // Rewrite as response->sendError();
+                response->setStatus(500);
+                std::string header = "HTTP/1.0 ";
+                header += response->getStatusMessage() + "\n";
+                header += "Server: menial\n";
+                header += "Content-Length: 0\n\n";
+                std::string content =  readFile(this->config->hosts[this->getVirtualHost()]["errorPagesDir"] + "500.html");
+                this->logger->error("Auth file " + authFile + " cannot be read");
+                return header + content;
+            }
+        }
+        else {
+            response->setStatus(401);
+            std::string header = "HTTP/1.0 ";
+            header += response->getStatusMessage() + "\n";
+            header += "Server: menial\n";
+            header += "Content-Length: 0\n";
+            header += "WWW-Authenticate: Basic realm = /\r\n";
+            return header;
+        }
 
-        std::string header = "HTTP/1.0 ";
-        header += response->getStatusMessage();
-        header += "\n";
-        header += "Server: menial\n";
-        header += "Content-Length: 0\n";
-        header += "WWW-Authenticate: Basic realm = /\r\n";
-        return header;
-
-        // this->logger->warning(readFile(authFile));
     }
     if (this->getMethod() == "GET") {
         return response->get();
