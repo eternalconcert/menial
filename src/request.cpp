@@ -104,7 +104,14 @@ std::string Request::getResponse() {
         if (this->headers.find("Authorization: ") != std::string::npos) {
             try {
                 // Authenticate
-                this->logger->warning(readFile(authFile));
+                std::string username = "\nchristian";
+                std::string db = readFile(authFile);
+                if (db.find(username + ":") == std::string::npos) {
+                    printf("%s\n", "ENDE");
+                }
+                else {
+                    printf("%s\n", "Found!");
+                }
             }
             catch (FileNotFoundException) {
                 // Rewrite as response->sendError();
