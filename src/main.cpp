@@ -25,7 +25,7 @@ void spawnThread(Server server) {
     server.run();
 };
 
-
+#if TEST==0
 int main(int argc, char *argv[]) {
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
@@ -59,3 +59,4 @@ int main(int argc, char *argv[]) {
     }
     return 0;
 }
+#endif

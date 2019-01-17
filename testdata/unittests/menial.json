@@ -1,0 +1,17 @@
+{
+    "hosts": {
+        "open:80": {
+            "handler": "file",
+            "root": "website/build/"
+        },
+        "closed:80": {
+            "handler": "file",
+            "root": "website/build/",
+            "authfile": "testdata/unittests/auth.db"
+        }
+    },
+    "iplogging": true,
+    "logger": "console",
+    "loglevel": "critical",
+    "errorpages": "deployment/default/errorpages/"
+}
