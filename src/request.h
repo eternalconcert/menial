@@ -12,6 +12,7 @@ class Request {
         void setTarget();
         void setUserAgent();
         void setBody();
+        bool authenticate();
 
         std::string getMethod();
         std::string getHeader();
@@ -19,9 +20,7 @@ class Request {
         std::string getVirtualHost();
         std::string getTarget();
         std::string getUserAgent();
-
         std::string getResponse();
-
         Request(std::string headers, std::string client_ip, bool ssl, Config* config, Logger* logger);
 
     private:

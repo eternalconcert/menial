@@ -96,60 +96,71 @@ void Request::setBody() {
     this->logger->debug("RequestBody: " + this->body);
 }
 
-std::string Request::getResponse() {
-    Response* response = _getHandler(this, this->config, this->logger);
-    std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
-    if (!authFile.empty()) {
-        bool authenticated = false;
-        this->logger->debug("Access is to " + this->getVirtualHost() + " is restricted by " + authFile);
 
-        std::string headers = this->headers;
-        std::string authDelim = "Authorization: Basic ";
-        if (headers.find(authDelim) != std::string::npos) {
-            try {
-                // Authenticate
-                std::string credentials = headers.substr(headers.find(authDelim) + authDelim.length()); // End delimiter missing
-                this->logger->debug("Requested raw credentials (base64): " + credentials);
-                credentials = base64decode(credentials);
-                std::string requestedPassword = credentials.substr(credentials.find(":") + 1);
-                std::string requestedUsername = credentials.substr(0, credentials.find(":"));
-                this->logger->debug("Requested username: " + requestedUsername);
-                std::string db_content = readFile(authFile);
-                std::string token;
-                std::stringstream stream(db_content);
-                while (std::getline(stream, token, '\n')) {
-                    if (token.find(requestedUsername + ":") != std::string::npos) {
-                        std::string passwordHash = token.substr(token.find(":") + 1, std::string::npos);
-                        authenticated = passwordHash == sha256hash(requestedPassword);
-                        if (authenticated) {
-                            break;
-                        }
-                    }
+bool Request::authenticate() {
+    std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
+    if (authFile.empty()) {
+        // Early exit
+        return true;
+    }
+
+    this->logger->debug("Access is to " + this->getVirtualHost() + " is restricted by " + authFile);
+    bool authenticated = false;
+    std::string headers = this->headers;
+    std::string authDelim = "Authorization: Basic ";
+    if (headers.find(authDelim) != std::string::npos) {
+
+        std::string credentials = headers.substr(headers.find(authDelim) + authDelim.length()); // End delimiter missing
+        this->logger->debug("Requested raw credentials (base64): " + credentials);
+        credentials = base64decode(credentials);
+        std::string requestedPassword = credentials.substr(credentials.find(":") + 1);
+        std::string requestedUsername = credentials.substr(0, credentials.find(":"));
+        this->logger->debug("Requested username: " + requestedUsername);
+
+        std::string db_content = readFile(authFile);
+        std::string token;
+        std::stringstream stream(db_content);
+        while (std::getline(stream, token, '\n')) {
+            if (token.find(requestedUsername + ":") != std::string::npos) {
+                std::string passwordHash = token.substr(token.find(":") + 1, std::string::npos);
+                authenticated = passwordHash == sha256hash(requestedPassword);
+                if (authenticated) {
+                    break;
                 }
             }
-            catch (FileNotFoundException) {
-                // Rewrite as response->sendError();
-                response->setStatus(500);
-                std::string header = "HTTP/1.0 ";
-                header += response->getStatusMessage() + "\n";
-                header += "Server: menial\n";
-                header += "Content-Length: 0\n\n";
-                std::string content =  readFile(this->config->hosts[this->getVirtualHost()]["errorPagesDir"] + "500.html");
-                this->logger->error("Auth file " + authFile + " cannot be read");
-                return header + content;
-            }
         }
-
-        if (!authenticated) {
-            response->setStatus(401);
-            std::string header = "HTTP/1.0 ";
-            header += response->getStatusMessage() + "\n";
-            header += "Server: menial\n";
-            header += "WWW-Authenticate: Basic realm = /\n\n";
-            return header;
-        }
-
     }
+    return authenticated;
+}
+
+
+std::string Request::getResponse() {
+    Response* response = _getHandler(this, this->config, this->logger);
+    bool authenticated;
+    try {
+        // Authenticate
+        authenticated = this->authenticate();
+    }
+    catch (FileNotFoundException) {
+        // Rewrite as response->sendError();
+        response->setStatus(500);
+        std::string header = "HTTP/1.0 ";
+        header += response->getStatusMessage() + "\n";
+        header += "Server: menial\n";
+        header += "Content-Length: 0\n\n";
+        std::string content =  readFile(this->config->hosts[this->getVirtualHost()]["errorPagesDir"] + "500.html");
+        this->logger->error("Auth file cannot be read");
+        return header + content;
+    }
+    if (!authenticated) {
+        response->setStatus(401);
+        std::string header = "HTTP/1.0 ";
+        header += response->getStatusMessage() + "\n";
+        header += "Server: menial\n";
+        header += "WWW-Authenticate: Basic realm = /\n\n";
+        return header;
+    }
+
     if (this->getMethod() == "GET") {
         return response->get();
     }
