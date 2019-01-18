@@ -33,4 +33,12 @@ TEST_CASE("Testing authenticate closed host, no credentials provided", "[authent
     REQUIRE_THAT(request->getResponse(), Catch::Contains("401 Unauthorized"));
 }
 
+TEST_CASE("Testing 404", "[404]") {
+    std::string headers = "GET /some/not/existing/page/ HTTP/1.1\nHost: open \nUser-Agent: Test Request Browser";
+    Request *request = new Request(headers, "127.0.0.2", false, config, logger);
+    REQUIRE(request->getVirtualHost() == "open:80");
+    REQUIRE_THAT(request->getResponse(), Catch::Contains("404 Not Found"));
+    REQUIRE_THAT(request->getResponse(), Catch::Contains("404: Not found"));
+}
+
 #endif
