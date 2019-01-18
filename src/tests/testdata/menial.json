@@ -7,7 +7,7 @@
         "closed:80": {
             "handler": "file",
             "root": "website/build/",
-            "authfile": "testdata/unittests/auth.db"
+            "authfile": "src/tests/testdata/auth.db"
         }
     },
     "iplogging": true,

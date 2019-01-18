@@ -7,7 +7,7 @@
 
 TEST_CASE ("Testing readFile", "[readFile]") {
     REQUIRE(readFile("/dev/null") == "");
-    REQUIRE(readFile("testdata/unittests/test.txt") == "Hello world!\n");
+    REQUIRE(readFile("src/tests/testdata/test.txt") == "Hello world!\n");
     REQUIRE_THROWS_AS(readFile("/not/an/existing/file.txt"), FileNotFoundException);
 }
 

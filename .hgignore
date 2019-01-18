@@ -7,3 +7,6 @@ deployment/buildno.txt
 deployment/default/index.html
 menial_pkg.tar.gz
 menial.tar.gz
+cert.pem
+key.pem
+auth.db
