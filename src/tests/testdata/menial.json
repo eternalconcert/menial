@@ -7,7 +7,7 @@
         "closed:80": {
             "handler": "file",
             "root": "src/tests/testdata/page/",
-            "authfile": "src/tests/testdata/auth.db"
+            "authfile": "src/tests/testdata/test_auth.db"
         }
     },
     "iplogging": true,

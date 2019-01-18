@@ -45,7 +45,7 @@ website:
 src:
 	tar -zcvf menial.tar.gz src/
 
-deploy: clean compile_static src website
+deploy: clean test compile_static src website
 	tar -zcvf menial_pkg.tar.gz website/build/ build/menial.bin deployment/default/errorpages/ deployment/Dockerfile
 	scp menial_pkg.tar.gz christian@softcreate.de://tmp/
 	scp menial.tar.gz christian@softcreate.de://tmp/
