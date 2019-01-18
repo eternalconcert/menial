@@ -4,17 +4,19 @@ SOURCES = $(shell find src/ -name "*.cpp")
 BUILD_NUMBER_FILE=deployment/buildno.txt
 
 TEST=0
+OUTFILE=build/menial.bin
 
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o build/menial.bin -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
+	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
 	$(MAKE) index
 
 
 test: TEST=1
+test: OUTFILE=build/menial_test.bin
 test: compile
-	@build/menial.bin -s
+	@build/menial_test.bin -s
 
 compile_static:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
