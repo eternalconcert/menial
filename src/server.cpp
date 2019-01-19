@@ -19,18 +19,29 @@ Server::Server(int portno, Config* config, Logger* logger) {
 };
 
 
-std::string Server::readPlainHeaders(int sockfd) {
+void Server::checkHeaderLengh(int idx) {
+    // Check header length
+    if (idx > MAX_HEADER_LENGTH) {
+        this->logger->warning(
+            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
+        );
+        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
+    }
+}
+
+
+std::string Server::readPlain(int sockfd) {
     char buffer[BUFFER_SIZE];
 
     if (sockfd < 0) {
         throw SocketError("Error: Cannot accept");
     }
 
-    std::string headers;
-    bool foundEnd = false;
+    std::string message;
+    bool foundHeaderEnd = false;
     int bytesReceived;
 
-    int headerIdx = 0;
+    int idx = 0;
     do {
         bytesReceived = recv(sockfd, buffer, BUFFER_LIMIT, 0);
         if (bytesReceived < 0) {
@@ -38,47 +49,42 @@ std::string Server::readPlainHeaders(int sockfd) {
         }
 
         for (int j = 0; j < bytesReceived; j++) {
-            headers += buffer[j];
-            if(headers[headerIdx] == '\n' and headers[headerIdx-1] == '\r' and headers[headerIdx-2] == '\n') {
-                foundEnd = true;
-                break;
+             message += buffer[j];
+            if(message[idx] == '\n' and message[idx-1] == '\r' and message[idx-2] == '\n') {
+                foundHeaderEnd = true;
             }
-            headerIdx++;
+            idx++;
         }
         // Make sure it is not an TLS connection
-        if (not isupper(headers[0])) {
+        if (not isupper(message[0])) {
             throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
         }
-    } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
+        if (!foundHeaderEnd) {
+            this->checkHeaderLengh(idx);
+        }
+    } while ((bytesReceived == BUFFER_LIMIT) and not (idx > MAX_MESSAGE_LENGTH));
 
-    // Check header length
-    if (headerIdx > MAX_HEADER_LENGTH) {
-        this->logger->warning(
-            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
-        );
-        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
-    }
-    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
-    this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
+    this->logger->debug("Server::getIncomingRequest message length: " + std::to_string(message.size()));
+    this->logger->debug("Server::getIncomingRequest message content:\n" + message);
 
-    if (headers.length() == 0) {
+    if (message.length() == 0) {
         throw CouldNotParseHeaders("Could not parse headers.");
     }
-    return headers;
+    return message;
 }
 
 
-std::string Server::readSSLHeaders(SSL *sockfd) {
+std::string Server::readSSL(SSL *sockfd) {
     char buffer[BUFFER_SIZE];
 
     if (sockfd < 0) {
         throw SocketError("Error: Cannot accept");
     }
 
-    std::string headers;
+    std::string message;
     bool foundEnd = false;
     int bytesReceived;
-    int headerIdx = 0;
+    int idx = 0;
     do {
         bytesReceived = SSL_read(sockfd, buffer, BUFFER_LIMIT);
         if (bytesReceived < 0) {
@@ -86,29 +92,24 @@ std::string Server::readSSLHeaders(SSL *sockfd) {
         }
 
         for (int j = 0; j < bytesReceived; j++) {
-            headers += buffer[j];
-            if(headers[headerIdx] == '\n' and headers[headerIdx-1] == '\r' and headers[headerIdx-2] == '\n') {
+            message += buffer[j];
+            if(message[idx] == '\n' and message[idx-1] == '\r' and message[idx-2] == '\n') {
                 foundEnd = true;
-                break;
             }
-            headerIdx++;
+            idx++;
         }
-    } while ((bytesReceived > 0 ) and not foundEnd and not (headerIdx > MAX_HEADER_LENGTH));
+        if (!foundEnd) {
+            this->checkHeaderLengh(idx);
+        }
+    } while ((bytesReceived == BUFFER_LIMIT) and not (idx > MAX_MESSAGE_LENGTH));
 
-    // Check header length
-    if (headerIdx > MAX_HEADER_LENGTH) {
-        this->logger->warning(
-            "Server::getIncomingRequest header length exceeded! Client sent too many headers."
-        );
-        throw RequestHeaderFieldTooLarge("Client sent too many headers. Request caused a 431.");
-    }
-    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(headers.size()));
-    this->logger->debug("Server::getIncomingRequest header content:\n" + headers);
+    this->logger->debug("Server::getIncomingRequest header length: " + std::to_string(message.size()));
+    this->logger->debug("Server::getIncomingRequest header content:\n" + message);
 
-    if (headers.length() == 0) {
+    if (message.length() == 0) {
         throw CouldNotParseHeaders("Could not parse headers.");
     }
-    return headers;
+    return message;
 }
 
 
@@ -202,8 +203,8 @@ void Server::runPlain() {
             sd = client_socket[i];
             if (FD_ISSET(sd, &readfds)) {
                 try {
-                    std::string headers = this->readPlainHeaders(sd);
-                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), false, this->config, this->logger);
+                    std::string message = this->readPlain(sd);
+                    Request *request = new Request(message, inet_ntoa(serv_addr.sin_addr), false, this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
                 } catch (std::out_of_range) {
                     this->sendError(400, sd);
@@ -321,8 +322,8 @@ void Server::runSSL() {
                     ERR_print_errors_fp(stderr);
                 }
                 try {
-                    std::string headers = this->readSSLHeaders(ssl);
-                    Request *request = new Request(headers, inet_ntoa(serv_addr.sin_addr), true, this->config, this->logger);
+                    std::string message = this->readSSL(ssl);
+                    Request *request = new Request(message, inet_ntoa(serv_addr.sin_addr), true, this->config, this->logger);
                     std::string response = request->getResponse();
                     SSL_write(ssl, response.c_str(), response.length());
                 } catch (std::out_of_range) {

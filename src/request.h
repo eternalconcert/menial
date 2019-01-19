@@ -8,6 +8,7 @@ class Request {
     public:
 
         void setClientIp(std::string ip);
+        void parseMessage(std::string message);
         void setMethod();
         void setHostAndPort();
         void setTarget();
@@ -22,7 +23,7 @@ class Request {
         std::string getTarget();
         std::string getUserAgent();
         std::string getResponse();
-        Request(std::string headers, std::string client_ip, bool ssl, Config* config, Logger* logger);
+        Request(std::string message, std::string client_ip, bool ssl, Config* config, Logger* logger);
 
     private:
         std::string headers;

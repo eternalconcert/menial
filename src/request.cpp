@@ -27,13 +27,13 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
 }
 
 
-Request::Request(std::string headers, std::string client_ip, bool ssl, Config* config, Logger* logger) {
+Request::Request(std::string message, std::string client_ip, bool ssl, Config* config, Logger* logger) {
     this->config = config;
     this->logger = logger;
     this->ssl = ssl;
 
     this->setClientIp(client_ip);
-    this->headers = headers;
+    this->parseMessage(message);
     this->setMethod();
     this->setHostAndPort();
     this->setTarget();
@@ -47,6 +47,13 @@ void Request::setClientIp(std::string ip) {
         this->clientIp = ip;
     }
     this->logger->info("Requesting client IP: " + this->clientIp);
+}
+
+void Request::parseMessage(std::string message) {
+    this->headers = message.substr(0, message.find("\n\r\n"));
+    this->logger->debug("From messages extracted headers:\n" + this->headers);
+    this->body = message.substr(message.find("\n\r\n") + 3, std::string::npos);
+    this->logger->debug("From messages extracted body:\n" + this->body);
 }
 
 
@@ -161,7 +168,11 @@ std::string Request::getResponse() {
         return header;
     }
 
-    if (this->getMethod() == "GET") {
+    if (this->getMethod() == "GET")  {
+        return response->get();
+    }
+    else if (this->getMethod() == "POST")  {
+        // Maybe theres no need to implement a dedicated POST?
         return response->get();
     }
     else if (this->getMethod() == "HEAD") {

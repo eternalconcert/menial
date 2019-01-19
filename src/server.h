@@ -10,11 +10,12 @@ class Server {
     public:
         void run();
         void runPlain();
-        std::string readPlainHeaders(int sockfd);
-        std::string readSSLHeaders(SSL *sockfd);
+        std::string readPlain(int sockfd);
+        std::string readSSL(SSL *sockfd);
         void runSSL();
         void sendReply(std::string replyMessage, int newsockfd);
         void sendError(int status, int sockfd);
+        void checkHeaderLengh(int idx);
         Server(int portno, Config* config, Logger* logger);
 
     private:

@@ -12,7 +12,7 @@
         },
         "cpc464.localhost:8080": {
             "handler": "redirect",
-            "target": "https://cpc464.localhost"
+            "target": "https://cpc464.localhost:4433"
         },
         "cpc464.localhost:4433": {
             "handler": "file",
@@ -21,6 +21,10 @@
         "menial.localhost:8080": {
             "handler": "file",
             "root": "website/build/"
+        },
+        "localhost:9999": {
+            "handler": "python",
+            "root": "testdata/testhost/pyresponse.py"
         }
 
     },

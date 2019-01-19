@@ -9,6 +9,7 @@ const int BUFFER_SIZE = 1024;
 const int BUFFER_LIMIT = BUFFER_SIZE - 1;
 
 const int MAX_HEADER_LENGTH = 2000;
+const int MAX_MESSAGE_LENGTH = 20000;
 
 std::string readFile(std::string path);
 std::string base64decode(std::string const &encoded);
