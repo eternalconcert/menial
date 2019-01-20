@@ -25,31 +25,40 @@
     <p>
         The content is JSON formated and has the following structure:
     </p>
-    <pre class="prettyprint lang-python prettyprinted">
-        {
-            "hosts": {
-                "*:80": {
-                    "handler": "file",
-                    "root": "default/",
-                    "errorpages": "default/errorpages/",
-                    "defaultdocument": "index.html",
-                    "additionalheaders": "Access-Control-Allow-Origin: *\n"
-                },
-                "*:8080": {
-                    "handler": "redirect",
-                    "root": "",
-                    "permanent": true,
-                    "target": "http://localhost/",
-                    "keeptarget": true
-                }
-            },
-            "logger": "console",
-            "loglevel": "debug",
-            "iplogging": false,
-            "logfilepath": "/tmp/",
+    <p>
+        <pre class="prettyprint lang-python prettyprinted">
+{
+    "hosts": {
+        "*:80": {
+            "handler": "file",
+            "root": "default/",
             "errorpages": "default/errorpages/",
+            "defaultdocument": "index.html",
+            "additionalheaders": "Access-Control-Allow-Origin: *\n"
+        },
+        "*:8080": {
+            "handler": "redirect",
+            "root": "",
+            "permanent": true,
+            "target": "http://localhost/",
+            "keeptarget": true
         }
-    </pre>
+    },
+    "logger": "console",
+    "loglevel": "debug",
+    "iplogging": false,
+    "logfilepath": "/tmp/",
+    "errorpages": "/etc/menial/errorpages/",
+    "ssl": {
+        "443": {
+            "on": true,
+            "cert": "/path/to/the/cert.pem",
+            "key": "/path/to/the/key.pem"
+        }
+    }
+}
+        </pre>
+    </p>
     <h3 id="config-directives">Directives</h3>
     <p>
         <ul>
@@ -120,56 +129,74 @@
             <li>
                 <b>errorpages:</b> (Optional, default: "default/errorpages/") Like the host specific error pages configuration (see above); but global. If there is no error pages directory configured for a host, this global directive will be used. Please be aware, that this is optional, but if no error pages directory is configured nor a host specific error pages directory is set, the server will die with a FileNotFoundExcpetion if a the request needs one of the error pages (e.g. a 404.html).
             </li>
-         </ul>
+            <li>
+                <b>ssl:</b> (Optional) A dictionary, containing the configuration directives for SSL/TLS encrypted connections.
+                <ul>
+                    <li>
+                        <b>443:</b> Portnumber for which SSL/TLS should be configured. Please keep in mind that menial can handle SSL/TLS connections only port specific. It is not possible to use different certificates for different hosts on the same port. (This means, server name indication is not supported by menial. This is not a missing feature, but a design decision. To check the malicous implications of SNI, please take a look at the <a href="https://en.wikipedia.org/wiki/Server_Name_Indication#Security_implications">Wikipedia article about SNI</a>.)
+                    </li>
+                    <ul>
+                        <li>
+                            <b>on:</b> (Mandatory) A boolean indicating if the SSL/TLS configuration should be used. If set to false, the port will be used for normal/insecure connections. Can be useful for debugging.
+                        <li>
+                            <b>cert:</b> (Mandatory) Path to the certificate file. It must be a PEM file. Currently no additional certificates or certificate chains are supported. If you need a certificate chain, please copy all certificates of that chain into one file and hand over the path to that file to menial via this configuration directive.
+                        <li>
+                            <b>key:</b> (Mandatory) Path to the private/server key file. It must be a PEM file.
+                    </ul>
+                </ul>
+            </li>
+        </ul>
     </p>
     <p>
-        You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler, root and errorpages directory. The other configuration directives (loglevel, logfilepath and logger) are considered as global.
+        You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler and root directory. The other configuration directives (loglevel, logfilepath and logger) are considered as global. Some directives (such as errorpages) can be declared global and orverwritten for certain hosts.
     </p>
     <p>
         A more sophisticated example:
     </p>
-    <pre>
-        {
-            "hosts": {
-                "*:80": {
-                    "handler": "redirect",
-                    "target": "myhomepage.tld:443",
-                    "keeptarget": true
-                },
-                "*:443": {
-                    "handler": "file",
-                    "root": "/var/www/html/myhomepage/"
-                }
-                "myfriend:80": {
-                    "handler": "file",
-                    "root": "/var/www/html/myfriendshomepage/"
-                },
-                "myfriendscousin:80": {
-                    "handler": "file",
-                    "root": "/var/www/html/myfriendscousinshomepage/"
-                    "errorpages": "/home/myfriendscousin/menial/errorpages/",
-                    "additionalheaders": "Access-Control-Allow-Origin: *\n"
-                },
-                "*:8000": {
-                    "handler": "python",
-                    "root": "pyresponse.py",
-                    "errorpages": "/can/be/blank/because/python/must/handle/errors/"
-                }
-            },
-            "logger": "file",
-            "loglevel": "info",
-            "iplogging": true,
-            "logfilepath": "/var/log/menial/",
-            "errorpages": "/etc/menial/errorpages/",
-            "ssl": {
-                "443": {
-                    "on": true,
-                    "cert": "/path/to/the/cert.pem",
-                    "key": "/path/to/the/key.pem"
-                }
-            }
+    <p>
+        <pre>
+{
+    "hosts": {
+        "*:80": {
+            "handler": "redirect",
+            "target": "myhomepage.tld:443",
+            "keeptarget": true
+        },
+        "*:443": {
+            "handler": "file",
+            "root": "/var/www/html/myhomepage/"
         }
-    </pre>
+        "myfriend:80": {
+            "handler": "file",
+            "root": "/var/www/html/myfriendshomepage/"
+        },
+        "myfriendscousin:80": {
+            "handler": "file",
+            "root": "/var/www/html/myfriendscousinshomepage/"
+            "errorpages": "/home/myfriendscousin/menial/errorpages/",
+            "additionalheaders": "Access-Control-Allow-Origin: *\n"
+        },
+        "*:8000": {
+            "handler": "python",
+            "root": "pyresponse.py",
+            "errorpages": "/can/be/blank/because/python/must/handle/errors/"
+        }
+    },
+    "logger": "file",
+    "loglevel": "info",
+    "iplogging": true,
+    "logfilepath": "/var/log/menial/",
+    "errorpages": "/etc/menial/errorpages/",
+    "ssl": {
+        "443": {
+            "on": true,
+            "cert": "/path/to/the/cert.pem",
+            "key": "/path/to/the/key.pem"
+        }
+    }
+}
+        </pre>
+    </p>
     <h3 id="config-custom-config">Custom config</h3>
         When you run menial you need to pass the location to the config file as first parameter.<br>
         You can create your own config file (e.g. copying the exsting one) and save it at any accessible locatation. Handover the new file to menial on startup.

@@ -1,8 +1,23 @@
 {% extends '_base.jinja' %}
 {% block body %}
     <h2>Documentation</h2>
+    <h3>Compilation</h3>
     <p>
-        Work in progress..
+        To compile menial, you can use the following commands:
     </p>
+    <p>
+        <pre class="prettyprint lang-c prettyprinted">
+g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto
+        </pre>
+    </p>
+    <h3>Prerequisited</h3>
+    <ul>
+        <li>
+            g++/gcc
+        </li>
+        <li>
+            OpenSSL headers
+        </li>
+    </ul>
 
 {% endblock %}
