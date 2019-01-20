@@ -19,5 +19,42 @@ g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I src/in
             OpenSSL headers
         </li>
     </ul>
+    <h3>Configuration</h3>
+    <h4 id="authfile">Authentication file</h4>
+    <p>
+        If a authfile path is set in the configuration, you need to provide a authentication file and the configured location.
+    </p>
+    <p>
+        An authentication file has the following structure:
+    </p>
+    <p>
+        <pre class="prettyprint lang-c prettyprinted">
+user:hashvalue
+...
+        </pre>
+    </p>
+    <p>
+        The hashvalue is the SHA 256 hashed password for the user.
+    </p>
+    <p>
+        You can provide as many user/hashvalues pairs as you need. To get a valid SHA 256 hash for the clean text password, you can use the following Python snippet:
+    </p>
+    <p>
+        <pre class="prettyprint lang-python prettyprinted">
+import hashlib
+hashlib.sha256("Acleantextpassword").hexdigest()
+        </pre>
+    </p>
+    <p>
+        This will result in the following hash: c953b25ee7b3e7fb5dbf6e8f02a4e303dbe898156bfa6e700c81f9d8e8219f8e
+    </p>
+    <p>
+        A valid entry in the authfile for user "jane" would than be:
+    </p>
+    <p>
+        <pre class="prettyprint lang-python prettyprinted">
+jane:c953b25ee7b3e7fb5dbf6e8f02a4e303dbe898156bfa6e700c81f9d8e8219f8e
+        </pre>
+    </p>
 
 {% endblock %}
