@@ -21,7 +21,7 @@ test: compile
 compile_static:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o build/menial.bin -Wall -std=c++11 -O3 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -I src/include/ -lssl -lcrypto -ldl
+	g++ $(SOURCES) -o build/menial.bin -Wall -std=c++11 -O3 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -I src/include/ -Bstatic -L src/include/openssl/ -lssl -lcrypto -ldl
 	$(MAKE) index
 
 index:
