@@ -13,6 +13,7 @@ class FileResponse: public Response {
         std::string headerBase();
         std::string methodNotAllowed();
         std::string getHeader(std::string content, std::string fileName);
+        std::string make404();
         void setGetParamsString();
         void setFilePath();
 

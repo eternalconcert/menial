@@ -1,5 +1,7 @@
+#include <dirent.h>
 #include <ctime>
 #include <cstring>
+#include <regex>
 #include <stdio.h>
 #include <sys/stat.h>
 #include "common.h"
@@ -27,6 +29,8 @@ void FileResponse::setFilePath() {
         this->logger->warning("Intrusion try detected: " + targetPath + " Resseting target to /");
         targetPath = "/";
     }
+
+    targetPath = std::regex_replace(targetPath, std::regex("%20"), " ");
 
     if (this->paramString.length() > 0) {
         targetPath.erase(targetPath.find(this->paramString));
@@ -130,19 +134,56 @@ std::string FileResponse::guessFileType(std::string fileName) {
 }
 
 
+std::string FileResponse::make404() {
+    this->setStatus(404);
+    this->logger->info("404: Unknown target requested: " + target);
+    return readFile(this->config["errorPagesDir"] + "404.html");
+}
+
+
 std::string FileResponse::getContent() {
-    std::string target = this->getRequest()->getTarget();
+    std::string filePath = this->filePath;
     if (this->paramString.length() > 0) {
-        target.erase(target.find(this->paramString));
+        filePath.erase(filePath.find(this->paramString));
     }
 
     std::string content;
+
+    if (this->config["dirlisting"] == "true") {
+        try {
+            std::string targetPath = this->target;
+            if (targetPath.rfind("/") == (targetPath.length() - 1)) {
+                if (targetPath.find("..") != std::string::npos) {
+                    this->logger->warning("Intrusion try detected: " + targetPath);
+                    throw FileNotFoundException("Intrusion try detected: " + targetPath);
+                }
+                std::string targetDir = this->config["root"] + targetPath.substr(1, targetPath.size() - 1);
+                targetDir = std::regex_replace(targetDir, std::regex("%20"), " ");
+                this->logger->debug("Dirlisting is active and no specific file requested. Return dirlisting: " + targetDir);
+                DIR *dir;
+                struct dirent *ent;
+                if ((dir = opendir(targetDir.c_str())) != NULL) {
+                    content += "<h1>Content of " + std::regex_replace(targetPath, std::regex("%20"), " ") + "</h1>";
+                    while ((ent = readdir(dir)) != NULL) {
+                        std::string dirName = std::string(ent->d_name);
+                        std::string term = "/>";
+                        if (dirName.find(".") != std::string::npos) {
+                            term = ">";
+                        }
+                        content += "<a href=" + std::regex_replace(dirName, std::regex(" "), "%20")  + term + dirName + "</a><br>";
+                    }
+                }
+                return content;
+            }
+        } catch (FileNotFoundException) {
+            content = this->make404();
+        }
+    }
+
     try {
-        content += readFile(this->filePath);
+        content = readFile(filePath);
     } catch (FileNotFoundException) {
-        content += readFile(this->config["errorPagesDir"] + "404.html");
-        this->setStatus(404);
-        this->logger->info("404: Unknown target requested: " + target);
+        content = this->make404();
     }
     return content;
 }

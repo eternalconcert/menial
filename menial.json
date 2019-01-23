@@ -5,6 +5,11 @@
             "root": "website/build/",
             "authfile": "auth.db"
         },
+        "music.localhost:8080": {
+            "handler": "file",
+            "root": "/home/christian/Music/",
+            "dirlisting": true
+        },
         "*:4433": {
             "handler": "file",
             "root": "/home/christian/Projekte/softcreate/build/",

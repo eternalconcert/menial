@@ -91,6 +91,12 @@ void Config::update(std::string configPath) {
             throw ConfigException("No root specified for host: " + host);
         }
 
+        bool dirlisting = false;
+        if (document["hosts"][host.c_str()].HasMember("dirlisting")) {
+            dirlisting = document["hosts"][host.c_str()]["dirlisting"].GetBool();
+        }
+        this->hosts[host]["dirlisting"] = dirlisting ? "true" : "false";
+
         std::string additionalheaders = "";
         if (document["hosts"][host.c_str()].HasMember("additionalheaders")) {
             additionalheaders = document["hosts"][host.c_str()]["additionalheaders"].GetString();
