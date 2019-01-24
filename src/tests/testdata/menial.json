@@ -13,5 +13,5 @@
     "iplogging": true,
     "logger": "console",
     "loglevel": "critical",
-    "errorpages": "src/tests/testdata/page/"
+    "staticdir": "src/tests/testdata/page/"
 }

@@ -35,7 +35,7 @@ std::string PyResponse::get() {
     }
     int status = pclose(f);
     if (WEXITSTATUS(status) != 0) {
-        content += readFile(this->config["errorPagesDir"] + "500.html");
+        content += readFile(this->config["staticdir"] + "500.html");
         this->setStatus(500);
         this->logger->error("500: Error while reading from python");
     }

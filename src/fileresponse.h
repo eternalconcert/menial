@@ -14,6 +14,7 @@ class FileResponse: public Response {
         std::string methodNotAllowed();
         std::string getHeader(std::string content, std::string fileName);
         std::string make404();
+        std::string getDirlisting();
         void setGetParamsString();
         void setFilePath();
 

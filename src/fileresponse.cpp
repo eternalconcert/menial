@@ -36,11 +36,11 @@ void FileResponse::setFilePath() {
         targetPath.erase(targetPath.find(this->paramString));
     }
 
-    if (targetPath == "/") {
+    if (targetPath == "/" and this->config["dirlisting"] == "false") {
         targetPath = this->config["defaultdocument"];
         this->logger->debug("No file on / requested, using default target: " + targetPath);
     }
-    else if (targetPath.back() == '/') {
+    else if (targetPath.back() == '/' and this->config["dirlisting"] == "false") {
             targetPath = targetPath + this->config["defaultdocument"];
             this->logger->debug("No file on subdir requested, using default target: " + targetPath);
     }
@@ -106,6 +106,9 @@ std::string FileResponse::guessFileType(std::string fileName) {
     if (extension == "css") {
         fileType = "text/css";
     }
+    else if (extension == "pdf") {
+        fileType = "application/pdf";
+    }
     else if (extension == "log") {
         fileType = "text/plain";
     }
@@ -137,7 +140,57 @@ std::string FileResponse::guessFileType(std::string fileName) {
 std::string FileResponse::make404() {
     this->setStatus(404);
     this->logger->info("404: Unknown target requested: " + target);
-    return readFile(this->config["errorPagesDir"] + "404.html");
+    return readFile(this->config["staticdir"] + "404.html");
+}
+
+
+std::string FileResponse::getDirlisting() {
+    std::string targetDir = this->filePath;
+    targetDir = std::regex_replace(targetDir, std::regex("%20"), " ");
+    this->logger->debug("Dirlisting is active and no specific file requested. Return dirlisting: " + targetDir);
+
+    std::string cleanTarget = std::regex_replace(this->target, std::regex("%20"), " ");
+
+    std::vector<std::string> dirList;
+    std::vector<std::string> fileList;
+    std::string listing = "<ul id=\"dirlisting\"><li class=\"dir linkparent\"><a href=\"..\">Parent directory..</a></li>\n";
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir(targetDir.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+
+            std::string entityName = std::string(ent->d_name);
+            if (entityName != "." and entityName != "..") {
+                struct stat path_stat;
+                std::string path = targetDir + std::string(ent->d_name);
+                stat(path.c_str(), &path_stat);
+
+                if (S_ISREG(path_stat.st_mode) == 0) {
+                    dirList.push_back(entityName);
+                } else {
+                    fileList.push_back(entityName);
+                }
+            }
+        }
+        std::sort(dirList.begin(), dirList.end());
+        std::sort(fileList.begin(), fileList.end());
+    }
+
+    for (std::vector<std::string>::iterator it = dirList.begin(); it != dirList.end(); ++it) {
+        std::string dir = *it;
+        listing += "<li class=\"dir\"><a href=" + std::regex_replace(dir, std::regex(" "), "%20") + "/>" + dir + "</a></li>\n";
+    }
+
+    for (std::vector<std::string>::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+        std::string file = *it;
+        listing += "<li class=\"file\"><a href=" + std::regex_replace(file, std::regex(" "), "%20")  + ">" + file + "</a></li>\n";
+    }
+
+    listing += "</ul>";
+    std::string listTemplate = readFile(this->config["staticdir"] + "dirlisting.html");
+    listTemplate = std::regex_replace(listTemplate, std::regex("<DIR>"), cleanTarget);
+    listTemplate = std::regex_replace(listTemplate, std::regex("<LISTING>"), listing);
+    return listTemplate;
 }
 
 
@@ -148,32 +201,15 @@ std::string FileResponse::getContent() {
     }
 
     std::string content;
-
     if (this->config["dirlisting"] == "true") {
         try {
-            std::string targetPath = this->target;
+            std::string targetPath = this->filePath;
             if (targetPath.rfind("/") == (targetPath.length() - 1)) {
                 if (targetPath.find("..") != std::string::npos) {
                     this->logger->warning("Intrusion try detected: " + targetPath);
                     throw FileNotFoundException("Intrusion try detected: " + targetPath);
                 }
-                std::string targetDir = this->config["root"] + targetPath.substr(1, targetPath.size() - 1);
-                targetDir = std::regex_replace(targetDir, std::regex("%20"), " ");
-                this->logger->debug("Dirlisting is active and no specific file requested. Return dirlisting: " + targetDir);
-                DIR *dir;
-                struct dirent *ent;
-                if ((dir = opendir(targetDir.c_str())) != NULL) {
-                    content += "<h1>Content of " + std::regex_replace(targetPath, std::regex("%20"), " ") + "</h1>";
-                    while ((ent = readdir(dir)) != NULL) {
-                        std::string dirName = std::string(ent->d_name);
-                        std::string term = "/>";
-                        if (dirName.find(".") != std::string::npos) {
-                            term = ">";
-                        }
-                        content += "<a href=" + std::regex_replace(dirName, std::regex(" "), "%20")  + term + dirName + "</a><br>";
-                    }
-                }
-                return content;
+                return this->getDirlisting();
             }
         } catch (FileNotFoundException) {
             content = this->make404();

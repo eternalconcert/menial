@@ -11,7 +11,7 @@ class Config {
         LogLevel logLevel;
         std::string logFilePath;
         std::string logger;
-        std::string errorPagesDir;
+        std::string staticDir;
         std::map<std::string, std::map<std::string, std::string>> hosts;
         std::map<std::string, std::string> defaultHosts;
         std::set<int> ports;

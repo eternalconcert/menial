@@ -3,7 +3,7 @@
         "*:80": {
             "handler": "file",
             "root": "default/",
-            "errorpages": "default/errorpages/"
+            "staticdir": "default/static/"
         }
     },
     "loglevel": "debug",

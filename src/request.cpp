@@ -155,7 +155,7 @@ std::string Request::getResponse() {
         header += response->getStatusMessage() + "\n";
         header += "Server: menial\n";
         header += "Content-Length: 0\n\n";
-        std::string content =  readFile(this->config->hosts[this->getVirtualHost()]["errorPagesDir"] + "500.html");
+        std::string content =  readFile(this->config->hosts[this->getVirtualHost()]["staticdir"] + "500.html");
         this->logger->error("Auth file cannot be read");
         return header + content;
     }

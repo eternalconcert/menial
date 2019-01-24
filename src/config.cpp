@@ -59,11 +59,11 @@ void Config::update(std::string configPath) {
     }
 
     // Error pages
-    std::string globalErrorPagesDir = "default/errorpages/";
-    if (document.HasMember("errorpages")) {
-        globalErrorPagesDir = document["errorpages"].GetString();
+    std::string globalstaticDir = "default/staticdir/";
+    if (document.HasMember("staticdir")) {
+        globalstaticDir = document["staticdir"].GetString();
     }
-    this->errorPagesDir = globalErrorPagesDir;
+    this->staticDir = globalstaticDir;
 
     // hosts
     Value& hosts = document["hosts"];
@@ -103,11 +103,11 @@ void Config::update(std::string configPath) {
         };
         this->hosts[host]["additionalheaders"] = additionalheaders;
 
-        std::string errorPagesDir = this->errorPagesDir;
-        if (document["hosts"][host.c_str()].HasMember("errorpages")) {
-            errorPagesDir = document["hosts"][host.c_str()]["errorpages"].GetString();
+        std::string staticDir = this->staticDir;
+        if (document["hosts"][host.c_str()].HasMember("staticdir")) {
+            staticDir = document["hosts"][host.c_str()]["staticdir"].GetString();
         }
-        this->hosts[host]["errorPagesDir"] = errorPagesDir;
+        this->hosts[host]["staticdir"] = staticDir;
 
         std::string defaultDoc = "index.html";
         if (document["hosts"][host.c_str()].HasMember("defaultdocument")) {

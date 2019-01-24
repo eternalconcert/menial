@@ -32,7 +32,7 @@
         "*:80": {
             "handler": "file",
             "root": "default/",
-            "errorpages": "default/errorpages/",
+            "staticdir": "default/static/",
             "defaultdocument": "index.html",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
         },
@@ -53,7 +53,7 @@
     "loglevel": "debug",
     "iplogging": false,
     "logfilepath": "/tmp/",
-    "errorpages": "/etc/menial/errorpages/",
+    "staticdir": "/etc/menial/static/",
     "ssl": {
         "443": {
             "on": true,
@@ -85,11 +85,13 @@
                             <b>root:</b> The document root directory. When the handler is set to "file", the content of the document root will be delivered. Path can be absolute or relative to the menial binary.
                         </li>
                         <li>
-                            <b>errorpages:</b> (default: "default/errorpages/") The directory where the error pages like 404 are stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. They must be named as follows: http_error_code.html
+                            <b>staticdir:</b> (default: "default/static/") The directory where the error pages like 404 are and other static content is stored. These will be delivered when the handler is set to "file". You can use the default value if you are happy with minmalistic error pages. Otherwise you can customize the default files or create your own. The error pages must be named as follows: http_error_code.html
                             <br>
                             Example: 404.html
                             <br>
-                            This host specific directive will overwrite global the (optional) global error pages directive (see below).
+                            This host specific directive will overwrite global the (optional) global staticdir directive (see below).
+                            <br>
+                            Another important file is dirlisting.html. This file is used as a template, when the dirlisting directive is used. Read more about <a href="{{ url_for('dirlisting.html') }}">dirlisting.html</a>.
                         </li>
                         <li>
                             <b>target</b> (Mandatory for redirect handlers) The location to which the resource has been moved.
@@ -135,7 +137,7 @@
                 <b>logfilepath:</b> (Optional, default: "/dev/null") Directory to store log files.
             </li>
             <li>
-                <b>errorpages:</b> (Optional, default: "default/errorpages/") Like the host specific error pages configuration (see above); but global. If there is no error pages directory configured for a host, this global directive will be used. Please be aware, that this is optional, but if no error pages directory is configured nor a host specific error pages directory is set, the server will die with a FileNotFoundExcpetion if a the request needs one of the error pages (e.g. a 404.html).
+                <b>staticdir:</b> (Optional, default: "default/static/") Like the host specific staticdir configuration (see above); but global. If there is no static directory configured for a host, this global directive will be used. Please be aware, that this is optional, but if no static directory is configured nor a host specific static directory is set, the server will die with a FileNotFoundExcpetion if a the request needs one of the static pages (e.g. a 404.html).
             </li>
             <li>
                 <b>ssl:</b> (Optional) A dictionary, containing the configuration directives for SSL/TLS encrypted connections.
@@ -156,7 +158,7 @@
         </ul>
     </p>
     <p>
-        You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler and root directory. The other configuration directives (loglevel, logfilepath and logger) are considered as global. Some directives (such as errorpages) can be declared global and orverwritten for certain hosts.
+        You can add a lot of hosts to the config. If you do so, you need to configure each hosts handler and root directory. The other configuration directives (loglevel, logfilepath and logger) are considered as global. Some directives (such as staticdir) can be declared global and orverwritten for certain hosts.
     </p>
     <p>
         A more sophisticated example:
@@ -181,20 +183,20 @@
         "myfriendscousin:80": {
             "handler": "file",
             "root": "/var/www/html/myfriendscousinshomepage/"
-            "errorpages": "/home/myfriendscousin/menial/errorpages/",
+            "staticdir": "/home/myfriendscousin/menial/static/",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
         },
         "*:8000": {
             "handler": "python",
             "root": "pyresponse.py",
-            "errorpages": "/can/be/blank/because/python/must/handle/errors/"
+            "staticdir": "/can/be/blank/because/python/must/handle/errors/"
         }
     },
     "logger": "file",
     "loglevel": "info",
     "iplogging": true,
     "logfilepath": "/var/log/menial/",
-    "errorpages": "/etc/menial/errorpages/",
+    "staticdir": "/etc/menial/static/",
     "ssl": {
         "443": {
             "on": true,
