@@ -15,17 +15,14 @@ class FileResponse: public Response {
         std::string getHeader(std::string content, std::string fileName);
         std::string make404();
         std::string getDirlisting();
-        void setGetParamsString();
         void setFilePath();
 
-        std::string paramString;
         std::string filePath;
         std::string fileName;
         std::string target;
 
         FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
             this->target = getRequest()->getTarget();
-            setGetParamsString();
             setFilePath();
             this->fileName = this->target.substr(this->target.find_last_of("/") + 1, this->target.length());
         };

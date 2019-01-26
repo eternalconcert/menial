@@ -54,6 +54,13 @@ void Request::parseMessage(std::string message) {
     this->logger->debug("From messages extracted headers:\n" + this->headers);
     this->body = message.substr(message.find("\n\r\n") + 3, std::string::npos);
     this->logger->debug("From messages extracted body:\n" + this->body);
+
+    std::string paramString = this->headers;
+    paramString.erase(0, paramString.find(" ") + 1);
+    paramString.erase(paramString.find(" "), paramString.length());
+    paramString.erase(0, paramString.find("?"));
+    this->logger->debug("Get Request params " + paramString);
+    this->paramString = paramString;
 }
 
 
@@ -185,6 +192,10 @@ std::string Request::getResponse() {
 
 std::string Request::getMethod() {
     return this->method;
+};
+
+std::string Request::getGetParams() {
+    return this->paramString;
 };
 
 std::string Request::getHeader() {

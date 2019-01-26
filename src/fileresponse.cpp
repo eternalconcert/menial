@@ -10,19 +10,6 @@
 #include "fileresponse.h"
 
 
-void FileResponse::setGetParamsString() {
-
-    std::string header = this->getRequest()->getHeader();
-    header.erase(0, header.find(" ") + 1);
-    header.erase(header.find(" "), header.length());
-
-    std::string paramString = header;
-    paramString.erase(0, header.find("?"));
-    this->logger->debug("Get Request params " + paramString);
-    this->paramString = paramString;
-};
-
-
 void FileResponse::setFilePath() {
     std::string targetPath = this->target;
     if (targetPath.find("..") != std::string::npos) {
@@ -32,8 +19,10 @@ void FileResponse::setFilePath() {
 
     targetPath = std::regex_replace(targetPath, std::regex("%20"), " ");
 
-    if (this->paramString.length() > 0) {
-        targetPath.erase(targetPath.find(this->paramString));
+    std::string paramString = this->getRequest()->getGetParams();
+    if (paramString.length() > 0) {
+
+        targetPath.erase(targetPath.find(paramString));
     }
 
     if (targetPath == "/" and this->config["dirlisting"] == "false") {
@@ -196,10 +185,6 @@ std::string FileResponse::getDirlisting() {
 
 std::string FileResponse::getContent() {
     std::string filePath = this->filePath;
-    if (this->paramString.length() > 0) {
-        filePath.erase(filePath.find(this->paramString));
-    }
-
     std::string content;
     if (this->config["dirlisting"] == "true") {
         try {

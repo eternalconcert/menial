@@ -19,6 +19,7 @@ class Request {
         std::string getMethod();
         std::string getHeader();
         std::string getBody();
+        std::string getGetParams();
         std::string getVirtualHost();
         std::string getTarget();
         std::string getUserAgent();
@@ -28,6 +29,7 @@ class Request {
     private:
         std::string headers;
         std::string body;
+        std::string paramString;
         std::string method;
         std::string target;
         std::string host;

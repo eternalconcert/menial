@@ -27,6 +27,10 @@
             "handler": "file",
             "root": "website/build/"
         },
+        "tmmk.localhost:8080": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/tmmk/build/"
+        },
         "localhost:9999": {
             "handler": "python",
             "root": "testdata/testhost/pyresponse.py"

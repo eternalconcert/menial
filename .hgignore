@@ -2,6 +2,7 @@ syntax: glob
 
 build/*
 target/*
+*.pyc
 website/hashvalues.json
 deployment/buildno.txt
 deployment/default/index.html
