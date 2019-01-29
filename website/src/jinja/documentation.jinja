@@ -6,7 +6,7 @@
         To compile menial, you can use the following commands:
     </p>
     <p>
-        <pre class="prettyprint lang-c prettyprinted">
+        <pre class="prettyprint lang-c">
 g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto
         </pre>
     </p>
@@ -19,6 +19,7 @@ g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I src/in
             OpenSSL headers
         </li>
     </ul>
+
     <h3>Configuration</h3>
     <h4 id="authfile">Authentication file</h4>
     <p>
@@ -28,7 +29,7 @@ g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I src/in
         An authentication file has the following structure:
     </p>
     <p>
-        <pre class="prettyprint lang-c prettyprinted">
+        <pre class="prettyprint lang-c">
 user:hashvalue
 ...
         </pre>
@@ -40,7 +41,7 @@ user:hashvalue
         You can provide as many user/hashvalues pairs as you need. To get a valid SHA 256 hash for the clean text password, you can use the following Python snippet:
     </p>
     <p>
-        <pre class="prettyprint lang-python prettyprinted">
+        <pre class="prettyprint lang-python">
 import hashlib
 hashlib.sha256("Acleantextpassword").hexdigest()
         </pre>
@@ -52,9 +53,44 @@ hashlib.sha256("Acleantextpassword").hexdigest()
         A valid entry in the authfile for user "jane" would than be:
     </p>
     <p>
-        <pre class="prettyprint lang-python prettyprinted">
+        <pre class="prettyprint lang-python">
 jane:c953b25ee7b3e7fb5dbf6e8f02a4e303dbe898156bfa6e700c81f9d8e8219f8e
         </pre>
     </p>
 
+    <h4 id="dirlisting">Directory listing</h4>
+    <p>
+        menial comes with the ability to list directory content instead of trying to deliever a default document. If the configuration directive "dirlisting" is set to "true", no default document will be delievered and the directory content will be listed.
+    </p>
+    <p>
+        The list will contain all directories and files in the current folder; directories before the files. There is also a link to the parent directory included. If you are already on the document root level, the link to the parent directory will have no effect, except a reloading of the current page.
+    </p>
+    <p>
+        The page which shows the directory content can be customized by editing "dirlisting.html" in the used static directory (the place where the error pages are stored aswell).
+    </p>
+    <p>
+        The file should contain the placeholders &lt;DIR&gt; and &lt;LISTING&gt;. &lt;DIR&gt; will be replaced by the current directory path (relative to the document root). &lt;LISTING&gt; will be replaced by the directory content.
+    </p>
+    <p>
+        The listing will be rendered as an unsorted list with some classnames to attach your own stylings to. It has the following structure and classnames:
+    </p>
+    <p>
+        <pre class="prettyprint lang-html">
+&lt;ul class="dirlisting list"&gt;
+    &lt;li class="dirlisting linkparent"&gt;
+        &lt;a href=".."&gt;Parent directory..&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class="dirlisting dir"&gt;
+        &lt;a href=Live%20in%20Oberhausen/&gt;Live in Oberhausen&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class="dirlisting file"&gt;
+        &lt;a href=01.%20Top%20level%20predator.mp3&gt;01. Top level predator.mp3&lt;/a&gt;
+    &lt;/li&gt;
+...
+&lt;/ul&gt;
+        </pre>
+    </p>
+    <p>
+        The &lt;DIR&gt; placeholder will be replaced just by the directory path without any classes or id's. None of the placeholders must be used and can be used more than once.
+    </p>
 {% endblock %}

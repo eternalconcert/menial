@@ -142,7 +142,7 @@ std::string FileResponse::getDirlisting() {
 
     std::vector<std::string> dirList;
     std::vector<std::string> fileList;
-    std::string listing = "<ul id=\"dirlisting\"><li class=\"dir linkparent\"><a href=\"..\">Parent directory..</a></li>\n";
+    std::string listing = "<ul class=\"dirlisting list\"><li class=\"dirlisting linkparent\"><a href=\"..\">Parent directory..</a></li>\n";
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir(targetDir.c_str())) != NULL) {
@@ -167,12 +167,12 @@ std::string FileResponse::getDirlisting() {
 
     for (std::vector<std::string>::iterator it = dirList.begin(); it != dirList.end(); ++it) {
         std::string dir = *it;
-        listing += "<li class=\"dir\"><a href=" + std::regex_replace(dir, std::regex(" "), "%20") + "/>" + dir + "</a></li>\n";
+        listing += "<li class=\"dirlisting dir\"><a href=" + std::regex_replace(dir, std::regex(" "), "%20") + "/>" + dir + "</a></li>\n";
     }
 
     for (std::vector<std::string>::iterator it = fileList.begin(); it != fileList.end(); ++it) {
         std::string file = *it;
-        listing += "<li class=\"file\"><a href=" + std::regex_replace(file, std::regex(" "), "%20")  + ">" + file + "</a></li>\n";
+        listing += "<li class=\"dirlisting file\"><a href=" + std::regex_replace(file, std::regex(" "), "%20")  + ">" + file + "</a></li>\n";
     }
 
     listing += "</ul>";

@@ -7,7 +7,7 @@
         },
         "music.localhost:8080": {
             "handler": "file",
-            "root": "/home/christian/Music/",
+            "root": "/home/christian/",
             "dirlisting": true
         },
         "*:4433": {

@@ -26,7 +26,7 @@
         The content is JSON formated and has the following structure:
     </p>
     <p>
-        <pre class="prettyprint lang-python prettyprinted">
+        <pre class="prettyprint lang-json">
 {
     "hosts": {
         "*:80": {
@@ -46,7 +46,8 @@
         "*:8080": {
             "handler": "file",
             "root": "/restricted/",
-            "authfile": auth.db"
+            "authfile": "auth.db",
+            "dirlisting": true
         }
     },
     "logger": "console",
@@ -91,7 +92,7 @@
                             <br>
                             This host specific directive will overwrite global the (optional) global staticdir directive (see below).
                             <br>
-                            Another important file is dirlisting.html. This file is used as a template, when the dirlisting directive is used. Read more about <a href="{{ url_for('dirlisting.html') }}">dirlisting.html</a>.
+                            Another important file is dirlisting.html. This file is used as a template, when the dirlisting directive is used. Read more about <a href="{{ url_for('documentation.html') }}#dirlisting">directory listing</a>.
                         </li>
                         <li>
                             <b>target</b> (Mandatory for redirect handlers) The location to which the resource has been moved.
@@ -111,7 +112,9 @@
                         <li>
                             <b>authfile: </b> (Optional, no default) Path to a file which holds authentication details. If set, a basic auth will be requested by menial and if credentials are provided, they will be checked against the authfile. Please see the <a href="{{ url_for('documentation.html') }}#authfile">authfile</a> section in the documentation for information about the necessary format.
                         </li>
-
+                        <li>
+                            <b>dirlisting: </b> (Optional, default: false) If set to true, the files and folders of the current directory are listet and no default document will be delievered. More about <a href="{{ url_for('documentation.html') }}#dirlisting">directory listing</a>.
+                        </li>
                     </ul>
                 </ul>
             </li>
@@ -164,7 +167,7 @@
         A more sophisticated example:
     </p>
     <p>
-        <pre>
+        <pre class="prettyprint lang-json">
 {
     "hosts": {
         "*:80": {
