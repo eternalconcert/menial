@@ -15,9 +15,22 @@ class Response {
             return "";
         };
 
+        virtual std::string unauthorized() {
+            return "";
+        };
+
         virtual std::string methodNotAllowed() {
             return "";
         };
+
+        virtual std::string notFound() {
+            return "";
+        };
+
+        virtual std::string internalServerError() {
+            return "";
+        };
+
         Request* getRequest();
         void setStatus(int status);
         int getStatus();

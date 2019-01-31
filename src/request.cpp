@@ -156,23 +156,11 @@ std::string Request::getResponse() {
         authenticated = this->authenticate();
     }
     catch (FileNotFoundException) {
-        // Rewrite as response->sendError();
-        response->setStatus(500);
-        std::string header = "HTTP/1.0 ";
-        header += response->getStatusMessage() + "\n";
-        header += "Server: menial\n";
-        header += "Content-Length: 0\n\n";
-        std::string content =  readFile(this->config->hosts[this->getVirtualHost()]["staticdir"] + "500.html");
         this->logger->error("Auth file cannot be read");
-        return header + content;
+        return response->internalServerError();
     }
     if (!authenticated) {
-        response->setStatus(401);
-        std::string header = "HTTP/1.0 ";
-        header += response->getStatusMessage() + "\n";
-        header += "Server: menial\n";
-        header += "WWW-Authenticate: Basic realm = /\n\n";
-        return header;
+        return response->unauthorized();
     }
 
     if (this->getMethod() == "GET")  {

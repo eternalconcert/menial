@@ -10,6 +10,9 @@
 #include "fileresponse.h"
 
 
+static const std::string HEADERDELIM = "\n\n";
+
+
 void FileResponse::setFilePath() {
     std::string targetPath = this->target;
     if (targetPath.find("..") != std::string::npos) {
@@ -60,7 +63,29 @@ std::string FileResponse::head() {
 
 
 std::string FileResponse::get() {
-    return this->head() + this->getContent();
+    std::string fileName = this->fileName;
+    std::string result;
+    std::string content = this->getContent();
+    result = this->getHeader(content, fileName) + content;
+
+    return result;
+}
+
+
+std::string FileResponse::unauthorized() {
+    this->logger->info("401: unauthorized");
+    this->setStatus(401);
+    std::string header = this->headerBase();
+    header += "WWW-Authenticate: Basic realm = /\n\n";
+    std::string content = readFile(this->config["staticdir"] + "401.html");
+    return header + content;
+}
+
+std::string FileResponse::notFound() {
+    this->logger->info("404: Unknown target requested: " + target);
+    this->setStatus(404);
+    std::string content = this->headerBase() + HEADERDELIM + readFile(this->config["staticdir"] + "404.html");
+    return content;
 }
 
 
@@ -68,6 +93,14 @@ std::string FileResponse::methodNotAllowed() {
     this->setStatus(405);
     std::string header = this->headerBase();
     return header;
+}
+
+
+std::string FileResponse::internalServerError() {
+    this->logger->error("Internal server error");
+    this->setStatus(500);
+    std::string content = this->headerBase() + HEADERDELIM + readFile(this->config["staticdir"] + "500.html");
+    return content;
 }
 
 
@@ -126,13 +159,6 @@ std::string FileResponse::guessFileType(std::string fileName) {
 }
 
 
-std::string FileResponse::make404() {
-    this->setStatus(404);
-    this->logger->info("404: Unknown target requested: " + target);
-    return readFile(this->config["staticdir"] + "404.html");
-}
-
-
 std::string FileResponse::getDirlisting() {
     std::string targetDir = this->filePath;
     targetDir = std::regex_replace(targetDir, std::regex("%20"), " ");
@@ -177,8 +203,8 @@ std::string FileResponse::getDirlisting() {
 
     listing += "</ul>";
     std::string listTemplate = readFile(this->config["staticdir"] + "dirlisting.html");
-    listTemplate = std::regex_replace(listTemplate, std::regex("<DIR>"), cleanTarget);
-    listTemplate = std::regex_replace(listTemplate, std::regex("<LISTING>"), listing);
+    listTemplate = std::regex_replace(listTemplate, std::regex("<_DIR_>"), cleanTarget);
+    listTemplate = std::regex_replace(listTemplate, std::regex("<_LISTING_>"), listing);
     return listTemplate;
 }
 
@@ -197,14 +223,16 @@ std::string FileResponse::getContent() {
                 return this->getDirlisting();
             }
         } catch (FileNotFoundException) {
-            content = this->make404();
+            this->setStatus(404);
+            return readFile(this->config["staticdir"] + "404.html");
         }
     }
 
     try {
         content = readFile(filePath);
     } catch (FileNotFoundException) {
-        content = this->make404();
+        this->setStatus(404);
+        return readFile(this->config["staticdir"] + "404.html");
     }
     return content;
 }
