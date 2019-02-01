@@ -8,17 +8,40 @@ Response::Response(Request *request, Config *config, Logger *logger) {
     this->setStatus(200);
 }
 
+
 Request* Response::getRequest() {
     return this->request;
 };
+
 
 void Response::setStatus(int status) {
     this->status = status;
 };
 
+
 int Response::getStatus() {
     return this->status;
 };
+
+
+std::string Response::headerBase() {
+    std::string header = "HTTP/1.0 ";
+    header += this->getStatusMessage();
+    header += "\n";
+    header += "Server: menial\n";
+    return header;
+}
+
+
+std::string Response::unauthorized() {
+    this->logger->info("401: unauthorized");
+    this->setStatus(401);
+    std::string header = this->headerBase();
+    header += "WWW-Authenticate: Basic realm = /\n\n";
+    std::string content = readFile(this->config["staticdir"] + "401.html");
+    return header + content;
+}
+
 
 std::string Response::getStatusMessage() {
     std::string statusMessage;

@@ -15,10 +15,6 @@ class Response {
             return "";
         };
 
-        virtual std::string unauthorized() {
-            return "";
-        };
-
         virtual std::string methodNotAllowed() {
             return "";
         };
@@ -31,10 +27,13 @@ class Response {
             return "";
         };
 
+
         Request* getRequest();
         void setStatus(int status);
         int getStatus();
         std::string getStatusMessage();
+        std::string headerBase();
+        std::string unauthorized();
         std::string hostName;
         Response(Request *request, Config *config, Logger *logger);
 

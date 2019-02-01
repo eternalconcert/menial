@@ -6,9 +6,7 @@
 
 
 std::string PyResponse::getHeader(std::string content) {
-    std::string header = "HTTP/1.0 ";
-    header += this->getStatusMessage();
-    header += "\n";
+    std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: text/html\n";
     header += this->config["additionalheaders"];

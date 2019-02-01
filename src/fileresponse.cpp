@@ -43,15 +43,6 @@ void FileResponse::setFilePath() {
 };
 
 
-std::string FileResponse::headerBase() {
-    std::string header = "HTTP/1.0 ";
-    header += this->getStatusMessage();
-    header += "\n";
-    header += "Server: menial\n";
-    return header;
-}
-
-
 std::string FileResponse::head() {
     std::string fileName = this->fileName;
 
@@ -71,15 +62,6 @@ std::string FileResponse::get() {
     return result;
 }
 
-
-std::string FileResponse::unauthorized() {
-    this->logger->info("401: unauthorized");
-    this->setStatus(401);
-    std::string header = this->headerBase();
-    header += "WWW-Authenticate: Basic realm = /\n\n";
-    std::string content = readFile(this->config["staticdir"] + "401.html");
-    return header + content;
-}
 
 std::string FileResponse::notFound() {
     this->logger->info("404: Unknown target requested: " + target);
