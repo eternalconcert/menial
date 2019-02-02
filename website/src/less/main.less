@@ -1,8 +1,5 @@
-/* Phone */
-@media (max-width: 767px) and (max-width: 767px) {}
-
-/* PC */
-@media (min-width: 1025px) {}
+@phone: ~'(max-width: 1023px)';
+@pc: ~'(min-width: 1024px)';
 
 body, html {
     height: 100%;
@@ -33,14 +30,17 @@ table {
 }
 
 #main {
-    @media (min-width: 1025px) {
+    position: relative;
+    min-height: 500px;
+
+    @media @phone {
+        margin: auto 20px auto 20px;
+    }
+    @media @pc {
         width: 600px;
         margin: auto;
         min-height: 100%;
     }
-    position: relative;
-    margin: 0 auto;
-    min-height: 500px;
 }
 
 #claim {
@@ -51,21 +51,34 @@ table {
 #footer {
     text-align: center;
     padding-top: 100px;
-    width: 600px;
+    @media @pc {
+        width: 600px;
+    }
     margin: 50px auto 100px auto;
 }
 
 #navigation {
     font-size: 1.3em;
-    text-align: center;
     padding-inline-start: 0px;
-
-    li {
-        padding-right: 10px;
-        display: inline;
-        a {
-            text-decoration: none;
+    @media @pc {
+        text-align: center;
+        li {
+            padding-right: 10px;
+            display: inline;
+            a {
+                text-decoration: none;
+            }
         }
+    }
+    @media @phone {
+        list-style-type: none;
+    }
+
+}
+
+@media @phone {
+    ul {
+        padding-left: 0em;
     }
 }
 
