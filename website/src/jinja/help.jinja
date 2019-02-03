@@ -185,14 +185,14 @@
         },
         "myfriendscousin:80": {
             "handler": "file",
-            "root": "/var/www/html/myfriendscousinshomepage/"
-            "staticdir": "/home/myfriendscousin/menial/static/",
+            "root": "/var/www/html/<wbr>myfriendscousinshomepage/"
+            "staticdir": "/home/<wbr>myfriendscousin/menial/static/",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
         },
         "*:8000": {
             "handler": "python",
             "root": "pyresponse.py",
-            "staticdir": "/can/be/blank/because/python/must/handle/errors/"
+            "staticdir": "/can/be/blank/because/<wbr>python/must/handle/errors/"
         }
     },
     "logger": "file",

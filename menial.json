@@ -2,7 +2,7 @@
     "hosts": {
         "*:8080": {
             "handler": "file",
-            "root": "website/build/",
+            "root": "/home/christian/Projekte/menial/website/build/",
             "authfile": "auth.db"
         },
         "music.localhost:8080": {
