@@ -12,9 +12,9 @@ args = parser.parse_args()
 
 
 class Request(object):
-    def __init__(self, host, url, header, body):
+    def __init__(self, host, target, header, body):
         self.host = host
-        self.url = url
+        self.target = target
         self.header = header
         self.body = body
         self.method = self.header.split('/')[0].strip()
@@ -23,8 +23,8 @@ class Request(object):
 
     def _get_get_params(self):
         params = {}
-        if len(self.url.split('?')) > 1:
-            query_string = self.url.split('?')[1]
+        if len(self.target.split('?')) > 1:
+            query_string = self.target.split('?')[1]
             for item in query_string.split('&'):
                 try:
                     key, value = item.split('=')
@@ -43,12 +43,6 @@ class Request(object):
 
 
 try:
-    body = ""
-
-    if len(sys.argv) > 4:
-        body = sys.argv[4]
-    request = Request(sys.argv[1], sys.argv[2], sys.argv[3], body)
-
-
+    request = Request(args.host, args.target, args.header, args.body)
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
