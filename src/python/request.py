@@ -42,7 +42,28 @@ class Request(object):
         return params
 
 
+
+def notFound():
+    print(404)
+
+
+class App:
+
+    def __init__(self):
+        self.url_mapping = {}
+
+    def __call__(self, request):
+        self.request = request
+        self.url_mapping.get(request.target, notFound)()
+
+    def route(self, url):
+        def function_wrapper(func):
+            self.url_mapping[url] = func
+        return function_wrapper
+
+
 try:
     request = Request(args.host, args.target, args.header, args.body)
+
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
