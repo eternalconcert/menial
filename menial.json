@@ -12,8 +12,7 @@
         },
         "*:4433": {
             "handler": "file",
-            "root": "/home/christian/Projekte/softcreate/build/",
-            "authfile": "auth.db"
+            "root": "/home/christian/Projekte/softcreate/build/"
         },
         "cpc464.localhost:8080": {
             "handler": "redirect",

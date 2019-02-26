@@ -20,7 +20,7 @@ std::string PyResponse::get() {
     std::string interfaceCall = "python " + this->config["root"];
     interfaceCall += " -s='" + hostName + "'";
     interfaceCall += " -t='" + this->getRequest()->getTarget() + "'";
-    interfaceCall += " -p='" + this->getRequest()->getHeader() + "'";
+    interfaceCall += " -p='" + this->getRequest()->getHeaders() + "'";
     interfaceCall += " -b='" + this->getRequest()->getBody() + "'";
     this->logger->debug("Calling Python with: " + interfaceCall);
 

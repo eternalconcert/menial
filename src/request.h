@@ -13,11 +13,10 @@ class Request {
         void setHostAndPort();
         void setTarget();
         void setUserAgent();
-        void setBody();
         bool authenticate();
 
         std::string getMethod();
-        std::string getHeader();
+        std::string getHeaders();
         std::string getBody();
         std::string getGetParams();
         std::string getVirtualHost();

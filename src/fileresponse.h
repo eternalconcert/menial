@@ -13,6 +13,7 @@ class FileResponse: public Response {
         std::string getHeader(std::string content, std::string fileName);
 
         std::string notFound();
+        std::string notModified();
         std::string internalServerError();
         std::string methodNotAllowed();
 
@@ -33,6 +34,9 @@ class FileResponse: public Response {
         std::string guessFileType(std::string fileName);
         std::string getContent();
         std::string getLastModified();
+        bool contentMatch();
+        std::string makeEtag();
+        std::string getETag();
 };
 
 

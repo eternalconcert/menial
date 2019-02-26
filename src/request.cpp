@@ -102,15 +102,6 @@ void Request::setUserAgent() {
     this->userAgent = userAgent;
 }
 
-void Request::setBody() {
-    this->body = "";
-    // std::string message = this->message;
-    // message.erase(0, message.find("\n\r\n") + 3);
-    // this->body = message;
-    this->logger->debug("RequestBody: " + this->body);
-}
-
-
 bool Request::authenticate() {
     std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
     if (authFile.empty()) {
@@ -186,7 +177,7 @@ std::string Request::getGetParams() {
     return this->paramString;
 };
 
-std::string Request::getHeader() {
+std::string Request::getHeaders() {
     return this->headers;
 };
 

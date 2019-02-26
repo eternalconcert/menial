@@ -55,6 +55,9 @@ std::string Response::getStatusMessage() {
         case 302:
             statusMessage = "302 Moved Temporary";
             break;
+        case 304:
+            statusMessage = "304 Not Modified";
+            break;
         case 401:
             statusMessage = "401 Unauthorized";
             break;

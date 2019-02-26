@@ -12,6 +12,35 @@
 
 static const std::string HEADERDELIM = "\n\n";
 
+std::string FileResponse::makeEtag() {
+    return sha256hash(this->getContent());
+}
+
+
+bool FileResponse::contentMatch() {
+    std::string requestHeaders = this->getRequest()->getHeaders();
+    std::string tag = "If-None-Match: ";
+
+    bool result = false;
+    if (requestHeaders.find(tag) != std::string::npos) {
+        std::string hash;
+        std::string eTag = this->makeEtag();
+        int i = requestHeaders.find(tag) + tag.length();
+        int j = 0;
+        result = true;
+        // Hacky comparson: No idea why == does not work.
+        while (j < 64) {
+            if (requestHeaders[i] != eTag[j]) {
+                result = false;
+            };
+            i++;
+            j++;
+        }
+    }
+
+    return result;
+}
+
 
 void FileResponse::setFilePath() {
     std::string targetPath = this->target;
@@ -24,7 +53,6 @@ void FileResponse::setFilePath() {
 
     std::string paramString = this->getRequest()->getGetParams();
     if (paramString.length() > 0) {
-
         targetPath.erase(targetPath.find(paramString));
     }
 
@@ -43,7 +71,18 @@ void FileResponse::setFilePath() {
 };
 
 
+std::string FileResponse::notModified() {
+    this->logger->debug("Content has not changed, -> 304");
+    this->setStatus(304);
+    return this->headerBase() + this->getETag() + HEADERDELIM;
+}
+
+
 std::string FileResponse::head() {
+    if (this->contentMatch()) {
+        return this->notModified();
+    }
+
     std::string fileName = this->fileName;
 
     std::string result;
@@ -54,9 +93,14 @@ std::string FileResponse::head() {
 
 
 std::string FileResponse::get() {
+    if (this->contentMatch()) {
+        return this->notModified();
+    }
+
     std::string fileName = this->fileName;
     std::string result;
     std::string content = this->getContent();
+
     result = this->getHeader(content, fileName) + content;
 
     return result;
@@ -92,6 +136,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     if (this->status == 200) {
         header += this->getLastModified();
+        header += this->getETag() + "\n";
     }
     header += this->config["additionalheaders"];
     header += "\r\n";
@@ -219,6 +264,11 @@ std::string FileResponse::getContent() {
     return content;
 }
 
+std::string FileResponse::getETag() {
+    std::string Etag = "ETag: ";
+    Etag += this->makeEtag();
+    return Etag;
+}
 
 std::string FileResponse::getLastModified() {
     // Last-Modified: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
