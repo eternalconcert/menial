@@ -13,7 +13,7 @@
 static const std::string HEADERDELIM = "\n\n";
 
 std::string FileResponse::makeEtag() {
-    return sha256hash(this->getContent());
+    return sha256hash(this->getLastModified());
 }
 
 
