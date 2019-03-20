@@ -176,6 +176,9 @@ std::string FileResponse::guessFileType(std::string fileName) {
     else if (extension == "tar") {
         fileType = "application/x-tar";
     }
+    else if (extension == "zip") {
+        fileType = "application/zip";
+    }
     else if (extension == "gz") {
         fileType = "application/gzip";
     }
