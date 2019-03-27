@@ -244,7 +244,7 @@ std::string FileResponse::getContent() {
     std::string content;
     if (this->config["dirlisting"] == "true") {
         try {
-            std::string targetPath = this->filePath;
+            std::string targetPath = this->target;
             if (targetPath.rfind("/") == (targetPath.length() - 1)) {
                 if (targetPath.find("..") != std::string::npos) {
                     this->logger->warning("Intrusion try detected: " + targetPath);

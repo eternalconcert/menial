@@ -1,5 +1,19 @@
 {
     "hosts": {
+        "test.localhost:8000": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/menial/website/build/"
+        },
+        "file.localhost:8000": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/menial/website/build/",
+            "dirlisting": true
+        },
+        "selenium.localhost:8000": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/menial/selenium/reports/",
+            "defaultdocument": "report.html"
+        },
         "*:8080": {
             "handler": "file",
             "root": "/home/christian/Projekte/menial/website/build/",

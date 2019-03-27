@@ -1,0 +1,26 @@
+{
+    "hosts": {
+        "test.localhost:8000": {
+            "handler": "file",
+            "root": "../website/build/"
+        },
+        "files.localhost:8000": {
+            "handler": "file",
+            "root": "../website/build/",
+            "dirlisting": true
+        },
+        "report.localhost:8000": {
+            "handler": "file",
+            "root": "../selenium/reports/",
+            "defaultdocument": "report.html"
+        },
+        "python.localhost:9999": {
+            "handler": "python",
+            "root": "../testdata/testhost/pyresponse.py"
+        }
+    },
+    "iplogging": true,
+    "logger": "console",
+    "loglevel": "debug",
+    "staticdir": "../deployment/default/static/"
+}

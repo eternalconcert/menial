@@ -44,7 +44,7 @@ class Request(object):
 
 
 def notFound():
-    print(404)
+    return "404"
 
 
 class App:
@@ -54,7 +54,7 @@ class App:
 
     def __call__(self, request):
         self.request = request
-        self.url_mapping.get(request.target, notFound)()
+        print(self.url_mapping.get(request.target, notFound)())
 
     def route(self, url):
         def function_wrapper(func):
