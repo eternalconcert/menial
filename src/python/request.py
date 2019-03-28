@@ -36,7 +36,7 @@ class Request(object):
     def _get_post_params(self):
         params = {}
         if len(self.body) > 3:
-            body = self.body[3:]
+            body = self.body
             for item in body.split("&"):
                 params[item.split("=")[0]] = item.split("=")[1]
         return params

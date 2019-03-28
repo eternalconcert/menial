@@ -55,4 +55,29 @@ def multiparams(name, id):
     response = template.format(title=name +" - " + " Order: " + id, body="")
     return response
 
+
+@app.route("/post_form/")
+def show_form():
+    body = """
+    <form action="/process_post/" method="POST">
+        <input type="text" name="name" />
+        <input type="password" name="password" />
+        <button id="submit">Submit</button>
+    </form>
+    """
+    response = template.format(title="Post form", body=body)
+    return response
+
+
+@app.route("/process_post/")
+def process_post():
+    if request.method == "POST":
+        name = request.post['name']
+        password = request.post['password']
+        response = template.format(title="Name: " + name + ", Password: " + password, body="<h2>" + request.method + "</h2>")
+    elif request.method == "GET":
+        response = template.format(title="", body="<h2>" + request.method + "</h2>")
+    return response
+
+
 app(request)

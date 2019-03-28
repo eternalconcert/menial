@@ -26,6 +26,23 @@ Show multiple get params
     Given open page to reply multiple request params
     Then param name and param id should be part of the page title
 
+Post request data
+    [Documentation]     Post a form and validate the received data
+    Given open page to post form data
+    And submit credentials   Christian       test123
+    Then page title should contain post data    Christian       test123
+
+Method dispatching POST
+    [Documentation]     Post a form and validate the request method
+    Given open page to post form data
+    And submit credentials   Christian       test123
+    Then page should contain method name     POST
+
+Method dispatching GET
+    [Documentation]     Open an URL which can process POST data or show a page
+    Go to       ${INDEX}/process_post/
+    Then page should contain method name     GET
+
 Dispatch URL with single variable
     [Documentation]     This testcase has been written before implementing the feature
     Given an url with a variable ID     23
@@ -84,6 +101,23 @@ An url with a variable name and an variable ID
 Both variable parts should be part of the title
     [Arguments]     ${Name}   ${ID}
     Page title should be    Customer: ${Name} - Order: ${ID}
+
+Open page to post form data
+    Go to       ${INDEX}/post_form/
+
+Page title should contain post data
+    [Arguments]     ${Name}     ${Password}
+    Page title should be    Name: ${Name}, Password: ${Password}
+
+Page should contain method name
+    [Arguments]     ${Method}
+    Headline should be      ${Method}
+
+Submit credentials
+    [Arguments]     ${Name}     ${Password}
+    Input text      xpath=//form/input[@name="name"]        ${Name}
+    Input text      xpath=//form/input[@name="password"]    ${Password}
+    Click button    submit
 
 Open browser to index page
     Open browser    ${INDEX}    ${BROWSER}
