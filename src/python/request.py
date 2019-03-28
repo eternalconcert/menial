@@ -42,9 +42,21 @@ class Request(object):
         return params
 
 
+template = """
+<html>
+    <head>
+        <title>{title}</title>
+    </head>
+    <body>
+        {body}
+    </body>
+</html>
+"""
+
 
 def notFound():
-    return "404"
+    message = "404 Not Found"
+    return template.format(title=message, body=message)
 
 
 class App:
