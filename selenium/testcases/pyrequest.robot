@@ -54,8 +54,19 @@ Dispatch URL with multiple variables
     [Documentation]      This testcase has been written before implementing the feature
     Given an url with a variable name and an variable ID     christian      23
     Then both variable parts should be part of the title     christian      23
-    And an url with a variable name and an variable ID    benjamin       5
+    And an url with a variable name and an variable ID       benjamin       5
     Then both variable parts should be part of the title     benjamin       5
+
+Dispatch URL with multiple variables with type names
+    [Documentation]      This testcase has been written before implementing the feature
+    Given an url with a variable name and an variable ID with type name     christian      23   19.0
+    Then All variable parts should be part of the title                     christian      23   19.0
+    And an url with a variable name and an variable ID with type name       benjamin       5    7.0
+    Then All variable parts should be part of the title                     benjamin       5    7.0
+
+Dispatcher should match without trailing /
+    Given an URL without a trailing /
+    Then the dispatcher should match the corresponding URL anyway
 
 *** Keywords ***
 Index page should be open
@@ -98,9 +109,23 @@ An url with a variable name and an variable ID
     [Arguments]     ${Name}   ${ID}
     Go to       ${INDEX}/customers/${Name}/orders/${ID}/
 
+An url with a variable name and an variable ID with type name
+    [Arguments]     ${Name}   ${ID}     ${Rate}
+    Go to       ${INDEX}/suppliers/${Name}/offers/${ID}/taxrate/${Rate}/
+
+All variable parts should be part of the title
+    [Arguments]     ${Name}   ${ID}     ${Rate}
+    Page title should be    Supplier: ${Name} - Offers: ${ID} (Tax rate: ${Rate})
+
 Both variable parts should be part of the title
     [Arguments]     ${Name}   ${ID}
     Page title should be    Customer: ${Name} - Order: ${ID}
+
+An URL without a trailing /
+    Go to       ${INDEX}/no/trailing/slash
+
+The dispatcher should match the corresponding URL anyway
+    Page title should be    Matched it anyway
 
 Open page to post form data
     Go to       ${INDEX}/post_form/

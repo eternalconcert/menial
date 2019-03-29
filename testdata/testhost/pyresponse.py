@@ -55,6 +55,15 @@ def multiparams(name, id):
     response = template.format(title="Customer: " + name + " - " + " Order: " + id, body="")
     return response
 
+@app.route("/suppliers/<str:name>/offers/<int:id>/taxrate/<float:rate>/")
+def typed_variables(name, id, rate):
+    assert isinstance(name, str)
+    assert isinstance(id, int)
+    assert isinstance(rate, float)
+    title = "Supplier: %s - Offers: %s (Tax rate: %s)" % (name, id, rate)
+    response = template.format(title=title, body="")
+    return response
+
 
 @app.route("/post_form/")
 def show_form():
@@ -79,6 +88,10 @@ def process_post():
         response = template.format(title="", body="<h2>" + request.method + "</h2>")
     return response
 
+
+@app.route("/no/trailing/slash/")
+def addition():
+    return template.format(title="Matched it anyway", body="")
 
 
 app(request)

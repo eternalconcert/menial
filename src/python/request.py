@@ -67,10 +67,25 @@ class App:
 
     def __call__(self, request):
         self.request = request
-        func, args = self.get_route_function(request.target)
+        func, args = self._get_route_function(request.target)
         print(func(*args))
 
-    def get_route_function(self, url):
+    @staticmethod
+    def _get_type(pattern):
+        if len(pattern.split(":")) == 1:
+            return
+        typename = pattern.split(":")[0].replace("<", "")
+        if typename == "int":
+            return int
+        if typename == "str":
+            return str
+        if typename == "float":
+            return float
+        raise TypeError("Type %s cannot be used for type casting." % typename)
+
+    def _get_route_function(self, url):
+        if url[-1:] != "/" and not self.request.get:
+            url += "/"
         arguments = []
         for pattern, func in self.url_patterns.items():
             if pattern == url:
@@ -82,6 +97,9 @@ class App:
             match = True
             for index, part in enumerate(pattern_parts):
                 if re.match(r"(<\S+?>)", part):
+                    type_to_cast = self._get_type(part)
+                    if type_to_cast:
+                        url_parts[index] = type_to_cast(url_parts[index])
                     arguments.append(url_parts[index])
                 elif part != url_parts[index]:
                     match = False
