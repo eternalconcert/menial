@@ -54,7 +54,7 @@ Dispatch URL with multiple variables
     [Documentation]      This testcase has been written before implementing the feature
     Given an url with a variable name and an variable ID     christian      23
     Then both variable parts should be part of the title     christian      23
-    And an an url with a variable name and an variable ID    benjamin       5
+    And an url with a variable name and an variable ID    benjamin       5
     Then both variable parts should be part of the title     benjamin       5
 
 *** Keywords ***

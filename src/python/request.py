@@ -1,3 +1,4 @@
+import re
 import sys
 from argparse import ArgumentParser
 
@@ -54,7 +55,7 @@ template = """
 """
 
 
-def notFound():
+def notFound(*args):
     message = "404 Not Found"
     return template.format(title=message, body=message)
 
@@ -62,15 +63,36 @@ def notFound():
 class App:
 
     def __init__(self):
-        self.url_mapping = {}
+        self.url_patterns = {}
 
     def __call__(self, request):
         self.request = request
-        print(self.url_mapping.get(request.target, notFound)())
+        func, args = self.get_route_function(request.target)
+        print(func(*args))
+
+    def get_route_function(self, url):
+        arguments = []
+        for pattern, func in self.url_patterns.items():
+            if pattern == url:
+                return func, arguments
+            url_parts = url.split("/")
+            pattern_parts = pattern.split("/")
+            if len(pattern_parts) != len(url_parts):
+                continue
+            match = True
+            for index, part in enumerate(pattern_parts):
+                if re.match(r"(<\S+?>)", part):
+                    arguments.append(url_parts[index])
+                elif part != url_parts[index]:
+                    match = False
+                    break
+            if match:
+                return func, arguments
+        return notFound, arguments
 
     def route(self, url):
         def function_wrapper(func):
-            self.url_mapping[url] = func
+            self.url_patterns[url] = func
         return function_wrapper
 
 
