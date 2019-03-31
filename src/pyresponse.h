@@ -9,7 +9,6 @@
 class PyResponse: public Response {
     public:
         std::string get();
-        std::string getHeader(std::string content);
         PyResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {};
 };
 

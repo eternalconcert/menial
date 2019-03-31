@@ -55,9 +55,65 @@ template = """
 """
 
 
-def notFound(*args):
-    message = "404 Not Found"
-    return template.format(title=message, body=message)
+class NotFoundError(Exception):
+
+    def __init__(self, message):
+        message = "Cannot find ressource: " +  message
+        super(NotFoundError, self).__init__(message)
+
+
+class Error:
+    def __init__(self, ex, status):
+        self.ex = ex
+        self.status = status
+
+    def __repr__(self):
+        template = """
+            <head>
+                <title>{statustext}: menial python exception</title>
+            </head>
+            <h1>{statustext}: menial python exception</h1>
+            <div style="color: red">
+                {error}
+            </div>
+        """
+        return template.format(error=self.ex, statustext=status_messages[self.status])
+
+
+status_messages = {
+    200: "200 OK",
+    301: "301 Moved Permanently",
+    302: "302 Moved Temporary",
+    304: "304 Not Modified",
+    401: "401 Unauthorized",
+    404: "404 Not Found",
+    405: "405 Method Not Allowed",
+    500: "500 Internal Server Error"
+}
+
+
+class Response:
+
+    def __init__(self, request, function, func_args):
+        self.status = 200
+        self.request = request
+        self.function = function
+        self.func_args = func_args
+        self.body = self.make_body()
+        self.headers = self.make_headers()
+
+    def make_headers(self):
+        headers = "HTTP/1.0 {status}\n" \
+                  "Server: menial"
+        headers = headers.format(status=status_messages[self.status])
+        return headers
+
+    def make_body(self):
+        try:
+            return self.function(*self.func_args)
+        except Exception as e:
+            self.status = 500
+            return Error(e, self.status)
 
 
 class App:
@@ -67,8 +123,20 @@ class App:
 
     def __call__(self, request):
         self.request = request
-        func, args = self._get_route_function(request.target)
-        print(func(*args))
+        self.send_response()
+
+    def send_response(self):
+        try:
+            func, func_args = self._get_route_function(request.target)
+            response = Response(request, func, func_args)
+            print(response.headers)
+            print("\n\n")
+            print(response.body)
+        except NotFoundError as e:
+            print("HTTP/1.0 {status}\n" \
+                  "Server: menial\n\n \
+                  {body}".format(status=status_messages[404], body=Error(e, 404))
+            )
 
     @staticmethod
     def _get_type(pattern):
@@ -106,7 +174,7 @@ class App:
                     break
             if match:
                 return func, arguments
-        return notFound, arguments
+        raise NotFoundError(url)
 
     def route(self, url):
         def function_wrapper(func):

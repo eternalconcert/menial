@@ -5,16 +5,6 @@
 #include "pyresponse.h"
 
 
-std::string PyResponse::getHeader(std::string content) {
-    std::string header = this->headerBase();
-    header += "Content-Length: " + std::to_string(content.length()) + "\n";
-    header += "Content-Type: text/html\n";
-    header += this->config["additionalheaders"];
-    header += "\r\n";
-    return header;
-}
-
-
 std::string PyResponse::get() {
     std::string hostName = this->getRequest()->getVirtualHost();
     std::string interfaceCall = "python " + this->config["root"];
@@ -27,18 +17,16 @@ std::string PyResponse::get() {
     FILE *f;
     char path[BUFFER_SIZE];
     f = popen(interfaceCall.c_str(), "r");
-    std::string content;
+    std::string response;
     while (fgets(path, BUFFER_SIZE, f) != NULL) {
-        content += path;
+        response += path;
     }
     int status = pclose(f);
     if (WEXITSTATUS(status) != 0) {
-        content += readFile(this->config["staticdir"] + "500.html");
+        response += readFile(this->config["staticdir"] + "500.html");
         this->setStatus(500);
         this->logger->error("500: Error while reading from python");
     }
 
-    std::string result;
-    result = this->getHeader(content) + content;
-    return result;
+    return response;
 }
