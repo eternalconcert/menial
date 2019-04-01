@@ -1,5 +1,8 @@
 import re
 import sys
+import json
+import os
+from random import randint
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -12,20 +15,70 @@ parser.add_argument('-b', dest='body')
 args = parser.parse_args()
 
 
+class Session:
+
+    base_path = "/tmp/menial/"
+    if not os.path.isdir(base_path):
+        os.mkdir(base_path)
+
+    def __init__(self, _id, content):
+        self._id = int(_id)
+        self.content = content
+        self.file_path = os.path.join(Session.base_path, str(_id))
+
+    def __getitem__(self, key):
+        return self.content.get(key)
+
+    def __setitem__(self, key, value):
+        self.content[key] = value
+
+    def save(self):
+        with open(self.file_path, 'w') as f:
+            f.write(json.dumps({'id': self._id, 'content': self.content}))
+
+    @classmethod
+    def create(cls):
+        _id = randint(10000000000000, 9999999999999999)
+        inst = cls(_id, {})
+        session_dict = {'id': inst._id, 'content': inst.content}
+        with open(inst.file_path, 'w') as f:
+            f.write(json.dumps(session_dict))
+        return inst
+
+    @classmethod
+    def get_by_id(cls, _id):
+        if not _id:
+            return cls.create()
+        file_path  = os.path.join(Session.base_path, str(_id))
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as f:
+                session_dict = json.loads(f.read())
+                if session_dict['id'] == int(_id):
+                    return Session(_id, session_dict['content'])
+
+
 class Request(object):
-    def __init__(self, host, target, header, body):
+    def __init__(self, host, target, headers, body):
         self.host = host
-        self.target = target
-        self.header = header
+        self.target = target.split('?')[0]
+        self.uri = target
+        self.headers = headers
         self.body = body
-        self.method = self.header.split('/')[0].strip()
+        self.method = self.headers.split('/')[0].strip()
         self.get = self._get_get_params()
         self.post = self._get_post_params()
+        self.session_id = self.get_session_id_from_headers()
+        self.session = Session.get_by_id(self.session_id)
+
+    def get_session_id_from_headers(self):
+        for line in self.headers.splitlines():
+            if line.startswith("Cookie: menial-session"):
+                return line.split("=")[1]
 
     def _get_get_params(self):
         params = {}
-        if len(self.target.split('?')) > 1:
-            query_string = self.target.split('?')[1]
+        if len(self.uri.split('?')) > 1:
+            query_string = self.uri.split('?')[1]
             for item in query_string.split('&'):
                 try:
                     key, value = item.split('=')
@@ -41,6 +94,13 @@ class Request(object):
             for item in body.split("&"):
                 params[item.split("=")[0]] = item.split("=")[1]
         return params
+
+
+try:
+    request = Request(args.host, args.target, args.header, args.body)
+
+except Exception as e:
+    print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
 
 
 template = """
@@ -101,10 +161,12 @@ class Response:
         self.func_args = func_args
         self.body = self.make_body()
         self.headers = self.make_headers()
+        self.request.session.save()
 
     def make_headers(self):
         headers = "HTTP/1.0 {status}\n" \
                   "Server: menial"
+        headers += "\nSet-Cookie: menial-session={}".format(self.request.session._id)
         headers = headers.format(status=status_messages[self.status])
         return headers
 
@@ -121,7 +183,7 @@ class App:
     def __init__(self):
         self.url_patterns = {}
 
-    def __call__(self, request):
+    def __call__(self):
         self.request = request
         self.send_response()
 
@@ -181,9 +243,3 @@ class App:
             self.url_patterns[url] = func
         return function_wrapper
 
-
-try:
-    request = Request(args.host, args.target, args.header, args.body)
-
-except Exception as e:
-    print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))

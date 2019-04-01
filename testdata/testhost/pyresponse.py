@@ -29,18 +29,13 @@ def subpage():
     return response
 
 
-@app.route("/params/?name=Christian")
-def single_get_param():
+@app.route("/params/")
+def get_params():
     name = request.get['name']
     response = template.format(title="Python test page: " + name, body="")
-    return response
-
-
-@app.route("/params/?name=Christian&id=23")
-def multiple_get_params():
-    name = request.get['name']
-    id = request.get['id']
-    response = template.format(title="Python test page: Name: " + name + ", ID: " + id, body="")
+    _id = request.get.get('id')
+    if _id:
+        response = template.format(title="Python test page: Name: " + name + ", ID: " + _id, body="")
     return response
 
 
@@ -94,4 +89,4 @@ def addition():
     return template.format(title="Matched it anyway", body="")
 
 
-app(request)
+app()
