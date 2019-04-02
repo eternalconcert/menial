@@ -15,16 +15,11 @@ parser.add_argument('-b', dest='body')
 args = parser.parse_args()
 
 
-class Session:
-
-    base_path = "/tmp/menial/"
-    if not os.path.isdir(base_path):
-        os.mkdir(base_path)
+class SessionBase(object):
 
     def __init__(self, _id, content):
         self._id = int(_id)
         self.content = content
-        self.file_path = os.path.join(Session.base_path, str(_id))
 
     def __getitem__(self, key):
         return self.content.get(key)
@@ -37,6 +32,29 @@ class Session:
             self.content[key]
         except KeyError:
             return default
+
+    def save(self):
+        raise NotImplementedError("save method must be implemented by inherited class")
+
+    @classmethod
+    def create(cls):
+        raise NotImplementedError("create method must be implemented by inherited class")
+
+    @classmethod
+    def get_by_id(cls, _id):
+        raise NotImplementedError("get_by_id method must be implemented by inherited class")
+
+
+
+class FileSystemSession(SessionBase):
+
+    base_path = "/tmp/menial/"
+    if not os.path.isdir(base_path):
+        os.mkdir(base_path)
+
+    def __init__(self, _id, content):
+        super(FileSystemSession, self).__init__(_id, content)
+        self.file_path = os.path.join(FileSystemSession.base_path, str(_id))
 
     def save(self):
         with open(self.file_path, 'w') as f:
@@ -53,11 +71,14 @@ class Session:
 
     @classmethod
     def get_by_id(cls, _id):
-        file_path  = os.path.join(Session.base_path, str(_id))
+        file_path  = os.path.join(FileSystemSession.base_path, str(_id))
         if os.path.isfile(file_path):
             with open(file_path, 'r') as f:
                 session_dict = json.loads(f.read())
-                return Session(_id, session_dict['content'])
+                return FileSystemSession(_id, session_dict['content'])
+
+
+session_adapter = FileSystemSession
 
 
 class Request(object):
@@ -73,13 +94,13 @@ class Request(object):
 
         current_session_id = self.get_session_id_from_headers()
         if current_session_id:
-            current_session = Session.get_by_id(current_session_id)
+            current_session = session_adapter.get_by_id(current_session_id)
             if current_session:
                 self.session = current_session
             else:
-                self.session =  Session.create()
+                self.session =  session_adapter.create()
         else:
-            self.session = Session.create()
+            self.session = session_adapter.create()
         self.session_id = self.session._id
 
     def get_session_id_from_headers(self):
