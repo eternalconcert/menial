@@ -70,12 +70,17 @@ class Request(object):
         self.method = self.headers.split('/')[0].strip()
         self.get = self._get_get_params()
         self.post = self._get_post_params()
-        self.session_id = self.get_session_id_from_headers()
-        if self.session_id:
-            self.session = Session.get_by_id(self.session_id)
+
+        current_session_id = self.get_session_id_from_headers()
+        if current_session_id:
+            current_session = Session.get_by_id(current_session_id)
+            if current_session:
+                self.session = current_session
+            else:
+                self.session =  Session.create()
         else:
             self.session = Session.create()
-            self.session_id = self.session._id
+        self.session_id = self.session._id
 
     def get_session_id_from_headers(self):
         for line in self.headers.splitlines():
