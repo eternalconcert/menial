@@ -2,9 +2,6 @@
 Documentation     Testcases for menial.
 Library           SeleniumLibrary
 
-*** Variables ***
-${BROWSER}        Firefox
-
 *** Keywords ***
 Headline should be
     [Arguments]     ${Headline}

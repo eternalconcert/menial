@@ -32,6 +32,12 @@ class Session:
     def __setitem__(self, key, value):
         self.content[key] = value
 
+    def get(self, key, default=None):
+        try:
+            self.content[key]
+        except KeyError:
+            return default
+
     def save(self):
         with open(self.file_path, 'w') as f:
             f.write(json.dumps({'id': self._id, 'content': self.content}))
@@ -47,14 +53,11 @@ class Session:
 
     @classmethod
     def get_by_id(cls, _id):
-        if not _id:
-            return cls.create()
         file_path  = os.path.join(Session.base_path, str(_id))
         if os.path.isfile(file_path):
             with open(file_path, 'r') as f:
                 session_dict = json.loads(f.read())
-                if session_dict['id'] == int(_id):
-                    return Session(_id, session_dict['content'])
+                return Session(_id, session_dict['content'])
 
 
 class Request(object):
@@ -68,12 +71,17 @@ class Request(object):
         self.get = self._get_get_params()
         self.post = self._get_post_params()
         self.session_id = self.get_session_id_from_headers()
-        self.session = Session.get_by_id(self.session_id)
+        if self.session_id:
+            self.session = Session.get_by_id(self.session_id)
+        else:
+            self.session = Session.create()
+            self.session_id = self.session._id
 
     def get_session_id_from_headers(self):
         for line in self.headers.splitlines():
             if line.startswith("Cookie: menial-session"):
-                return line.split("=")[1]
+                value  = line.split("=")[1]
+                return value.split(";")[0]
 
     def _get_get_params(self):
         params = {}

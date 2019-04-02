@@ -89,4 +89,16 @@ def addition():
     return template.format(title="Matched it anyway", body="")
 
 
+@app.route("/session/write/<name>/")
+def write(name):
+    request.session["name"] = name
+    return ""
+
+
+@app.route("/session/read/")
+def write():
+    response = template.format(title=request.session["name"], body="")
+    return response
+
+
 app()

@@ -6,7 +6,8 @@ serve:
 	../build/menial.bin menial.json
 
 tests:
-	pythonenv/bin/robot --outputdir=reports testcases
+	pythonenv/bin/robot --variable BROWSER:Firefox --outputdir=reports testcases
+	pythonenv/bin/robot --variable BROWSER:Chrome --outputdir=reports testcases
 
 pythonenv:
 	virtualenv --python=python2 pythonenv
