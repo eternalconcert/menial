@@ -12,7 +12,7 @@
         "report.localhost:8000": {
             "handler": "file",
             "root": "../selenium/reports/",
-            "defaultdocument": "report.html"
+            "dirlisting": true
         },
         "python.localhost:9999": {
             "handler": "python",

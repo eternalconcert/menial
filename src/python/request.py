@@ -29,9 +29,12 @@ class SessionBase(object):
 
     def get(self, key, default=None):
         try:
-            self.content[key]
+            return self.content[key]
         except KeyError:
             return default
+
+    def pop(self, key):
+        return self.content.pop(key, None)
 
     def save(self):
         raise NotImplementedError("save method must be implemented by inherited class")
@@ -43,7 +46,6 @@ class SessionBase(object):
     @classmethod
     def get_by_id(cls, _id):
         raise NotImplementedError("get_by_id method must be implemented by inherited class")
-
 
 
 class FileSystemSession(SessionBase):
@@ -186,36 +188,48 @@ status_messages = {
 }
 
 
+def render(content, status=200):
+    return (None, content, status)
+
+
+def redirect(url, permanent=False):
+    headers = Response.header_base
+    headers += "Location: {url}\n".format(url=url)
+    status = 302 if not permanent else 301
+    return (headers, None, status)
+
+
 class Response:
 
+    header_base = "HTTP/1.0 {status}\n" \
+                  "Server: menial\n"
+
     def __init__(self, request, function, func_args):
-        self.status = 200
         self.request = request
         self.function = function
         self.func_args = func_args
-        self.body = self.make_body()
-        self.headers = self.make_headers()
+
+        headers, body, status = self.function(*self.func_args)
+
+        if not headers:
+            headers = self.make_headers()
+
+        self.body = body
+        self.headers = headers.format(status=status_messages[status])
         self.request.session.save()
 
     def make_headers(self):
-        headers = "HTTP/1.0 {status}\n" \
-                  "Server: menial"
-        headers += "\nSet-Cookie: menial-session={}".format(self.request.session._id)
-        headers = headers.format(status=status_messages[self.status])
+        headers = Response.header_base
+        if not self.request.get_session_id_from_headers():
+            headers += "Set-Cookie: menial-session={}".format(self.request.session._id)
         return headers
 
-    def make_body(self):
-        try:
-            return self.function(*self.func_args)
-        except Exception as e:
-            self.status = 500
-            return Error(e, self.status)
+
 
 
 class App:
 
-    def __init__(self):
-        self.url_patterns = {}
+    url_patterns = {}
 
     def __call__(self):
         self.request = request
@@ -251,7 +265,7 @@ class App:
         if url[-1:] != "/" and not self.request.get:
             url += "/"
         arguments = []
-        for pattern, func in self.url_patterns.items():
+        for pattern, func in App.url_patterns.items():
             if pattern == url:
                 return func, arguments
             url_parts = url.split("/")
@@ -274,6 +288,20 @@ class App:
 
     def route(self, url):
         def function_wrapper(func):
-            self.url_patterns[url] = func
+            App.url_patterns[url] = func
         return function_wrapper
 
+
+def url_for(func_name, *args):
+    for key, value in App.url_patterns.items():
+        if value.__name__ == func_name:
+            arg_idx = 0
+            url = ""
+            for index, part in enumerate(key.split('/')):
+                if part:
+                    url += '/'
+                    if re.match(r"(<\S+?>)", part):
+                        part = str(args[arg_idx])
+                        arg_idx += 1
+                    url += part
+            return url + "/"

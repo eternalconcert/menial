@@ -46,8 +46,7 @@
         },
         "localhost:9999": {
             "handler": "python",
-            "root": "testdata/testhost/pyresponse.py",
-            "authfile": "auth.db"
+            "root": "testdata/testhost/db.py"
         }
 
     },
