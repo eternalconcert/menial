@@ -47,6 +47,10 @@
         "localhost:9999": {
             "handler": "python",
             "root": "testdata/testhost/db.py"
+        },
+        "wsgi.localhost:9999": {
+            "handler": "python",
+            "root": "testdata/testhost/wsgi_adapter.py"
         }
 
     },

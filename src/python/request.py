@@ -84,13 +84,15 @@ session_adapter = FileSystemSession
 
 
 class Request(object):
-    def __init__(self, host, target, headers, body):
+    def __init__(self, host, port, target, headers, body):
         self.host = host
+        self.port = port
         self.target = target.split('?')[0]
         self.uri = target
         self.headers = headers
         self.body = body
         self.method = self.headers.split('/')[0].strip()
+        self.query_string = ""
         self.get = self._get_get_params()
         self.post = self._get_post_params()
 
@@ -114,8 +116,8 @@ class Request(object):
     def _get_get_params(self):
         params = {}
         if len(self.uri.split('?')) > 1:
-            query_string = self.uri.split('?')[1]
-            for item in query_string.split('&'):
+            self.query_string = self.uri.split('?')[1]
+            for item in self.query_string.split('&'):
                 try:
                     key, value = item.split('=')
                     params[key] = value
@@ -133,7 +135,9 @@ class Request(object):
 
 
 try:
-    request = Request(args.host, args.target, args.header, args.body)
+    host = args.host.split(":")[0]
+    port = None if len (args.host.split(":")) <= 1 else args.host.split(":")[1]
+    request = Request(host, port, args.target, args.header, args.body)
 
 except Exception as e:
     print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
