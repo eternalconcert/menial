@@ -240,7 +240,7 @@ class App:
             func, func_args = self._get_route_function(request.target)
             response = Response(request, func, func_args)
             print(response.headers)
-            print("\n\n")
+            print("")
             print(response.body)
         except NotFoundError as e:
             print("HTTP/1.0 {status}\n" \
@@ -305,3 +305,13 @@ def url_for(func_name, *args):
                         arg_idx += 1
                     url += part
             return url + "/"
+
+
+class Template(object):
+
+    def __init__(self, file_path):
+        with open(file_path, "r") as f:
+            self.content = f.read()
+
+    def render(self, **kwargs):
+        return self.content.format(**kwargs)
