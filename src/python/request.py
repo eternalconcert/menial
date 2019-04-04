@@ -162,24 +162,6 @@ class NotFoundError(Exception):
         super(NotFoundError, self).__init__(message)
 
 
-class Error:
-    def __init__(self, ex, status):
-        self.ex = ex
-        self.status = status
-
-    def __repr__(self):
-        template = """
-            <head>
-                <title>{statustext}: menial python exception</title>
-            </head>
-            <h1>{statustext}: menial python exception</h1>
-            <div style="color: red">
-                {error}
-            </div>
-        """
-        return template.format(error=self.ex, statustext=status_messages[self.status])
-
-
 status_messages = {
     200: "200 OK",
     301: "301 Moved Permanently",
@@ -227,8 +209,6 @@ class Response:
         if not self.request.get_session_id_from_headers():
             headers += "Set-Cookie: menial-session={}".format(self.request.session._id)
         return headers
-
-
 
 
 class App:
