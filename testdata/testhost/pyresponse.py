@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../src/python/")
 
-from request import App, redirect, render, request, url_for
+from request import App, redirect, render, url_for
 
 
 app = App()
@@ -18,19 +18,19 @@ template = """
 """
 
 @app.route("/")
-def index():
+def index(request):
     response = template.format(title="Python test page: index", body="This is the index")
     return render(response)
 
 
 @app.route("/sub/")
-def subpage():
+def subpage(request):
     response = template.format(title="Python test page: sub", body="This is a random sub page")
     return render(response)
 
 
 @app.route("/params/")
-def get_params():
+def get_params(request):
     name = request.get['name']
     response = template.format(title="Python test page: " + name, body="")
     _id = request.get.get('id')
@@ -40,18 +40,18 @@ def get_params():
 
 
 @app.route("/items/<id>/edit/")
-def parameterized(id):
+def parameterized(request, id):
     response = template.format(title="Item to edit: " + id, body="")
     return render(response)
 
 
 @app.route("/customers/<name>/orders/<id>/")
-def multiparams(name, id):
+def multiparams(request, name, id):
     response = template.format(title="Customer: " + name + " - " + " Order: " + id, body="")
     return render(response)
 
 @app.route("/suppliers/<str:name>/offers/<int:id>/taxrate/<float:rate>/")
-def typed_variables(name, id, rate):
+def typed_variables(request, name, id, rate):
     assert isinstance(name, str)
     assert isinstance(id, int)
     assert isinstance(rate, float)
@@ -61,7 +61,7 @@ def typed_variables(name, id, rate):
 
 
 @app.route("/post_form/")
-def show_form():
+def show_form(request):
     body = """
     <form action="/process_post/" method="POST">
         <input type="text" name="name" />
@@ -74,7 +74,7 @@ def show_form():
 
 
 @app.route("/process_post/")
-def process_post():
+def process_post(request):
     if request.method == "POST":
         name = request.post['name']
         password = request.post['password']
@@ -85,40 +85,40 @@ def process_post():
 
 
 @app.route("/no/trailing/slash/")
-def addition():
+def addition(request):
     return render(template.format(title="Matched it anyway", body=""))
 
 
 @app.route("/session/write/<name>/")
-def write(name):
+def write(request, name):
     request.session["name"] = name
     return render("")
 
 
 @app.route("/session/read/")
-def write():
+def write(request):
     response = template.format(title=request.session["name"], body="")
     return render(response)
 
 
 @app.route("/redirect/")
-def redirect_to_another_location():
+def redirect_to_another_location(request):
     return redirect(url_for('new_location'))
 
 
 @app.route("/new_location/")
-def new_location():
+def new_location(request):
     response = template.format(title="Redirected from another location", body="")
     return render(response)
 
 
 @app.route("/redirect/with/variable/part/")
-def redirect_to_another_location():
+def redirect_to_another_location(request):
     return redirect(url_for('new_location_with_variable_part', "christian"))
 
 
 @app.route("/new_location/<str:name>/")
-def new_location_with_variable_part(name):
+def new_location_with_variable_part(request, name):
     response = template.format(title="Redirected from another location: " + name, body="")
     return render(response)
 

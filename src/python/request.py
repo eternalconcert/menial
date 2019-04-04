@@ -209,7 +209,7 @@ class Response:
         self.function = function
         self.func_args = func_args
 
-        headers, body, status = self.function(*self.func_args)
+        headers, body, status = self.function(self.request, *self.func_args)
 
         if not headers:
             headers = self.make_headers()
@@ -238,7 +238,7 @@ class App:
     def send_response(self):
         try:
             func, func_args = self._get_route_function(request.target)
-            response = Response(request, func, func_args)
+            response = Response(self.request, func, func_args)
             print(response.headers)
             print("")
             print(response.body)
