@@ -185,6 +185,29 @@ def redirect(url, permanent=False):
     return (headers, None, status)
 
 
+class Error:
+
+    def __init__(self, ex, status):
+        self.ex = ex
+        self.status = status
+
+    def __repr__(self):
+        status = status_messages[self.status]
+
+        header = Response.header_base.format(status=status)
+        template = """{header}
+
+            <head>
+                <title>{status}</title>
+            </head>
+            <h1>{status}</h1>
+            <div style="color: red">
+                {error}
+            </div>
+        """
+        return template.format(header=header, error=self.ex, status=status)
+
+
 class Response:
 
     header_base = "HTTP/1.0 {status}\n" \
@@ -217,20 +240,19 @@ class App:
 
     def __call__(self):
         self.request = request
-        self.send_response()
+        try:
+            self.send_response()
+        except Exception as e:
+            error = Error(e, 500)
+            print(error)
+
 
     def send_response(self):
-        try:
-            func, func_args = self._get_route_function(request.target)
-            response = Response(self.request, func, func_args)
-            print(response.headers)
-            print("")
-            print(response.body)
-        except NotFoundError as e:
-            print("HTTP/1.0 {status}\n" \
-                  "Server: menial\n\n \
-                  {body}".format(status=status_messages[404], body=Error(e, 404))
-            )
+        func, func_args = self._get_route_function(request.target)
+        response = Response(self.request, func, func_args)
+        print(response.headers)
+        print("")
+        print(response.body)
 
     @staticmethod
     def _get_type(pattern):
