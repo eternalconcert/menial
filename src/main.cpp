@@ -45,6 +45,11 @@ int main(int argc, char *argv[]) {
     logger->info("Initializing servers");
     logger->info("Starting servers");
 
+    std::map<std::string, std::map<std::string, std::string>>::iterator hostItr = config->hosts.begin();
+    for (hostItr = config->hosts.begin(); hostItr != config->hosts.end(); hostItr++) {
+        logger->info("Listening on host " + hostItr->first);
+    }
+
     std::list<std::thread> threads;
 
     std::set<int>::iterator portItr = config->ports.begin();

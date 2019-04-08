@@ -2,31 +2,31 @@
     "hosts": {
         "test.localhost:8000": {
             "handler": "file",
-            "root": "/home/christian/Projekte/menial/website/build/"
+            "root": "/home/xgwschk/projects/menial/website/build/"
         },
         "file.localhost:8000": {
             "handler": "file",
-            "root": "/home/christian/Projekte/menial/website/build/",
+            "root": "/home/xgwschk/projects/menial/website/build/",
             "dirlisting": true
         },
         "selenium.localhost:8000": {
             "handler": "file",
-            "root": "/home/christian/Projekte/menial/selenium/reports/",
+            "root": "/home/xgwschk/projects/menial/selenium/reports/",
             "defaultdocument": "report.html"
         },
         "*:8080": {
             "handler": "file",
-            "root": "/home/christian/Projekte/menial/website/build/",
+            "root": "/home/xgwschk/projects/menial/website/build/",
             "authfile": "auth.db"
         },
         "music.localhost:8080": {
             "handler": "file",
-            "root": "/home/christian/",
+            "root": "/home/xgwschk/",
             "dirlisting": true
         },
         "*:4433": {
             "handler": "file",
-            "root": "/home/christian/Projekte/softcreate/build/"
+            "root": "/home/xgwschk/projects/softcreate/build/"
         },
         "cpc464.localhost:8080": {
             "handler": "redirect",
@@ -34,7 +34,7 @@
         },
         "cpc464.localhost:4433": {
             "handler": "file",
-            "root": "/home/christian/Projekte/cpc464/build/"
+            "root": "/home/xgwschk/projects/cpc464/build/"
         },
         "menial.localhost:8080": {
             "handler": "file",
@@ -42,7 +42,7 @@
         },
         "tmmk.localhost:8080": {
             "handler": "file",
-            "root": "/home/christian/Projekte/tmmk/build/"
+            "root": "/home/xgwschk/projects/tmmk/build/"
         },
         "localhost:9999": {
             "handler": "python",
@@ -62,8 +62,8 @@
     "ssl": {
         "4433": {
             "on": true,
-            "cert": "/home/christian/Projekte/menial/cert.pem",
-            "key": "/home/christian/Projekte/menial/key.pem"
+            "cert": "/home/xgwschk/projects/menial/cert.pem",
+            "key": "/home/xgwschk/projects/menial/key.pem"
         }
     }
 }
