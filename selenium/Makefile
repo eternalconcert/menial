@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-PATH := $(PATH):geckodriver/
+PATH := $(PATH):webdriver/
 
 serve:
 	../build/menial.bin menial.json
