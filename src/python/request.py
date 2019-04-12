@@ -237,6 +237,8 @@ class Response:
 class App:
 
     url_patterns = {}
+    static_files_dir = None
+    static_files_url = None
 
     def __call__(self):
         self.request = request
@@ -245,7 +247,6 @@ class App:
         except Exception as e:
             error = Error(e, 500)
             print(error)
-
 
     def send_response(self):
         func, func_args = self._get_route_function(request.target)
@@ -268,8 +269,12 @@ class App:
         raise TypeError("Type %s cannot be used for type casting." % typename)
 
     def _get_route_function(self, url):
+        if App.static_files_url and url.startswith(App.static_files_url):
+            return send_static_file, [url]
+
         if url[-1:] != "/" and not self.request.get:
             url += "/"
+
         arguments = []
         for pattern, func in App.url_patterns.items():
             if pattern == url:
@@ -311,6 +316,18 @@ def url_for(func_name, *args):
                         arg_idx += 1
                     url += part
             return url + "/"
+
+
+def send_static_file(reqest, file_path):
+    if ".." in file_path:
+        raise Exception("Intrusion try")
+    full_path = App.static_files_dir + file_path
+    full_path = os.path.normpath(full_path)
+    full_path = full_path.replace(App.static_files_url, "/", 1)
+    full_path = os.path.normpath(full_path)
+    with open(full_path) as f:
+        content = f.read()
+        return render(content)
 
 
 class Template(object):
