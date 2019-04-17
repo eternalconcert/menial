@@ -123,4 +123,4 @@ def new_location_with_variable_part(request, name):
     return render(response)
 
 
-app()
+app.run()

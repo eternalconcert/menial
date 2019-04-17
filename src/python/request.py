@@ -1,5 +1,4 @@
 import re
-import sys
 import json
 import os
 from random import randint
@@ -73,7 +72,7 @@ class FileSystemSession(SessionBase):
 
     @classmethod
     def get_by_id(cls, _id):
-        file_path  = os.path.join(FileSystemSession.base_path, str(_id))
+        file_path = os.path.join(FileSystemSession.base_path, str(_id))
         if os.path.isfile(file_path):
             with open(file_path, 'r') as f:
                 session_dict = json.loads(f.read())
@@ -102,7 +101,7 @@ class Request(object):
             if current_session:
                 self.session = current_session
             else:
-                self.session =  session_adapter.create()
+                self.session = session_adapter.create()
         else:
             self.session = session_adapter.create()
         self.session_id = self.session._id
@@ -110,7 +109,7 @@ class Request(object):
     def get_session_id_from_headers(self):
         for line in self.headers.splitlines():
             if line.startswith("Cookie: menial-session"):
-                value  = line.split("=")[1]
+                value = line.split("=")[1]
                 return value.split(";")[0]
 
     def _get_get_params(self):
@@ -136,7 +135,7 @@ class Request(object):
 
 try:
     host = args.host.split(":")[0]
-    port = None if len (args.host.split(":")) <= 1 else args.host.split(":")[1]
+    port = None if len(args.host.split(":")) <= 1 else args.host.split(":")[1]
     request = Request(host, port, args.target, args.header, args.body)
 
 except Exception as e:
@@ -241,7 +240,7 @@ class App:
     static_files_dir = None
     static_files_url = None
 
-    def __call__(self):
+    def run(self):
         self.request = request
         try:
             self.send_response()
@@ -334,13 +333,3 @@ def send_static_file(reqest, file_path):
     with open(full_path) as f:
         content = f.read()
         return render(content)
-
-
-class Template(object):
-
-    def __init__(self, file_path):
-        with open(file_path, "r") as f:
-            self.content = f.read()
-
-    def render(self, **kwargs):
-        return self.content.format(**kwargs)
