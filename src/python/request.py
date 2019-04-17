@@ -237,6 +237,7 @@ class Response:
 class App:
 
     url_patterns = {}
+    context_preprocessors = []
     static_files_dir = None
     static_files_url = None
 
@@ -301,6 +302,11 @@ class App:
         def function_wrapper(func):
             App.url_patterns[url] = func
         return function_wrapper
+
+    def context_preprocessor(self, function):
+        def function_wrapper(func):
+            App.context_preprocessors.append(func)
+        return function_wrapper(function)
 
 
 def url_for(func_name, *args):
