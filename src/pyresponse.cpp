@@ -18,7 +18,7 @@ std::string PyResponse::get() {
 
     pName = PyString_FromString(this->config["root"].c_str());
     pModule = PyImport_Import(pName);
-    // Py_DECREF(pName);
+    Py_DECREF(pName);
 
     if (pModule != NULL) {
         this->logger->info("Python module found");
@@ -36,8 +36,11 @@ std::string PyResponse::get() {
         PyTuple_SetItem(pArgs, 3, PyString_FromString(this->getRequest()->getBody().c_str()));
 
         pValue = PyObject_CallObject(pFunc, pArgs);
-        if (PyErr_Occurred())
+        if (PyErr_Occurred()) {
             PyErr_Print();
+            Py_DECREF(pValue);
+            Py_DECREF(pArgs);
+        }
 
     }
 
