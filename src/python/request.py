@@ -2,16 +2,6 @@ import re
 import json
 import os
 from random import randint
-from argparse import ArgumentParser
-
-parser = ArgumentParser()
-
-parser.add_argument('-s', dest='host')
-parser.add_argument('-t', dest='target')
-parser.add_argument('-p', dest='header')
-parser.add_argument('-b', dest='body')
-
-args = parser.parse_args()
 
 
 class SessionBase(object):
@@ -133,15 +123,6 @@ class Request(object):
         return params
 
 
-try:
-    host = args.host.split(":")[0]
-    port = None if len(args.host.split(":")) <= 1 else args.host.split(":")[1]
-    request = Request(host, port, args.target, args.header, args.body)
-
-except Exception as e:
-    print("<h1>An error occured during the request.</h1><h2>Traceback:</h2>{}".format(e))
-
-
 template = """
 <html>
     <head>
@@ -240,20 +221,23 @@ class App:
     static_files_dir = None
     static_files_url = None
 
-    def run(self):
-        self.request = request
+    def run(self, host, target, header, body):
+        host = host.split(":")[0]
+        port = None if len(host.split(":")) <= 1 else host.split(":")[1]
+        self.request = Request(host, port, target, header, body)
         try:
-            self.send_response()
+            return self.send_response()
         except Exception as e:
             error = Error(e, 500)
-            print(error)
+            return str(error)
 
     def send_response(self):
-        func, func_args = self._get_route_function(request.target)
+        func, func_args = self._get_route_function(self.request.target)
         response = Response(self.request, func, func_args)
-        print(response.headers)
-        print("")
-        print(response.body)
+        result = response.headers + "\n"
+        if response.body:
+            result += response.body
+        return result
 
     @staticmethod
     def _get_type(pattern):

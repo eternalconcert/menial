@@ -1,6 +1,10 @@
-import sys
-sys.path.append("../src/python/")
+import re
+import json
+import os
+from random import randint
 
+import sys
+sys.path.append("/home/xgwschk/projects/menial/src/python/")
 from request import App, redirect, render, url_for
 
 
@@ -123,4 +127,6 @@ def new_location_with_variable_part(request, name):
     return render(response)
 
 
-app.run()
+def application(*args):
+    return app.run(*args)
+

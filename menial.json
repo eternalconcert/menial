@@ -46,7 +46,7 @@
         },
         "localhost:9999": {
             "handler": "python",
-            "root": "testdata/testhost/db.py"
+            "root": "pyresponse"
         },
         "wsgi.localhost:9999": {
             "handler": "python",

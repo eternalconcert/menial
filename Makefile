@@ -9,7 +9,7 @@ OUTFILE=build/menial.bin
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
+	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/python2.7 -l python2.7 -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
 	$(MAKE) index
 
 
