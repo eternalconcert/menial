@@ -18,6 +18,9 @@ std::string PyResponse::get() {
 
     pName = PyString_FromString(this->config["root"].c_str());
     pModule = PyImport_Import(pName);
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
     Py_DECREF(pName);
 
     if (pModule != NULL) {
