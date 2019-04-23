@@ -190,8 +190,7 @@ void Config::update(std::string configPath) {
 
 Config* Config::_instance = 0;
 
-Config::Config() {
-};
+Config::Config() {};
 
 
 Config* Config::getConfig(std::string path) {
