@@ -1,9 +1,9 @@
 import sys
-sys.path.append("/home/xgwschk/projects/pax-musica/")
-sys.path.append("/home/xgwschk/projects/pax-musica/pythonenv/lib/python3.6/site-packages/")
+sys.path.append("/home/xgwschk/projects/demobase/")
+sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
 sys.path.append("/home/xgwschk/projects/menial/src/python/")
 from request import App, redirect, render, url_for, Request
-from paxmusica.wsgi import application as app
+from base.wsgi import application as app
 
 
 result = []
@@ -56,6 +56,7 @@ def application(*args):
         "wsgi.errors": ""
     }
     #content = app(environ, get_response_headers)
-    content = app(environ, get_response_headers).content.decode("utf-8")
+    content = app(environ, get_response_headers).content
     result.append(content)
-    return result[0] + "\n" + result[1]
+
+    return "{0}\n{1}".format(result[0], result[1])
