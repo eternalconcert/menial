@@ -24,6 +24,11 @@
             "root": "/home/xgwschk/",
             "dirlisting": true
         },
+        "localhost:8888": {
+            "handler": "file",
+            "root": "/home/xgwschk/projects/demobase/demobase/static/",
+            "dirlisting": true
+        },
         "*:4433": {
             "handler": "file",
             "root": "/home/xgwschk/projects/softcreate/build/"
