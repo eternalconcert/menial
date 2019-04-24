@@ -17,7 +17,6 @@ class PyFunc {
         };
 
     private:
-        static PyFunc *_instance;
         PyFunc(std::string root);
 };
 
@@ -28,6 +27,5 @@ class PyResponse: public Response {
         std::string get();
         PyResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {};
 };
-
 
 #endif

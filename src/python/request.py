@@ -307,7 +307,7 @@ def url_for(func_name, *args):
             return url + "/"
 
 
-def send_static_file(reqest, file_path):
+def send_static_file(request, file_path):
     if ".." in file_path:
         raise Exception("Intrusion try")
     full_path = App.static_files_dir + file_path

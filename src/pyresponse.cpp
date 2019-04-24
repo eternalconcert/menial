@@ -6,7 +6,8 @@
 #include "pyresponse.h"
 
 
-PyFunc* PyFunc::_instance = 0;
+std::map<std::string, PyFunc*> pyFunctionMap;
+
 
 PyFunc::PyFunc(std::string root) {
     Py_Initialize();
@@ -23,10 +24,11 @@ PyFunc::PyFunc(std::string root) {
 
 
 PyFunc* PyFunc::getPyFunc(std::string root) {
-    if (_instance == 0) {
-        _instance = new PyFunc(root);
+    if (pyFunctionMap.find(root) == pyFunctionMap.end()) {
+        PyFunc* instance = new PyFunc(root);
+        pyFunctionMap[root] = instance;
     }
-    return _instance;
+    return pyFunctionMap[root];
 }
 
 
