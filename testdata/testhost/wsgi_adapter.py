@@ -51,17 +51,19 @@ def application(*args):
     header = args[2]
     body = args[3]
     request = Request(host, port, target, header, body)
-    wsgi_input = StringIO.StringIO()
-    wsgi_input.write(request.body)
-    wsgi_input.close()
+    wsgi_input = BytesIO(request.body)
     environ = {
         "REQUEST_METHOD": request.method,
+        "CONTENT_LENGTH": len(request.body),
+        "CONTENT_TYPE": request.content_type,
         "SCRIPT_NAME": "",
         "PATH_INFO": request.target,
         "QUERY_STRING": request.query_string,
         "SERVER_NAME": request.host,
         "SERVER_PORT": request.port,
         "SERVER_PROTOCOL": "HTTP/1.0",
+        "HTTP_REFERER": request.referer,
+        "HTTP_COOKIE": request.cookies,
         "wsgi.input": wsgi_input,
         "wsgi.url_scheme": "",
         "wsgi.errors": ""
@@ -69,5 +71,5 @@ def application(*args):
 
     _status, _headers, _body = call_application(app, environ)
     headers = make_headers(_status, _headers)
-
+    wsgi_input.close()
     return "{0}\n{1}".format(headers, _body)

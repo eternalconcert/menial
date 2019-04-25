@@ -82,6 +82,9 @@ class Request(object):
         self.body = body
         self.method = self.headers.split('/')[0].strip()
         self.query_string = ""
+        self.content_type = self._get_content_type_from_headers()
+        self.referer = self._get_referer_from_headers()
+        self.cookies = self._get_cookies_from_headers()
         self.get = self._get_get_params()
         self.post = self._get_post_params()
 
@@ -101,6 +104,27 @@ class Request(object):
             if line.startswith("Cookie: menial-session"):
                 value = line.split("=")[1]
                 return value.split(";")[0]
+
+    def _get_content_type_from_headers(self):
+        value = ""
+        for line in self.headers.splitlines():
+            if line.startswith("Content-Type: "):
+                value = line.split(": ")[1]
+        return value
+
+    def _get_referer_from_headers(self):
+        value = ""
+        for line in self.headers.splitlines():
+            if line.startswith("Referer: "):
+                value = line.split(": ")[1]
+        return value
+
+    def _get_cookies_from_headers(self):
+        value = ""
+        for line in self.headers.splitlines():
+            if line.startswith("Cookie: "):
+                value = line.split(": ")[1]
+        return value
 
     def _get_get_params(self):
         params = {}
