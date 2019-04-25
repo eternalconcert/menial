@@ -48,16 +48,6 @@ std::string PyFunc::getValue(PyObject *pArgs) {
 
 std::string PyResponse::get() {
 
-    // if (pModule != NULL) {
-    //     this->logger->info("Python module found");
-    //     PyObject *pFunc;
-    //     pFunc = PyObject_GetAttrString(pModule, "application");
-    //     if (!(pFunc && PyCallable_Check(pFunc))) {
-    //         this->logger->error("No callable python function");
-    //         this->setStatus(500);
-    //         return this->headerBase();
-    //     }
-
     PyObject *pArgs;
     pArgs = PyTuple_New(4);
 
@@ -65,7 +55,6 @@ std::string PyResponse::get() {
     PyTuple_SetItem(pArgs, 1, PyString_FromString(this->getRequest()->getTarget().c_str()));
     PyTuple_SetItem(pArgs, 2, PyString_FromString(this->getRequest()->getHeaders().c_str()));
     PyTuple_SetItem(pArgs, 3, PyString_FromString(this->getRequest()->getBody().c_str()));
-
 
     PyFunc* func = PyFunc::getPyFunc(this->config["root"]);
     std::string response = func->getValue(pArgs);
