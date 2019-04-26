@@ -92,16 +92,16 @@ def addition(request):
     return render(template.format(title="Matched it anyway", body=""))
 
 
-@app.route("/session/write/<name>/")
-def write(request, name):
-    request.session["name"] = name
-    return render("")
-
-
-@app.route("/session/read/")
-def write(request):
-    response = template.format(title=request.session["name"], body="")
-    return render(response)
+# @app.route("/session/write/<name>/")
+# def write(request, name):
+#     request.session["name"] = name
+#     return render("")
+#
+#
+# @app.route("/session/read/")
+# def write(request):
+#     response = template.format(title=request.session["name"], body="")
+#     return render(response)
 
 
 @app.route("/redirect/")
@@ -126,6 +126,6 @@ def new_location_with_variable_part(request, name):
     return render(response)
 
 
-def application(*args):
-    return app.run(*args)
+def application(environ, start_response):
+    return app.run(environ, start_response)
 

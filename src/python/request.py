@@ -73,21 +73,21 @@ session_adapter = FileSystemSession
 
 
 class Request(object):
-    def __init__(self, host, port, target, headers, body):
-        self.host = host
-        self.port = port
-        self.target = target.split('?')[0]
-        self.uri = target
-        self.headers = headers
-        self.body = body
-        self.method = self.headers.split('/')[0].strip()
-        self.query_string = ""
-        self.content_type = self._get_content_type_from_headers()
-        self.referer = self._get_referer_from_headers()
-        self.cookies = self._get_cookies_from_headers()
+    def __init__(self, environ):
+        self.host = environ['SERVER_NAME']
+        self.port = environ['SERVER_PORT']
+        self.method = environ['REQUEST_METHOD']
+        self.target = environ['PATH_INFO']
+        self.body = environ['wsgi.input'].read()
+        self.query_string = environ['QUERY_STRING']
+        self.content_type = environ['CONTENT_TYPE']
+        self.cookies = environ['HTTP_COOKIE']
+        self.referer = environ['HTTP_REFERER']
+        self.uri = self.target
         self.get = self._get_get_params()
         self.post = self._get_post_params()
 
+        """
         current_session_id = self.get_session_id_from_headers()
         if current_session_id:
             current_session = session_adapter.get_by_id(current_session_id)
@@ -104,27 +104,7 @@ class Request(object):
             if line.startswith("Cookie: menial-session"):
                 value = line.split("=")[1]
                 return value.split(";")[0]
-
-    def _get_content_type_from_headers(self):
-        value = ""
-        for line in self.headers.splitlines():
-            if line.startswith("Content-Type: "):
-                value = line.split(": ")[1]
-        return value
-
-    def _get_referer_from_headers(self):
-        value = ""
-        for line in self.headers.splitlines():
-            if line.startswith("Referer: "):
-                value = line.split(": ")[1]
-        return value
-
-    def _get_cookies_from_headers(self):
-        value = ""
-        for line in self.headers.splitlines():
-            if line.startswith("Cookie: "):
-                value = line.split(": ")[1]
-        return value
+    """
 
     def _get_get_params(self):
         params = {}
@@ -229,12 +209,12 @@ class Response:
 
         self.body = body
         self.headers = headers.format(status=status_messages[status])
-        self.request.session.save()
+        # self.request.session.save()
 
     def make_headers(self):
         headers = Response.header_base
-        if not self.request.get_session_id_from_headers():
-            headers += "Set-Cookie: menial-session={}".format(self.request.session._id)
+        # if not self.request.get_session_id_from_headers():
+        #     headers += "Set-Cookie: menial-session={}".format(self.request.session._id)
         return headers
 
 
@@ -245,10 +225,8 @@ class App:
     static_files_dir = None
     static_files_url = None
 
-    def run(self, host, target, header, body):
-        host = host.split(":")[0]
-        port = None if len(host.split(":")) <= 1 else host.split(":")[1]
-        self.request = Request(host, port, target, header, body)
+    def run(self, environ, start_response):
+        self.request = Request(environ)
         try:
             return self.send_response()
         except Exception as e:

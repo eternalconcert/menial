@@ -6,8 +6,6 @@ sys.path.append("/home/xgwschk/projects/demobase/")
 sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
 
 
-from request import Request
-
 
 def make_headers(status, headers):
 
@@ -41,26 +39,54 @@ def call_application(app, environ):
     return status, headers, body.getvalue()
 
 
+def get_content_type_from_headers(headers):
+    value = ""
+    for line in headers.splitlines():
+        if line.startswith("Content-Type: "):
+            value = line.split(": ")[1]
+    return value
+
+def get_referer_from_headers(headers):
+    value = ""
+    for line in headers.splitlines():
+        if line.startswith("Referer: "):
+            value = line.split(": ")[1]
+    return value
+
+def get_cookies_from_headers(headers):
+    value = ""
+    for line in headers.splitlines():
+        if line.startswith("Cookie: "):
+            value = line.split(": ")[1]
+    return value
+
+
+def get_query_string(target):
+    query_string = ""
+    if len(target.split('?')) > 1:
+        query_string = target.split('?')[1]
+    return query_string
+
+
 def wsgi(app, *args):
     host = args[0].split(":")[0]
     port = None if len(args[0].split(":")) <= 1 else args[0].split(":")[1]
     target = args[1]
     header = args[2]
     body = args[3]
-    request = Request(host, port, target, header, body)
-    wsgi_input = BytesIO(request.body)
+    wsgi_input = BytesIO(body)
     environ = {
-        "REQUEST_METHOD": request.method,
-        "CONTENT_LENGTH": len(request.body),
-        "CONTENT_TYPE": request.content_type,
+        "REQUEST_METHOD": header.split('/')[0].strip(),
+        "CONTENT_LENGTH": len(body),
+        "CONTENT_TYPE": get_content_type_from_headers(header),
         "SCRIPT_NAME": "",
-        "PATH_INFO": request.target,
-        "QUERY_STRING": request.query_string,
-        "SERVER_NAME": request.host,
-        "SERVER_PORT": request.port,
+        "PATH_INFO": target,
+        "QUERY_STRING": get_query_string(target),
+        "SERVER_NAME": host,
+        "SERVER_PORT": port,
         "SERVER_PROTOCOL": "HTTP/1.0",
-        "HTTP_REFERER": request.referer,
-        "HTTP_COOKIE": request.cookies,
+        "HTTP_REFERER": get_referer_from_headers(header),
+        "HTTP_COOKIE": get_cookies_from_headers(header),
         "wsgi.input": wsgi_input,
         "wsgi.url_scheme": "",
         "wsgi.errors": ""
