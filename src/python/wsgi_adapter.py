@@ -2,8 +2,8 @@ from io import BytesIO
 import StringIO
 import sys
 
-sys.path.append("/home/xgwschk/projects/demobase/")
-sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
+sys.path.append("/home/christian/Projekte/demobase/")
+sys.path.append("/home/christian/Projekte/demobase/pythonenv/lib/python2.7/site-packages/")
 
 
 

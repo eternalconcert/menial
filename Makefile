@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:/home/xgwschk/projects/demobase/
+export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/
 
 SOURCES = $(shell find src/ -name "*.cpp")
 BUILD_NUMBER_FILE=deployment/buildno.txt

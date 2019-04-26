@@ -1,53 +1,24 @@
 {
     "hosts": {
-        "test.localhost:8000": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/menial/website/build/"
-        },
-        "file.localhost:8000": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/menial/website/build/",
-            "dirlisting": true
-        },
         "selenium.localhost:8000": {
             "handler": "file",
             "root": "/home/xgwschk/projects/menial/selenium/reports/",
             "defaultdocument": "report.html"
         },
-        "*:8080": {
+        "tmmk.localhost:8000": {
             "handler": "file",
-            "root": "/home/xgwschk/projects/menial/website/build/",
-            "authfile": "auth.db"
+            "root": "/home/christian/Projekte/tmmk/build/"
         },
-        "music.localhost:8080": {
+        "demobase_static.localhost:8080": {
             "handler": "file",
-            "root": "/home/xgwschk/",
+            "root": "/home/christian/Projekte/demobase/demobase/static/",
+            "additionalheaders": "Access-Control-Allow-Origin: *\n"
+        },
+        "demobase_media.localhost:8081": {
+            "handler": "file",
+            "root": "/home/christian/Projekte/demobase/media/",
+            "additionalheaders": "Access-Control-Allow-Origin: *\n",
             "dirlisting": true
-        },
-        "localhost:8888": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/demobase/demobase/static/",
-            "dirlisting": true
-        },
-        "*:4433": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/softcreate/build/"
-        },
-        "cpc464.localhost:8080": {
-            "handler": "redirect",
-            "target": "https://cpc464.localhost:4433"
-        },
-        "cpc464.localhost:4433": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/cpc464/build/"
-        },
-        "menial.localhost:8080": {
-            "handler": "file",
-            "root": "website/build/"
-        },
-        "tmmk.localhost:8080": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/tmmk/build/"
         },
         "localhost:9999": {
             "handler": "python",
@@ -55,7 +26,8 @@
         },
         "wsgi.localhost:9999": {
             "handler": "python",
-            "root": "base.wsgi"
+            "root": "base.wsgi",
+            "additionalheaders": "Access-Control-Allow-Origin: *\n"
         }
 
     },
@@ -66,7 +38,7 @@
     "staticdir": "deployment/default/static/",
     "ssl": {
         "4433": {
-            "on": true,
+            "on": false,
             "cert": "/home/xgwschk/projects/menial/cert.pem",
             "key": "/home/xgwschk/projects/menial/key.pem"
         }
