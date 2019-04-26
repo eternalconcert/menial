@@ -1,5 +1,7 @@
 #!/usr/bin/make
 
+export PYTHONPATH=$PYTHONPATH:../src/python:../testdata/testhost/
+
 PATH := $(PATH):webdriver/
 
 serve:

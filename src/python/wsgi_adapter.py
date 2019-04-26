@@ -4,7 +4,7 @@ import sys
 
 sys.path.append("/home/xgwschk/projects/demobase/")
 sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
-sys.path.append("/home/xgwschk/projects/menial/src/python/")
+
 
 from request import Request
 from base.wsgi import application as app
