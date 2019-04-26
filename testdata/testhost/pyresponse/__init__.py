@@ -127,6 +127,6 @@ def new_location_with_variable_part(request, name):
     return render(response)
 
 
-def application(*args):
+def wsgi(*args):
     return app.run(*args)
 

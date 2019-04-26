@@ -6,36 +6,35 @@
 #include "pyresponse.h"
 
 
-std::map<std::string, PyFunc*> pyFunctionMap;
+std::map<std::string, WSGIAdapter*> wsgiAdapterMap;
 
 
-PyFunc::PyFunc(std::string root) {
+WSGIAdapter::WSGIAdapter(std::string root) {
     Py_Initialize();
 
     PyObject *pName;
     pName = PyString_FromString(root.c_str());
-
     PyObject *pModule;
     pModule = PyImport_Import(pName);
     Py_DECREF(pName);
-    this->pFunc = PyObject_GetAttrString(pModule, "application");
+    this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi");
 
 };
 
 
-PyFunc* PyFunc::getPyFunc(std::string root) {
-    if (pyFunctionMap.find(root) == pyFunctionMap.end()) {
-        PyFunc* instance = new PyFunc(root);
-        pyFunctionMap[root] = instance;
+WSGIAdapter* WSGIAdapter::getWSGIAdapter(std::string root) {
+    if (wsgiAdapterMap.find(root) == wsgiAdapterMap.end()) {
+        WSGIAdapter* instance = new WSGIAdapter(root);
+        wsgiAdapterMap[root] = instance;
     }
-    return pyFunctionMap[root];
+    return wsgiAdapterMap[root];
 }
 
 
 
-std::string PyFunc::getValue(PyObject *pArgs) {
+std::string WSGIAdapter::getValue(PyObject *pArgs) {
     PyObject *pValue;
-    pValue = PyObject_CallObject(pFunc, pArgs);
+    pValue = PyObject_CallObject(this->wsgiFunction, pArgs);
     if (PyErr_Occurred()) {
         PyErr_Print();
         Py_DECREF(pValue);
@@ -56,7 +55,7 @@ std::string PyResponse::get() {
     PyTuple_SetItem(pArgs, 2, PyString_FromString(this->getRequest()->getHeaders().c_str()));
     PyTuple_SetItem(pArgs, 3, PyString_FromString(this->getRequest()->getBody().c_str()));
 
-    PyFunc* func = PyFunc::getPyFunc(this->config["root"]);
-    std::string response = func->getValue(pArgs);
+    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->config["root"]);
+    std::string response = adaptor->getValue(pArgs);
     return response;
 }

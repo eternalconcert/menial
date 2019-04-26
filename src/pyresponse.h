@@ -7,17 +7,17 @@
 #include "request.h"
 
 
-class PyFunc {
+class WSGIAdapter {
     public:
-        static PyFunc* getPyFunc(std::string root);
-        PyObject* pFunc;
+        static WSGIAdapter* getWSGIAdapter(std::string root);
+        PyObject* wsgiFunction;
         std::string getValue(PyObject *pArgs);
-        ~PyFunc() {
+        ~WSGIAdapter() {
             Py_Finalize();
         };
 
     private:
-        PyFunc(std::string root);
+        WSGIAdapter(std::string root);
 };
 
 

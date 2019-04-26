@@ -6,7 +6,7 @@ sys.path.append("/home/xgwschk/projects/demobase/")
 sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
 sys.path.append("/home/xgwschk/projects/menial/src/python/")
 
-from request import App, redirect, render, url_for, Request
+from request import Request
 from base.wsgi import application as app
 
 
@@ -19,8 +19,6 @@ def make_headers(status, headers):
         result += key + ": " + value + "\n"
 
     return result
-
-
 
 
 def call_application(app, environ):
@@ -44,7 +42,7 @@ def call_application(app, environ):
     return status, headers, body.getvalue()
 
 
-def application(*args):
+def wsgi(*args):
     host = args[0].split(":")[0]
     port = None if len(args[0].split(":")) <= 1 else args[0].split(":")[1]
     target = args[1]
