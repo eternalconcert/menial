@@ -11,6 +11,7 @@ class WSGIAdapter {
     public:
         static WSGIAdapter* getWSGIAdapter(std::string root);
         PyObject* wsgiFunction;
+        PyObject* wsgiApplication;
         std::string getValue(PyObject *pArgs);
         ~WSGIAdapter() {
             Py_Finalize();

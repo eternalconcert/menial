@@ -55,7 +55,7 @@
         },
         "wsgi.localhost:9999": {
             "handler": "python",
-            "root": "wsgi_adapter"
+            "root": "base.wsgi"
         }
 
     },

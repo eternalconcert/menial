@@ -7,7 +7,6 @@ sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-pa
 
 
 from request import Request
-from base.wsgi import application as app
 
 
 def make_headers(status, headers):
@@ -42,7 +41,7 @@ def call_application(app, environ):
     return status, headers, body.getvalue()
 
 
-def wsgi(*args):
+def wsgi(app, *args):
     host = args[0].split(":")[0]
     port = None if len(args[0].split(":")) <= 1 else args[0].split(":")[1]
     target = args[1]
