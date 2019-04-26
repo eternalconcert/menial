@@ -1,12 +1,12 @@
 syntax: glob
 
+*.pyc
 build/*
 target/*
 pythonenv/*
 webdriver/*
 reports/*
 .vscode/*
-*.pyc
 website/hashvalues.json
 deployment/buildno.txt
 deployment/default/index.html
