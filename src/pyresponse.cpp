@@ -18,12 +18,21 @@ WSGIAdapter::WSGIAdapter(std::string root) {
     Py_DECREF(pName);
     this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi");
 
-    PyObject *app;
-    app = PyString_FromString(root.c_str());
+    const char* funcName = "application";
+    const char* moduleName = root.c_str();
+    if (root.find(":") != std::string::npos) {
+        funcName = root.substr(root.find(":") + 1, std::string::npos).c_str();
+        moduleName = root.substr(0, root.find(":")).c_str();
+        printf("%s\n", funcName);
+        printf("%s\n", moduleName);
+    }
+
+    PyObject *pyModule;
+    pyModule = PyString_FromString(moduleName);
     PyObject *module;
-    module = PyImport_Import(app);
-    Py_DECREF(app);
-    this->wsgiApplication = PyObject_GetAttrString(module, "application");
+    module = PyImport_Import(pyModule);
+    Py_DECREF(pyModule);
+    this->wsgiApplication = PyObject_GetAttrString(module, funcName);
 };
 
 
