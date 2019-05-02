@@ -81,9 +81,9 @@ class Request(object):
         self.uri = environ['PATH_INFO']
         self.body = environ['wsgi.input'].read()
         self.query_string = environ['QUERY_STRING']
-        self.content_type = environ['CONTENT_TYPE']
-        self.cookies = environ['HTTP_COOKIE']
-        self.referer = environ['HTTP_REFERER']
+        self.content_type = environ.get('CONTENT_TYPE')
+        self.cookies = environ.get('HTTP_COOKIE')
+        self.referer = environ.get('HTTP_REFERER')
         self.get = self._get_get_params()
         self.post = self._get_post_params()
 
@@ -108,14 +108,13 @@ class Request(object):
 
     def _get_get_params(self):
         params = {}
-        if len(self.uri.split('?')) > 1:
-            self.query_string = self.uri.split('?')[1]
-            for item in self.query_string.split('&'):
-                try:
-                    key, value = item.split('=')
-                    params[key] = value
-                except ValueError:
-                    params[item] = None
+
+        for item in self.query_string.split('&'):
+            try:
+                key, value = item.split('=')
+                params[key] = value
+            except ValueError:
+                continue
         return params
 
     def _get_post_params(self):
@@ -206,7 +205,7 @@ class Response:
         if not response_headers:
             response_headers = self.make_headers()
 
-        self.body = body
+        self.body = body if body else ""
         self.status = status_messages[status]
 
         self.headers = []

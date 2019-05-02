@@ -116,7 +116,7 @@ def new_location(request):
 
 
 @app.route("/redirect/with/variable/part/")
-def redirect_to_another_location(request):
+def redirect_to_another_location_with_variable_part(request):
     return redirect(url_for('new_location_with_variable_part', "christian"))
 
 
@@ -126,6 +126,4 @@ def new_location_with_variable_part(request, name):
     return render(response)
 
 
-def application(environ, start_response):
-    return app.run(environ, start_response)
-
+application = app.run
