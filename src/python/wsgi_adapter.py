@@ -2,13 +2,12 @@ from io import BytesIO
 import StringIO
 import sys
 
-sys.path.append("/home/christian/Projekte/demobase/")
-sys.path.append("/home/christian/Projekte/demobase/pythonenv/lib/python2.7/site-packages/")
+sys.path.append("/home/xgwschk/projects/demobase/")
+sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
 
 
 
 def make_headers(status, headers):
-
     result = "HTTP/1.0 {status}\n" \
              "Server: menial\n".format(status=status)
 
@@ -18,15 +17,17 @@ def make_headers(status, headers):
     return result
 
 
-def call_application(app, environ):
+def call_application(application, environ):
     global status, headers
+    status = ""
+    headers = []
     body = BytesIO()
 
     def start_response(rstatus, rheaders):
-       global status, headers
-       status, headers = rstatus, rheaders
+        global status, headers
+        status, headers = rstatus, rheaders
 
-    app_iter = app(environ, start_response)
+    app_iter = application(environ, start_response)
     try:
         for data in app_iter:
             assert status is not None and headers is not None, "start_response was not called"

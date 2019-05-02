@@ -77,13 +77,13 @@ class Request(object):
         self.host = environ['SERVER_NAME']
         self.port = environ['SERVER_PORT']
         self.method = environ['REQUEST_METHOD']
-        self.target = environ['PATH_INFO']
+        self.target = environ['PATH_INFO'].split("?")[0]
+        self.uri = environ['PATH_INFO']
         self.body = environ['wsgi.input'].read()
         self.query_string = environ['QUERY_STRING']
         self.content_type = environ['CONTENT_TYPE']
         self.cookies = environ['HTTP_COOKIE']
         self.referer = environ['HTTP_REFERER']
-        self.uri = self.target
         self.get = self._get_get_params()
         self.post = self._get_post_params()
 
@@ -194,21 +194,25 @@ class Error:
 
 class Response:
 
-    header_base = "HTTP/1.0 {status}\n" \
-                  "Server: menial\n"
+    header_base = "Server: menial\n"
 
     def __init__(self, request, function, func_args):
         self.request = request
         self.function = function
         self.func_args = func_args
 
-        headers, body, status = self.function(self.request, *self.func_args)
+        response_headers, body, status = self.function(self.request, *self.func_args)
 
-        if not headers:
-            headers = self.make_headers()
+        if not response_headers:
+            response_headers = self.make_headers()
 
         self.body = body
-        self.headers = headers.format(status=status_messages[status])
+        self.status = status_messages[status]
+
+        self.headers = []
+        for item in response_headers.splitlines():
+            self.headers.append((item.split(':')[0], item.split(':')[1]))
+
         # self.request.session.save()
 
     def make_headers(self):
@@ -228,18 +232,17 @@ class App:
     def run(self, environ, start_response):
         self.request = Request(environ)
         try:
-            return self.send_response()
+            return self.send_response(start_response)
         except Exception as e:
             error = Error(e, 500)
             return str(error)
 
-    def send_response(self):
+    def send_response(self, start_response):
         func, func_args = self._get_route_function(self.request.target)
         response = Response(self.request, func, func_args)
-        result = response.headers + "\n"
-        if response.body:
-            result += response.body
-        return result
+        start_response(response.status, response.headers)
+
+        return response.body
 
     @staticmethod
     def _get_type(pattern):
