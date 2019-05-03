@@ -1,6 +1,9 @@
 #include <fstream>
 #include "common.h"
 #include "exceptions.h"
+#include <sstream>
+#include <iostream>
+#include <map>
 #include <vector>
 #include <openssl/sha.h>
 #include <sstream>
@@ -83,4 +86,29 @@ std::string sha256hash(const std::string input) {
         res << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
     }
     return res.str();
+}
+
+
+std::map<std::string, std::string>* mimeTypeMap = 0;
+
+
+std::string getMimeType(std::string extension) {
+    if (mimeTypeMap == 0) {
+        mimeTypeMap = new std::map<std::string, std::string>();
+
+        std::istringstream fileContent(readFile("resources/mimetypes.tray"));
+        std::string line;
+        while (std::getline(fileContent, line)) {
+            std::string ext = line.substr(0, line.find_first_of(" "));
+            std::string mimeType = line.substr(line.find_last_of(" ") + 1, std::string::npos);
+
+            mimeTypeMap->operator[](ext) = mimeType;
+        }
+    }
+
+    std::string fileType = mimeTypeMap->operator[](extension);
+    if (fileType == "") {
+        fileType = "text/html; charset=utf-8;";
+    }
+    return fileType;
 }

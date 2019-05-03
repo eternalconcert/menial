@@ -146,55 +146,11 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
 
 
 std::string FileResponse::guessFileType(std::string fileName) {
-    std::string charset = " charset=utf-8;";
-    std::string fileType = "text/html;" + charset;;
     std::string extension = fileName.substr(0, fileName.find_last_of("?"));
     extension = extension.substr(extension.find_last_of(".") + 1, extension.length());
-
     this->logger->debug("Filename extension: " + extension);
-    if (extension == "css") {
-        fileType = "text/css";
-    }
-    else if (extension == "pdf") {
-        fileType = "application/pdf";
-    }
-    else if (extension == "log") {
-        fileType = "text/plain";
-    }
-    else if (extension == "png") {
-        fileType = "image/png";
-    }
-    else if (extension == "jpg") {
-        fileType = "image/jpg";
-    }
-    else if (extension == "mp3") {
-        fileType = "audio/mpeg";
-    }
-    else if (extension == "flac") {
-        fileType = "audio/flac";
-    }
-    else if (extension == "tar") {
-        fileType = "application/x-tar";
-    }
-    else if (extension == "zip") {
-        fileType = "application/zip";
-    }
-    else if (extension == "gz") {
-        fileType = "application/gzip";
-    }
-    else if (extension == "woff") {
-        fileType = "font/woff";
-    }
-    else if (extension == "woff2") {
-        fileType = "font/woff2";
-    }
-    else if (extension == "ttf") {
-        fileType = "font/ttf";
-    }
-    else if (extension == "bin" or extension == "file" or extension == "com" or extension == "class") {
-        fileType = "application/octet-stream";
-    }
-    return fileType;
+
+    return getMimeType(extension);
 }
 
 
