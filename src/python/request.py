@@ -321,4 +321,4 @@ def send_static_file(request, file_path):
 
     with open(full_path, mode='rb') as f:
         content = f.read()
-        return render(content)
+        return render(content.decode())
