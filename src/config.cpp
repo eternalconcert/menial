@@ -71,7 +71,6 @@ void Config::update(std::string configPath) {
         resources = document["resources"].GetString();
     }
     this->resources = resources;
-    printf("%s\n", this->resources.c_str());
 
     // hosts
     Value& hosts = document["hosts"];
