@@ -16,14 +16,14 @@ std::string readFile(std::string path) {
     std::ifstream file(path);
 
     if (!file) {
-        throw FileNotFoundException();
+        throw FileNotFoundException(path);
     }
 
     try {
         std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         return content;
     } catch (std::ios_base::failure) {
-        throw FileNotFoundException();
+        throw FileNotFoundException(path);
     }
 }
 
@@ -92,11 +92,11 @@ std::string sha256hash(const std::string input) {
 std::map<std::string, std::string>* mimeTypeMap = 0;
 
 
-std::string getMimeType(std::string extension) {
+std::string getMimeType(std::string extension, std::string filePath) {
     if (mimeTypeMap == 0) {
         mimeTypeMap = new std::map<std::string, std::string>();
 
-        std::istringstream fileContent(readFile("resources/mimetypes.tray"));
+        std::istringstream fileContent(readFile(filePath));
         std::string line;
         while (std::getline(fileContent, line)) {
             std::string ext = line.substr(0, line.find_first_of(" "));

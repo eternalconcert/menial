@@ -119,9 +119,9 @@ class Request(object):
 
     def _get_post_params(self):
         params = {}
-        if len(self.body) > 3:
-            body = self.body
-            for item in body.split("&"):
+        _body = self.body.decode()
+        if len(_body) > 3:
+            for item in _body.split("&"):
                 params[item.split("=")[0]] = item.split("=")[1]
         return params
 
@@ -241,7 +241,7 @@ class App:
         response = Response(self.request, func, func_args)
         start_response(response.status, response.headers)
 
-        return response.body
+        return [response.body.encode()]
 
     @staticmethod
     def _get_type(pattern):

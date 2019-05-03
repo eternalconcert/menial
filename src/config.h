@@ -12,6 +12,7 @@ class Config {
         std::string logFilePath;
         std::string logger;
         std::string staticDir;
+        std::string resources;
         std::map<std::string, std::map<std::string, std::string>> hosts;
         std::map<std::string, std::string> defaultHosts;
         std::set<int> ports;

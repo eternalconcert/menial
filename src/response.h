@@ -38,7 +38,8 @@ class Response {
         Response(Request *request, Config *config, Logger *logger);
 
     protected:
-        std::map<std::string, std::string> config;
+        Config *config;
+        std::map<std::string, std::string> hostConfig;
         Logger *logger;
         Request *request;
         int status;

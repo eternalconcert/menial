@@ -12,26 +12,37 @@ std::map<std::string, WSGIAdapter*> wsgiAdapterMap;
 WSGIAdapter::WSGIAdapter(std::string root) {
     Py_Initialize();
     PyObject *pName;
-    pName = PyString_FromString("wsgi_adapter");
+    pName = PyUnicode_FromString("wsgi_adapter");
     PyObject *pModule;
     pModule = PyImport_Import(pName);
     Py_DECREF(pName);
-    this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi");
 
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+        Py_DECREF(pName);
+        Py_DECREF(pModule);
+    }
+
+    this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi");
     const char* funcName = "application";
     const char* moduleName = root.c_str();
     if (root.find(":") != std::string::npos) {
         funcName = root.substr(root.find(":") + 1, std::string::npos).c_str();
         moduleName = root.substr(0, root.find(":")).c_str();
-        printf("%s\n", funcName);
-        printf("%s\n", moduleName);
     }
 
     PyObject *pyModule;
-    pyModule = PyString_FromString(moduleName);
+    pyModule = PyUnicode_FromString(moduleName);
     PyObject *module;
     module = PyImport_Import(pyModule);
     Py_DECREF(pyModule);
+
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+        Py_DECREF(module);
+        Py_DECREF(pyModule);
+    }
+
     this->wsgiApplication = PyObject_GetAttrString(module, funcName);
 };
 
@@ -54,22 +65,22 @@ std::string WSGIAdapter::getValue(PyObject *pArgs) {
         Py_DECREF(pValue);
         Py_DECREF(pArgs);
     }
-    std::string response = PyString_AsString(pValue);
+    std::string response = PyBytes_AsString(pValue);
     return response;
 };
 
 
 std::string PyResponse::get() {
-    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->config["root"]);
+    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->hostConfig["root"]);
 
     PyObject *pArgs;
     pArgs = PyTuple_New(5);
 
     PyTuple_SetItem(pArgs, 0, adaptor->wsgiApplication);
-    PyTuple_SetItem(pArgs, 1, PyString_FromString(this->getRequest()->getVirtualHost().c_str()));
-    PyTuple_SetItem(pArgs, 2, PyString_FromString(this->getRequest()->getTarget().c_str()));
-    PyTuple_SetItem(pArgs, 3, PyString_FromString(this->getRequest()->getHeaders().c_str()));
-    PyTuple_SetItem(pArgs, 4, PyString_FromString(this->getRequest()->getBody().c_str()));
+    PyTuple_SetItem(pArgs, 1, PyUnicode_FromString(this->getRequest()->getVirtualHost().c_str()));
+    PyTuple_SetItem(pArgs, 2, PyUnicode_FromString(this->getRequest()->getTarget().c_str()));
+    PyTuple_SetItem(pArgs, 3, PyUnicode_FromString(this->getRequest()->getHeaders().c_str()));
+    PyTuple_SetItem(pArgs, 4, PyUnicode_FromString(this->getRequest()->getBody().c_str()));
 
     std::string response = adaptor->getValue(pArgs);
 

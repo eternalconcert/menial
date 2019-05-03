@@ -56,17 +56,17 @@ void FileResponse::setFilePath() {
         targetPath.erase(targetPath.find(paramString));
     }
 
-    if (targetPath == "/" and this->config["dirlisting"] == "false") {
-        targetPath = this->config["defaultdocument"];
+    if (targetPath == "/" and this->hostConfig["dirlisting"] == "false") {
+        targetPath = this->hostConfig["defaultdocument"];
         this->logger->debug("No file on / requested, using default target: " + targetPath);
     }
-    else if (targetPath.back() == '/' and this->config["dirlisting"] == "false") {
-            targetPath = targetPath + this->config["defaultdocument"];
+    else if (targetPath.back() == '/' and this->hostConfig["dirlisting"] == "false") {
+            targetPath = targetPath + this->hostConfig["defaultdocument"];
             this->logger->debug("No file on subdir requested, using default target: " + targetPath);
     }
     this->logger->debug("Requested document: " + targetPath);
 
-    this->filePath = this->config["root"] + targetPath;
+    this->filePath = this->hostConfig["root"] + targetPath;
     this->logger->debug("Filepath: " + this->filePath);
 };
 
@@ -110,7 +110,7 @@ std::string FileResponse::get() {
 std::string FileResponse::notFound() {
     this->logger->info("404: Unknown target requested: " + target);
     this->setStatus(404);
-    std::string content = this->headerBase() + HEADERDELIM + readFile(this->config["staticdir"] + "404.html");
+    std::string content = this->headerBase() + HEADERDELIM + readFile(this->hostConfig["staticdir"] + "404.html");
     return content;
 }
 
@@ -125,7 +125,7 @@ std::string FileResponse::methodNotAllowed() {
 std::string FileResponse::internalServerError() {
     this->logger->error("Internal server error");
     this->setStatus(500);
-    std::string content = this->headerBase() + HEADERDELIM + readFile(this->config["staticdir"] + "500.html");
+    std::string content = this->headerBase() + HEADERDELIM + readFile(this->hostConfig["staticdir"] + "500.html");
     return content;
 }
 
@@ -138,7 +138,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
         header += this->getLastModified();
         header += this->getETag() + "\n";
     }
-    header += this->config["additionalheaders"];
+    header += this->hostConfig["additionalheaders"];
     header += "\r\n";
     this->logger->debug("FileResponse header: " + header);
     return header;
@@ -150,7 +150,7 @@ std::string FileResponse::guessFileType(std::string fileName) {
     extension = extension.substr(extension.find_last_of(".") + 1, extension.length());
     this->logger->debug("Filename extension: " + extension);
 
-    return getMimeType(extension);
+    return getMimeType(extension, this->config->resources + "mimetypes.tray");
 }
 
 
@@ -197,7 +197,7 @@ std::string FileResponse::getDirlisting() {
     }
 
     listing += "</ul>";
-    std::string listTemplate = readFile(this->config["staticdir"] + "dirlisting.html");
+    std::string listTemplate = readFile(this->hostConfig["staticdir"] + "dirlisting.html");
     listTemplate = std::regex_replace(listTemplate, std::regex("<_DIR_>"), cleanTarget);
     listTemplate = std::regex_replace(listTemplate, std::regex("<_LISTING_>"), listing);
     return listTemplate;
@@ -207,7 +207,7 @@ std::string FileResponse::getDirlisting() {
 std::string FileResponse::getContent() {
     std::string filePath = this->filePath;
     std::string content;
-    if (this->config["dirlisting"] == "true") {
+    if (this->hostConfig["dirlisting"] == "true") {
         try {
             std::string targetPath = this->target;
             if (targetPath.rfind("/") == (targetPath.length() - 1)) {
@@ -219,7 +219,7 @@ std::string FileResponse::getContent() {
             }
         } catch (FileNotFoundException) {
             this->setStatus(404);
-            return readFile(this->config["staticdir"] + "404.html");
+            return readFile(this->hostConfig["staticdir"] + "404.html");
         }
     }
 
@@ -227,7 +227,7 @@ std::string FileResponse::getContent() {
         content = readFile(filePath);
     } catch (FileNotFoundException) {
         this->setStatus(404);
-        return readFile(this->config["staticdir"] + "404.html");
+        return readFile(this->hostConfig["staticdir"] + "404.html");
     }
     return content;
 }

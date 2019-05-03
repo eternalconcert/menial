@@ -78,6 +78,7 @@ def show_form(request):
 
 @app.route("/process_post/")
 def process_post(request):
+    print("5ytretertertert")
     if request.method == "POST":
         name = request.post['name']
         password = request.post['password']

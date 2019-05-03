@@ -2,7 +2,8 @@
 
 Response::Response(Request *request, Config *config, Logger *logger) {
     this->request = request;
-    this->config = config->hosts[this->getRequest()->getVirtualHost()];
+    this->config = config;
+    this->hostConfig = config->hosts[this->getRequest()->getVirtualHost()];
     this->logger = logger;
     this->hostName = this->getRequest()->getVirtualHost();
     this->setStatus(200);
@@ -38,7 +39,7 @@ std::string Response::unauthorized() {
     this->setStatus(401);
     std::string header = this->headerBase();
     header += "WWW-Authenticate: Basic realm = /\n\n";
-    std::string content = readFile(this->config["staticdir"] + "401.html");
+    std::string content = readFile(this->hostConfig["staticdir"] + "401.html");
     return header + content;
 }
 

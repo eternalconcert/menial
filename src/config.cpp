@@ -59,11 +59,19 @@ void Config::update(std::string configPath) {
     }
 
     // Error pages
-    std::string globalstaticDir = "default/staticdir/";
+    std::string globalstaticDir = "resources/staticdir/";
     if (document.HasMember("staticdir")) {
         globalstaticDir = document["staticdir"].GetString();
     }
     this->staticDir = globalstaticDir;
+
+    // Resources
+    std::string resources = "resources/";
+    if (document.HasMember("resources")) {
+        resources = document["resources"].GetString();
+    }
+    this->resources = resources;
+    printf("%s\n", this->resources.c_str());
 
     // hosts
     Value& hosts = document["hosts"];

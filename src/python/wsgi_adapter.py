@@ -1,5 +1,4 @@
-from io import BytesIO
-import StringIO
+from io import StringIO, BytesIO
 import sys
 
 sys.path.append("/home/xgwschk/projects/demobase/")
@@ -21,7 +20,7 @@ def call_application(application, environ):
     global status, headers
     status = ""
     headers = []
-    body = BytesIO()
+    body = StringIO()
 
     def start_response(rstatus, rheaders):
         global status, headers
@@ -30,13 +29,14 @@ def call_application(application, environ):
     app_iter = application(environ, start_response)
     try:
         for data in app_iter:
-            assert status is not None and headers is not None, "start_response was not called"
-            body.write(data)
+            assert (status is not None and headers is not None), "start_response was not called"
+            body.write(data.decode())
     except Exception as e:
         pass
     finally:
         if hasattr(app_iter, 'close'):
             app_iter.close()
+
     return status, headers, body.getvalue()
 
 
@@ -75,7 +75,8 @@ def wsgi(app, *args):
     target = args[1]
     header = args[2]
     body = args[3]
-    wsgi_input = BytesIO(body)
+    wsgi_input = BytesIO(body.encode())
+
     environ = {
         "REQUEST_METHOD": header.split('/')[0].strip(),
         "CONTENT_LENGTH": len(body),
@@ -96,5 +97,4 @@ def wsgi(app, *args):
     _status, _headers, _body = call_application(app, environ)
     headers = make_headers(_status, _headers)
     wsgi_input.close()
-
-    return b"{0}\n{1}".format(headers, _body)
+    return "{0}\n{1}".format(headers, _body).encode()

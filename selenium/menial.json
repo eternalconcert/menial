@@ -22,5 +22,6 @@
     "iplogging": true,
     "logger": "console",
     "loglevel": "debug",
-    "staticdir": "../deployment/default/static/"
+    "staticdir": "../resources/static/",
+    "resources": "../resources/"
 }

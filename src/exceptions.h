@@ -25,6 +25,9 @@ class SSLError: public Exception {
 
 class FileNotFoundException: public Exception {
     using Exception::Exception;
+
+    public:
+        FileNotFoundException(std::string message = "");
 };
 
 class RequestHeaderFieldTooLarge: public Exception {
