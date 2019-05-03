@@ -6,8 +6,11 @@ from random import randint
 import sys
 from request import App, redirect, render, url_for
 
+App.static_files_dir = "/home/xgwschk/Pictures/"
+App.static_files_url = "/static/"
 
 app = App()
+
 
 template = """
 <html>
@@ -78,7 +81,6 @@ def show_form(request):
 
 @app.route("/process_post/")
 def process_post(request):
-    print("5ytretertertert")
     if request.method == "POST":
         name = request.post['name']
         password = request.post['password']

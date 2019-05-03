@@ -318,6 +318,7 @@ def send_static_file(request, file_path):
     full_path = os.path.normpath(full_path)
     full_path = full_path.replace(App.static_files_url, "/", 1)
     full_path = os.path.normpath(full_path)
-    with open(full_path) as f:
+
+    with open(full_path, mode='rb') as f:
         content = f.read()
         return render(content)
