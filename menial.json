@@ -5,18 +5,23 @@
             "root": "/home/xgwschk/projects/menial/selenium/reports/",
             "defaultdocument": "report.html"
         },
+        "files.localhost:8000": {
+            "handler": "file",
+            "root": "/home/xgwschk/",
+            "dirlisting": true
+        },
         "tmmk.localhost:8000": {
             "handler": "file",
-            "root": "/home/christian/Projekte/tmmk/build/"
+            "root": "/home/xgwschk/projects/tmmk/build/"
         },
         "demobase_static.localhost:8080": {
             "handler": "file",
-            "root": "/home/christian/Projekte/demobase/demobase/static/",
+            "root": "/home/xgwschk/projects/demobase/demobase/static/",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
         },
         "demobase_media.localhost:8081": {
             "handler": "file",
-            "root": "/home/christian/Projekte/demobase/media/",
+            "root": "/home/xgwschk/projects/demobase/media/",
             "additionalheaders": "Access-Control-Allow-Origin: *\n",
             "dirlisting": true
         },
@@ -35,7 +40,7 @@
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug",
-    "staticdir": "deployment/default/static/",
+    "staticdir": "resources/static/",
     "ssl": {
         "4433": {
             "on": false,
