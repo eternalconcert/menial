@@ -6,7 +6,7 @@ from random import randint
 import sys
 from request import App, redirect, render, url_for
 
-App.static_files_dir = "/home/christian/Pictures/"
+App.static_files_dir = "/home/xgwschk/Pictures/"
 App.static_files_url = "/static/"
 
 app = App()
