@@ -65,8 +65,14 @@ std::string WSGIAdapter::getValue(PyObject *pArgs) {
         Py_DECREF(pValue);
         Py_DECREF(pArgs);
     }
-    std::string response = PyBytes_AsString(pValue);
-    return response;
+
+    PyObject *pyHeaders;
+    pyHeaders = PyTuple_GetItem(pValue, 0);
+    PyObject *pyBody;
+    pyBody = PyTuple_GetItem(pValue, 1);
+    std::string headers = PyBytes_AsString(pyHeaders);
+    std::string body = PyBytes_AsString(pyBody);
+    return headers + "\n" + body;
 };
 
 

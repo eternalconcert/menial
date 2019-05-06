@@ -101,4 +101,4 @@ def wsgi(app, *args):
     _status, _headers, _body = call_application(app, environ)
     headers = make_headers(_status, _headers)
     wsgi_input.close()
-    return "{0}\n{1}".format(headers, _body).encode()
+    return headers.encode(), _body.encode()
