@@ -4,74 +4,6 @@ import os
 from random import randint
 
 
-class SessionBase(object):
-
-    def __init__(self, _id, content):
-        self._id = int(_id)
-        self.content = content
-
-    def __getitem__(self, key):
-        return self.content.get(key)
-
-    def __setitem__(self, key, value):
-        self.content[key] = value
-
-    def get(self, key, default=None):
-        try:
-            return self.content[key]
-        except KeyError:
-            return default
-
-    def pop(self, key):
-        return self.content.pop(key, None)
-
-    def save(self):
-        raise NotImplementedError("save method must be implemented by inherited class")
-
-    @classmethod
-    def create(cls):
-        raise NotImplementedError("create method must be implemented by inherited class")
-
-    @classmethod
-    def get_by_id(cls, _id):
-        raise NotImplementedError("get_by_id method must be implemented by inherited class")
-
-
-class FileSystemSession(SessionBase):
-
-    base_path = "/tmp/menial/"
-    if not os.path.isdir(base_path):
-        os.mkdir(base_path)
-
-    def __init__(self, _id, content):
-        super(FileSystemSession, self).__init__(_id, content)
-        self.file_path = os.path.join(FileSystemSession.base_path, str(_id))
-
-    def save(self):
-        with open(self.file_path, 'w') as f:
-            f.write(json.dumps({'id': self._id, 'content': self.content}))
-
-    @classmethod
-    def create(cls):
-        _id = randint(10000000000000, 9999999999999999)
-        inst = cls(_id, {})
-        session_dict = {'id': inst._id, 'content': inst.content}
-        with open(inst.file_path, 'w') as f:
-            f.write(json.dumps(session_dict))
-        return inst
-
-    @classmethod
-    def get_by_id(cls, _id):
-        file_path = os.path.join(FileSystemSession.base_path, str(_id))
-        if os.path.isfile(file_path):
-            with open(file_path, 'r') as f:
-                session_dict = json.loads(f.read())
-                return FileSystemSession(_id, session_dict['content'])
-
-
-session_adapter = FileSystemSession
-
-
 class Request(object):
     def __init__(self, environ):
         self.host = environ['SERVER_NAME']
@@ -86,25 +18,6 @@ class Request(object):
         self.referer = environ.get('HTTP_REFERER')
         self.get = self._get_get_params()
         self.post = self._get_post_params()
-
-        """
-        current_session_id = self.get_session_id_from_headers()
-        if current_session_id:
-            current_session = session_adapter.get_by_id(current_session_id)
-            if current_session:
-                self.session = current_session
-            else:
-                self.session = session_adapter.create()
-        else:
-            self.session = session_adapter.create()
-        self.session_id = self.session._id
-
-    def get_session_id_from_headers(self):
-        for line in self.headers.splitlines():
-            if line.startswith("Cookie: menial-session"):
-                value = line.split("=")[1]
-                return value.split(";")[0]
-    """
 
     def _get_get_params(self):
         params = {}
@@ -162,9 +75,9 @@ def render(content, status=200):
 
 
 def redirect(url, permanent=False):
-    headers = Response.header_base
-    headers += "Location: {url}\n".format(url=url)
     status = 302 if not permanent else 301
+    headers = "Location: {url}\n"
+    headers = headers.format(status=status_messages[status], url=url)
     return (headers, None, status)
 
 
@@ -177,7 +90,7 @@ class Error:
     def __repr__(self):
         status = status_messages[self.status]
 
-        header = Response.header_base.format(status=status)
+        header = "HTTP/1.0 {status}".format(status=status)
         template = """{header}
 
             <head>
@@ -191,9 +104,15 @@ class Error:
         return template.format(header=header, error=self.ex, status=status)
 
 
-class Response:
+def get_mimetype(target=None):
+    filename = target.split("/")[-1]
+    mimetype = "text/html"
+    #if filename:
+    #    mimetype = "image/png"
+    return mimetype
 
-    header_base = "Server: menial\n"
+
+class Response:
 
     def __init__(self, request, function, func_args):
         self.request = request
@@ -202,23 +121,22 @@ class Response:
 
         response_headers, body, status = self.function(self.request, *self.func_args)
 
-        if not response_headers:
-            response_headers = self.make_headers()
-
         self.body = body if body else ""
         self.status = status_messages[status]
 
+        if not response_headers:
+            response_headers = self.make_headers()
+
         self.headers = []
         for item in response_headers.splitlines():
-            self.headers.append((item.split(':')[0], item.split(':')[1]))
+            self.headers.append((item.split(':')[0].strip(), item.split(':')[1].strip()))
 
-        # self.request.session.save()
 
     def make_headers(self):
-        headers = Response.header_base
-        # if not self.request.get_session_id_from_headers():
-        #     headers += "Set-Cookie: menial-session={}".format(self.request.session._id)
-        return headers
+        headers = "Content-Length: {length}\n" \
+                  "Content-Type: {mimetype}"
+        return headers.format(length=len(self.body), mimetype=get_mimetype(self.request.target))
+
 
 
 class App:
@@ -230,18 +148,25 @@ class App:
 
     def run(self, environ, start_response):
         self.request = Request(environ)
+
+
+        #return self.send_response(start_response)
+
+
         try:
             return self.send_response(start_response)
         except Exception as e:
             error = Error(e, 500)
-            return str(error)
+            return render(error, 500)
 
     def send_response(self, start_response):
         func, func_args = self._get_route_function(self.request.target)
         response = Response(self.request, func, func_args)
         start_response(response.status, response.headers)
-
-        return [response.body.encode()]
+        content = response.body
+        if isinstance(content, str):
+            content = content.encode()
+        return [content]
 
     @staticmethod
     def _get_type(pattern):
@@ -321,4 +246,4 @@ def send_static_file(request, file_path):
 
     with open(full_path, mode='rb') as f:
         content = f.read()
-        return render(content.decode())
+        return render(content)

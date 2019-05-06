@@ -30,13 +30,17 @@ def call_application(application, environ):
     try:
         for data in app_iter:
             assert (status is not None and headers is not None), "start_response was not called"
-            body.write(data.decode())
+            try:
+                body.write(data.decode())
+            except UnicodeDecodeError:
+                body.write(str(data, "ascii", "ignore"))
+
     except Exception as e:
-        pass
+        status = 500
+        body.write(e.__repr__())
     finally:
         if hasattr(app_iter, 'close'):
             app_iter.close()
-
     return status, headers, body.getvalue()
 
 
