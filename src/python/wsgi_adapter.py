@@ -86,7 +86,7 @@ def wsgi(app, *args):
         "CONTENT_LENGTH": len(body),
         "CONTENT_TYPE": get_content_type_from_headers(header),
         "SCRIPT_NAME": "",
-        "PATH_INFO": target,
+        "PATH_INFO": target.split('?')[0],
         "QUERY_STRING": get_query_string(target),
         "SERVER_NAME": host,
         "SERVER_PORT": port,
