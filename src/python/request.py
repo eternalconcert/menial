@@ -104,12 +104,35 @@ class Error:
         return template.format(header=header, error=self.ex, status=status)
 
 
+class MimeTypeCache:
+    __instance = None
+
+    def __new__(cls):
+        if not cls.__instance:
+            cls.__instance = super().__new__(cls)
+            cls.__instance.data = {}
+            with open('resources/mimetypes.tray') as f:  # TODO: Confirgurable
+                for line in f.readlines():
+                    cls.__instance.data[line.split(" ")[0].strip()] = line.split(" ")[-1].strip()
+        return cls.__instance
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+
 def get_mimetype(target=None):
-    filename = target.split("/")[-1]
-    mimetype = "text/html"
-    #if filename:
-    #    mimetype = "image/png"
-    return mimetype
+    extenstion = target.split("/")[-1].split('.')[-1]
+    mimetypes = MimeTypeCache()
+    return mimetypes.get(extenstion, 'text/html; charset=utf-8;')
 
 
 class Response:

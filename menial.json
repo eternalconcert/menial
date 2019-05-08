@@ -29,18 +29,22 @@
             "handler": "python",
             "root": "pyresponse"
         },
-        "wsgi.localhost:9999": {
+        "svp.localhost:9999": {
             "handler": "python",
-            "root": "base.wsgi",
+            "root": "env.dev.wsgi",
             "additionalheaders": "Access-Control-Allow-Origin: *\n"
+        },
+        "svp_static.localhost:9999": {
+            "handler": "file",
+            "root": "/home/xgwschk/projects/serviceportal/static/"
         }
-
     },
     "iplogging": true,
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug",
     "staticdir": "resources/static/",
+    "resources": "resources/",
     "ssl": {
         "4433": {
             "on": false,
