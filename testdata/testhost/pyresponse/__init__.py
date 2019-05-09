@@ -1,12 +1,6 @@
-import re
-import json
-import os
-from random import randint
-
-import sys
 from request import App, redirect, render, url_for
 
-App.static_files_dir = "/home/xgwschk/Pictures/"
+App.static_files_dir = "/home/christian/Pictures/"
 App.static_files_url = "/static/"
 
 app = App()
@@ -22,6 +16,7 @@ template = """
     </body>
 </html>
 """
+
 
 @app.route("/")
 def index(request):
@@ -56,6 +51,7 @@ def multiparams(request, name, id):
     response = template.format(title="Customer: " + name + " - " + " Order: " + id, body="")
     return render(response)
 
+
 @app.route("/suppliers/<str:name>/offers/<int:id>/taxrate/<float:rate>/")
 def typed_variables(request, name, id, rate):
     assert isinstance(name, str)
@@ -84,7 +80,9 @@ def process_post(request):
     if request.method == "POST":
         name = request.post['name']
         password = request.post['password']
-        response = template.format(title="Name: " + name + ", Password: " + password, body="<h2>" + request.method + "</h2>")
+        response = template.format(
+            title="Name: " + name + ", Password: " + password, body="<h2>" + request.method + "</h2>"
+        )
     elif request.method == "GET":
         response = template.format(title="", body="<h2>" + request.method + "</h2>")
     return render(response)
@@ -93,18 +91,6 @@ def process_post(request):
 @app.route("/no/trailing/slash/")
 def addition(request):
     return render(template.format(title="Matched it anyway", body=""))
-
-
-# @app.route("/session/write/<name>/")
-# def write(request, name):
-#     request.session["name"] = name
-#     return render("")
-#
-#
-# @app.route("/session/read/")
-# def write(request):
-#     response = template.format(title=request.session["name"], body="")
-#     return render(response)
 
 
 @app.route("/redirect/")

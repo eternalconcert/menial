@@ -1,7 +1,5 @@
 import re
-import json
 import os
-from random import randint
 
 
 class Request(object):
@@ -123,6 +121,7 @@ class MimeTypeCache:
         return self.data[key]
 
     def get(self, key, default=None):
+        key = key.lower()
         try:
             return self[key]
         except KeyError:
@@ -172,9 +171,7 @@ class App:
     def run(self, environ, start_response):
         self.request = Request(environ)
 
-
         #return self.send_response(start_response)
-
 
         try:
             return self.send_response(start_response)

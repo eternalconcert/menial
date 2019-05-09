@@ -71,7 +71,9 @@ std::string WSGIAdapter::getValue(PyObject *pArgs) {
     PyObject *pyBody;
     pyBody = PyTuple_GetItem(pValue, 1);
     std::string headers = PyBytes_AsString(pyHeaders);
+    // std::string body = readFile("/home/christian/Pictures/1.png");
     std::string body = PyBytes_AsString(pyBody);
+    body = base64decode(body);
     return headers + "\n" + body;
 };
 

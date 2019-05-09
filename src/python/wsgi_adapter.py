@@ -1,9 +1,5 @@
-from io import StringIO, BytesIO
-import sys
-
-sys.path.append("/home/xgwschk/projects/demobase/")
-sys.path.append("/home/xgwschk/projects/demobase/pythonenv/lib/python2.7/site-packages/")
-
+from io import BytesIO
+from base64 import b64encode
 
 
 def make_headers(status, headers):
@@ -20,7 +16,7 @@ def call_application(application, environ):
     global status, headers
     status = ""
     headers = []
-    body = StringIO()
+    body = BytesIO()
 
     def start_response(rstatus, rheaders):
         global status, headers
@@ -30,14 +26,11 @@ def call_application(application, environ):
     try:
         for data in app_iter:
             assert (status is not None and headers is not None), "start_response was not called"
-            try:
-                body.write(data.decode())
-            except UnicodeDecodeError:
-                body.write(str(data, "ascii", "ignore"))
+            body.write(data)
 
     except Exception as e:
         status = 500
-        body.write(e.__repr__())
+        body.write(e.__repr__().encode())
     finally:
         if hasattr(app_iter, 'close'):
             app_iter.close()
@@ -51,12 +44,14 @@ def get_content_type_from_headers(headers):
             value = line.split(": ")[1]
     return value
 
+
 def get_referer_from_headers(headers):
     value = ""
     for line in headers.splitlines():
         if line.startswith("Referer: "):
             value = line.split(": ")[1]
     return value
+
 
 def get_cookies_from_headers(headers):
     value = ""
@@ -101,4 +96,4 @@ def wsgi(app, *args):
     _status, _headers, _body = call_application(app, environ)
     headers = make_headers(_status, _headers)
     wsgi_input.close()
-    return headers.encode(), _body.encode()
+    return headers.encode(), b64encode(_body)

@@ -1,4 +1,5 @@
 #include <fstream>
+#include <algorithm>
 #include "common.h"
 #include "exceptions.h"
 #include <sstream>
@@ -89,10 +90,17 @@ std::string sha256hash(const std::string input) {
 }
 
 
+std::string lower(std::string inStr) {
+    std::transform(inStr.begin(), inStr.end(), inStr.begin(), ::tolower);
+    return inStr;
+}
+
+
 std::map<std::string, std::string>* mimeTypeMap = 0;
 
 
 std::string getMimeType(std::string extension, std::string filePath) {
+    extension = lower(extension);
     if (mimeTypeMap == 0) {
         mimeTypeMap = new std::map<std::string, std::string>();
 
