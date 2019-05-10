@@ -29,6 +29,9 @@ std::string readFile(std::string path) {
 }
 
 LogLevel logLevelByName(std::string levelName) {
+    if (levelName == "highlight") {
+        return HIGHLIGHT;
+    }
     if (levelName == "debug") {
         return DEBUG;
     }

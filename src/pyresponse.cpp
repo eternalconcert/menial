@@ -9,7 +9,8 @@
 std::map<std::string, WSGIAdapter*> wsgiAdapterMap;
 
 
-WSGIAdapter::WSGIAdapter(std::string root) {
+WSGIAdapter::WSGIAdapter(std::string root, Logger *logger) {
+    this->logger = logger;
     std::string rootCopy = root;  // No idea, but without something went wrong
     Py_Initialize();
     PyObject *pName;
@@ -49,12 +50,13 @@ WSGIAdapter::WSGIAdapter(std::string root) {
         PyErr_Print();
     }
 
+    this->logger->debug("New instance ot WSGIAdapter created for root: " + root);
 };
 
 
-WSGIAdapter* WSGIAdapter::getWSGIAdapter(std::string root) {
+WSGIAdapter* WSGIAdapter::getWSGIAdapter(std::string root, Logger *logger) {
     if (wsgiAdapterMap.find(root) == wsgiAdapterMap.end()) {
-        WSGIAdapter* instance = new WSGIAdapter(root);
+        WSGIAdapter* instance = new WSGIAdapter(root, logger);
         wsgiAdapterMap[root] = instance;
     }
     return wsgiAdapterMap[root];
@@ -76,7 +78,6 @@ std::string WSGIAdapter::getValue(PyObject *pArgs) {
     PyObject *pyBody;
     pyBody = PyTuple_GetItem(pValue, 1);
     std::string headers = PyBytes_AsString(pyHeaders);
-    // std::string body = readFile("/home/christian/Pictures/1.png");
     std::string body = PyBytes_AsString(pyBody);
     body = base64decode(body);
     return headers + "\n" + body;
@@ -84,7 +85,7 @@ std::string WSGIAdapter::getValue(PyObject *pArgs) {
 
 
 std::string PyResponse::get() {
-    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->hostConfig["root"]);
+    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->hostConfig["root"], this->logger);
 
     PyObject *pArgs;
     pArgs = PyTuple_New(5);

@@ -27,6 +27,7 @@ class Logger {
         void setLevel(LogLevel level);
         void setHandler(LogHandler *handler);
 
+        void highlight(std::string message);
         void debug(std::string message);
         void info(std::string message);
         void warning(std::string message);

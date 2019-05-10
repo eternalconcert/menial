@@ -2,41 +2,25 @@
     "hosts": {
         "selenium.localhost:8000": {
             "handler": "file",
-            "root": "/home/xgwschk/projects/menial/selenium/reports/",
+            "root": "selenium/reports/",
             "defaultdocument": "report.html"
         },
         "files.localhost:8000": {
             "handler": "file",
-            "root": "/home/xgwschk/",
+            "root": "/home/",
             "dirlisting": true
         },
         "tmmk.localhost:8000": {
             "handler": "file",
-            "root": "/home/xgwschk/projects/tmmk/build/"
+            "root": "../tmmk/build/"
         },
-        "demobase_static.localhost:8080": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/demobase/demobase/static/",
-            "additionalheaders": "Access-Control-Allow-Origin: *\n"
-        },
-        "demobase_media.localhost:8081": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/demobase/media/",
-            "additionalheaders": "Access-Control-Allow-Origin: *\n",
-            "dirlisting": true
-        },
-        "localhost:9999": {
+        "python.localhost:9999": {
             "handler": "python",
-            "root": "pyresponse"
+            "root": "pyresponse:application"
         },
         "svp.localhost:9999": {
             "handler": "python",
-            "root": "env.dev.wsgi",
-            "additionalheaders": "Access-Control-Allow-Origin: *\n"
-        },
-        "svp_static.localhost:9999": {
-            "handler": "file",
-            "root": "/home/xgwschk/projects/serviceportal/static/"
+            "root": "env.dev.wsgi:application"
         }
     },
     "iplogging": true,
@@ -48,8 +32,8 @@
     "ssl": {
         "4433": {
             "on": false,
-            "cert": "/home/xgwschk/projects/menial/cert.pem",
-            "key": "/home/xgwschk/projects/menial/key.pem"
+            "cert": "cert.pem",
+            "key": "key.pem"
         }
     }
 }

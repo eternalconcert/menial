@@ -14,6 +14,7 @@ void DefaultLogHandler::log(std::string level, std::string message) {
     logColors["warning"] = "\x1b[33m"; /* yellow */
     logColors["error"] = "\x1b[31m"; /* red */
     logColors["critical"] = "\x1b[34m"; /* blue */
+    logColors["highlight"] = "\x1b[47m\x1b[31m"; /* green */
     logColors["reset"] = "\x1b[0m";
 
     time_t t = time(0);
@@ -85,6 +86,12 @@ void Logger::error(std::string message) {
 void Logger::critical(std::string message) {
     if (this->level <= CRITICAL) {
         this->handler->log("critical", message);
+    }
+}
+
+void Logger::highlight(std::string message) {
+    if (this->level <= HIGHLIGHT) {
+        this->handler->log("highlight", message);
     }
 }
 

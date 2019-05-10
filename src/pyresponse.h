@@ -9,7 +9,7 @@
 
 class WSGIAdapter {
     public:
-        static WSGIAdapter* getWSGIAdapter(std::string root);
+        static WSGIAdapter* getWSGIAdapter(std::string root, Logger *logger);
         PyObject* wsgiFunction;
         PyObject* wsgiApplication;
         std::string getValue(PyObject *pArgs);
@@ -18,7 +18,8 @@ class WSGIAdapter {
         };
 
     private:
-        WSGIAdapter(std::string root);
+        Logger *logger;
+        WSGIAdapter(std::string root, Logger *logger);
 };
 
 
