@@ -10,6 +10,7 @@ std::map<std::string, WSGIAdapter*> wsgiAdapterMap;
 
 
 WSGIAdapter::WSGIAdapter(std::string root) {
+    std::string rootCopy = root;  // No idea, but without something went wrong
     Py_Initialize();
     PyObject *pName;
     pName = PyUnicode_FromString("wsgi_adapter");
@@ -25,10 +26,10 @@ WSGIAdapter::WSGIAdapter(std::string root) {
 
     this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi");
     const char* funcName = "application";
-    const char* moduleName = root.c_str();
-    if (root.find(":") != std::string::npos) {
-        funcName = root.substr(root.find(":") + 1, std::string::npos).c_str();
-        moduleName = root.substr(0, root.find(":")).c_str();
+    const char* moduleName = rootCopy.c_str();
+    if (rootCopy.find(":") != std::string::npos) {
+        funcName = rootCopy.substr(rootCopy.find(":") + 1, std::string::npos).c_str();
+        moduleName = rootCopy.substr(0, rootCopy.find(":")).c_str();
     }
 
     PyObject *pyModule;
@@ -44,6 +45,10 @@ WSGIAdapter::WSGIAdapter(std::string root) {
     }
 
     this->wsgiApplication = PyObject_GetAttrString(module, funcName);
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
+
 };
 
 
