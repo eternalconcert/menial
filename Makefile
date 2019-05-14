@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:/home/xgwschk/projects/serviceportal/:/home/xgwschk/projects/serviceportal/pythonenv/lib/python3.6/site-packages/
+export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:/home/christian/Projekte/eternalconcert/:/home/christian/Projekte/eternalconcert/pythonenv/lib/python3.5/site-packages/
 
 
 SOURCES = $(shell find src/ -name "*.cpp")
@@ -12,7 +12,7 @@ OUTFILE=build/menial.bin
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/python3.6 -l python3.6m -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
+	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/python3.5m/ -l python3.5m -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
 	$(MAKE) index
 
 
@@ -51,7 +51,7 @@ src:
 docker-image:
 	docker build . -t menial
 	docker tag menial cloud.canister.io:5000/eternalconcert/menial:latest
-	docker push cloud.canister.io:5000/eternalconcert/menial:latest
+	#docker push cloud.canister.io:5000/eternalconcert/menial:latest
 
 deploy: clean test compile_static src website
 	tar -zcvf menial_pkg.tar.gz website/build/ build/menial.bin resources/static/ deployment/Dockerfile

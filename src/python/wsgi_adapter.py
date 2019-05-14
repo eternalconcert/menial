@@ -68,7 +68,7 @@ def get_query_string(target):
     return query_string
 
 
-def wsgi(app, *args):
+def wsgi_interface(app, *args):
     host = args[0].split(":")[0]
     port = None if len(args[0].split(":")) <= 1 else args[0].split(":")[1]
     target = args[1]

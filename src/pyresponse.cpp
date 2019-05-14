@@ -25,7 +25,7 @@ WSGIAdapter::WSGIAdapter(std::string root, Logger *logger) {
         Py_DECREF(pModule);
     }
 
-    this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi");
+    this->wsgiFunction = PyObject_GetAttrString(pModule, "wsgi_interface");
     const char* funcName = "application";
     const char* moduleName = rootCopy.c_str();
     if (rootCopy.find(":") != std::string::npos) {

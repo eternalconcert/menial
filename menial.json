@@ -26,9 +26,9 @@
             "handler": "python",
             "root": "pyresponse:application"
         },
-        "svp.localhost:9999": {
+        "eternalconcert.localhost:9999": {
             "handler": "python",
-            "root": "env.dev.wsgi:application"
+            "root": "wsgi:application"
         }
     },
     "iplogging": true,
