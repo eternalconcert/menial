@@ -1,5 +1,13 @@
 {
     "hosts": {
+        "localhost:8000": {
+            "handler": "file",
+            "root": "deployment/default/"
+        },
+        "menial.localhost:8000": {
+            "handler": "file",
+            "root": "website/build/"
+        },
         "selenium.localhost:8000": {
             "handler": "file",
             "root": "selenium/reports/",

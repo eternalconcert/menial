@@ -54,7 +54,7 @@ docker-image:
 	docker push cloud.canister.io:5000/eternalconcert/menial:latest
 
 deploy: clean test compile_static src website
-	tar -zcvf menial_pkg.tar.gz website/build/ build/menial.bin deployment/default/static/ deployment/Dockerfile
+	tar -zcvf menial_pkg.tar.gz website/build/ build/menial.bin resources/static/ deployment/Dockerfile
 	scp menial_pkg.tar.gz christian@softcreate.de://tmp/
 	scp menial.tar.gz christian@softcreate.de://tmp/
 	ssh -t christian@softcreate.de "tar -xvf /tmp/menial_pkg.tar.gz -C /tmp/; /home/christian/deploymentscripts/menial.sh"

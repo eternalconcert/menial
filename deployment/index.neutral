@@ -17,10 +17,10 @@
                 If you see this page, the menial webserver is up and running.
             </p>
             <p>
-                If you like to add your own content instead of this placeholder page, please take a look at the configuration file <i>menial.conf</i> in the root installation directory of menial or <a href="/content/help.html#config">create your own</a>.
+                If you like to add your own content instead of this placeholder page, please take a look at the configuration file <i>menial.conf</i> in the root installation directory of menial or <a href="https://menial.softcreate.de:4433/help.html#config">create your own</a>.
             </p>
             <p>
-                For further information, please check the <a href="/content/help.html">help page</a>.
+                For further information, please check the <a href="https://menial.softcreate.de:4433/help.html">help page</a>.
             </p>
             <h2 id="info">Info</h2>
             <table id="info-table">
