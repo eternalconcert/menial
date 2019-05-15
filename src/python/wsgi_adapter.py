@@ -1,5 +1,7 @@
+import os
 from io import BytesIO
 from base64 import b64encode
+import traceback
 
 
 def make_headers(status, headers):
@@ -12,6 +14,11 @@ def make_headers(status, headers):
     return result
 
 
+template = "<h1>Internal Server Error</h1>"
+if os.getenv("DEBUG"):
+    template += """<h2>{exc}</h2><pre>{traceback}</pre>"""
+
+
 def call_application(application, environ):
     global status, headers
     status = ""
@@ -22,15 +29,21 @@ def call_application(application, environ):
         global status, headers
         status, headers = rstatus, rheaders
 
-    app_iter = application(environ, start_response)
+    try:
+        app_iter = application(environ, start_response)
+    except Exception as e:
+        exc = traceback.format_exc()
+        status = 500
+        return status, headers, template.format(exc=e, traceback=exc).encode()
     try:
         for data in app_iter:
             assert (status is not None and headers is not None), "start_response was not called"
             body.write(data)
 
     except Exception as e:
+        exc = traceback.format_exc()
         status = 500
-        body.write(e.__repr__().encode())
+        body.write(template.format(exc=e, traceback=exc).encode())
     finally:
         if hasattr(app_iter, 'close'):
             app_iter.close()
