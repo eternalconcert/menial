@@ -5,7 +5,7 @@ export PYTHONPATH=$PYTHONPATH:../src/python:../testdata/testhost/
 PATH := $(PATH):webdriver/
 
 serve:
-	../build/menial.bin menial.json
+	@DEBUG=1 ../build/menial.bin menial.json
 
 tests:
 	pythonenv/bin/robot --variable BROWSER:Firefox --timestampoutputs --outputdir=reports testcases

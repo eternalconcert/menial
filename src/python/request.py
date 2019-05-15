@@ -1,5 +1,18 @@
 import re
 import os
+import traceback
+
+
+class ClientSession:
+
+    def __init__(self, cookies):
+        self.session_cookie = cookies
+
+    def __getitem__(self, key, default=None):
+        return "TEST"
+
+    def __setitem__(self, key, value):
+        return
 
 
 class Request(object):
@@ -16,6 +29,7 @@ class Request(object):
         self.referer = environ.get('HTTP_REFERER')
         self.get = self._get_get_params()
         self.post = self._get_post_params()
+        self.session = ClientSession(self.cookies)
 
     def _get_get_params(self):
         params = {}
@@ -37,22 +51,15 @@ class Request(object):
         return params
 
 
-template = """
-<html>
-    <head>
-        <title>{title}</title>
-    </head>
-    <body>
-        {body}
-    </body>
-</html>
-"""
+template = "<h1>Internal Server Error</h1>"
+if os.getenv("DEBUG"):
+    template += """<h2>{exc}</h2><pre>{traceback}</pre>"""
 
 
 class NotFoundError(Exception):
 
     def __init__(self, message):
-        message = "Cannot find ressource: " +  message
+        message = "Cannot find ressource: " + message
         super(NotFoundError, self).__init__(message)
 
 
@@ -74,32 +81,8 @@ def render(content, status=200):
 
 def redirect(url, permanent=False):
     status = 302 if not permanent else 301
-    headers = "Location: {url}\n"
-    headers = headers.format(status=status_messages[status], url=url)
+    headers = [('status_line', status_messages[status]), ('Location', url)]
     return (headers, None, status)
-
-
-class Error:
-
-    def __init__(self, ex, status):
-        self.ex = ex
-        self.status = status
-
-    def __repr__(self):
-        status = status_messages[self.status]
-
-        header = "HTTP/1.0 {status}".format(status=status)
-        template = """{header}
-
-            <head>
-                <title>{status}</title>
-            </head>
-            <h1>{status}</h1>
-            <div style="color: red">
-                {error}
-            </div>
-        """
-        return template.format(header=header, error=self.ex, status=status)
 
 
 class MimeTypeCache:
@@ -141,28 +124,19 @@ class Response:
         self.function = function
         self.func_args = func_args
 
-        response_headers, body, status = self.function(self.request, *self.func_args)
-
+        self.headers, body, status = self.function(self.request, *self.func_args)
         self.body = body if body else ""
         self.status = status_messages[status]
 
-        if not response_headers:
-            response_headers = self.make_headers()
-
-        self.headers = []
-        for item in response_headers.splitlines():
-            self.headers.append((item.split(':')[0].strip(), item.split(':')[1].strip()))
-
-
-    def make_headers(self):
-        headers = "Content-Length: {length}\n" \
-                  "Content-Type: {mimetype}"
-        return headers.format(length=len(self.body), mimetype=get_mimetype(self.request.target))
-
+        if not self.headers:
+            self.headers = [
+                ('Content-Length', str(len(self.body))),
+                ('Content-Type', get_mimetype(self.request.target))
+            ]
+        self.headers.append(('HeregoestheCookie', 'SettheCookie!'))
 
 
 class App:
-
     url_patterns = {}
     context_preprocessors = []
     static_files_dir = None
@@ -176,8 +150,8 @@ class App:
         try:
             return self.send_response(start_response)
         except Exception as e:
-            error = Error(e, 500)
-            return render(error, 500)
+            exc = traceback.format_exc()
+            return render(template.format(exc=e, traceback=exc).encode(), status=500)
 
     def send_response(self, start_response):
         func, func_args = self._get_route_function(self.request.target)

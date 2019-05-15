@@ -16,7 +16,7 @@
         },
         "python.localhost:9999": {
             "handler": "python",
-            "root": "pyresponse"
+            "root": "pyresponse:application"
         }
     },
     "iplogging": true,

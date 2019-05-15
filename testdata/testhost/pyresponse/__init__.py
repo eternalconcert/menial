@@ -115,4 +115,11 @@ def new_location_with_variable_part(request, name):
     return render(response)
 
 
+@app.route("/session/write/<str:value>/")
+def session_write(request, value):
+    request.session['key'] = value
+    response = template.format(title=request.session['key'], body=request.session['key'])
+    return render(response)
+
+
 application = app.run

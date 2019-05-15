@@ -77,7 +77,13 @@ Redirect with variable location
     Given an URL which redirect to another location with a variable part
     Then the request should be redirect to the new location with the variable url       christian
 
+Session
+    ${Name}                                                 Generate Random String
+    Given an URL which stores a variable to the session     ${Name}
+    Then the variable should be present on another page     ${Name}
+
 *** Keywords ***
+
 Index page should be open
     Page title should be    Python test page: index
 
@@ -148,6 +154,15 @@ An URL which redirect to another location with a variable part
 The request should be redirect to the new location with the variable url
     [Arguments]     ${Variable Part}
     Page title should be    Redirected from another location: ${Variable Part}
+
+An URL which stores a variable to the session
+    [Arguments]     ${Name}
+    Go to           ${INDEX}/session/write/${Name}/
+
+The variable should be present on another page
+    [Arguments]             ${Name}
+    Go to                   ${INDEX}/session/read/
+    Page title should be    ${Name}
 
 Open page to post form data
     Go to       ${INDEX}/post_form/
