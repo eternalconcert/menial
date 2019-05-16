@@ -66,6 +66,9 @@ WSGIAdapter* WSGIAdapter::getWSGIAdapter(std::string root, Logger *logger) {
 
 std::string WSGIAdapter::getValue(PyObject *pArgs) {
     PyObject *pValue;
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
     pValue = PyObject_CallObject(this->wsgiFunction, pArgs);
     if (PyErr_Occurred()) {
         PyErr_Print();
@@ -94,7 +97,7 @@ std::string PyResponse::get() {
     PyTuple_SetItem(pArgs, 1, PyUnicode_FromString(this->getRequest()->getVirtualHost().c_str()));
     PyTuple_SetItem(pArgs, 2, PyUnicode_FromString(this->getRequest()->getTarget().c_str()));
     PyTuple_SetItem(pArgs, 3, PyUnicode_FromString(this->getRequest()->getHeaders().c_str()));
-    PyTuple_SetItem(pArgs, 4, PyUnicode_FromString(this->getRequest()->getBody().c_str()));
+    PyTuple_SetItem(pArgs, 4, PyBytes_FromString(this->getRequest()->getBody().c_str()));
 
     std::string response = adaptor->getValue(pArgs);
 

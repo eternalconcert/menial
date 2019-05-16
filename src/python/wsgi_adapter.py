@@ -88,7 +88,7 @@ def wsgi_interface(app, *args):
     target = args[1]
     header = args[2]
     body = args[3]
-    wsgi_input = BytesIO(body.encode())
+    wsgi_input = BytesIO(body)
 
     environ = {
         "REQUEST_METHOD": header.split('/')[0].strip(),
