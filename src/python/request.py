@@ -1,22 +1,58 @@
+import json
 import re
 import os
 import traceback
+import base64
+from hashlib import sha256
 
 
 class ClientSession:
 
-    def __init__(self, cookies):
-        self.session_cookie = cookies
+    def __init__(self, cookies, secret_key):
+        self.secret_key = secret_key
+
+        self.session_cookie = None
+        for line in cookies.split(';'):
+            line = line.strip()
+            if line.startswith('session'):
+                self.session_cookie = line.split('=')[1].strip()
+        self.data = self.get_payload()
+
+    def get_payload(self):
+        if not self.session_cookie:
+            return {}
+
+        hashed_payload = self.session_cookie.split('.')[0]
+        checksum = self.session_cookie.split('.')[-1]
+        if not checksum or not hashed_payload:
+            break_here_2
+            return {}
+        payload = base64.urlsafe_b64decode(hashed_payload + "==").decode()
+
+        if sha256((hashed_payload + self.secret_key).encode()).hexdigest() == checksum:
+            return json.loads(payload)
+        return {}
+
+    def cookie_header(self):
+        data = json.dumps(self.data).encode()
+        hashed_payload = base64.urlsafe_b64encode(data).decode().replace('=', '')
+        checksum = sha256((hashed_payload + self.secret_key).encode()).hexdigest()
+        return ("Set-Cookie", "session={0}.{1}; Path=/".format(hashed_payload, checksum))
 
     def __getitem__(self, key, default=None):
-        return "TEST"
+        try:
+            return self.data[key]
+        except KeyError:
+            return default
 
     def __setitem__(self, key, value):
-        return
+        self.data[key] = value
 
 
 class Request(object):
-    def __init__(self, environ):
+    def __init__(self, environ, secret_key):
+        assert (secret_key is not None and secret_key != ""), "Please provide a secret key"
+        self.secret_key = secret_key
         self.host = environ['SERVER_NAME']
         self.port = environ['SERVER_PORT']
         self.method = environ['REQUEST_METHOD']
@@ -29,7 +65,7 @@ class Request(object):
         self.referer = environ.get('HTTP_REFERER')
         self.get = self._get_get_params()
         self.post = self._get_post_params()
-        self.session = ClientSession(self.cookies)
+        self.session = ClientSession(self.cookies, secret_key)
 
     def _get_get_params(self):
         params = {}
@@ -85,36 +121,31 @@ def redirect(url, permanent=False):
     return (headers, None, status)
 
 
-class MimeTypeCache:
-    __instance = None
-
-    def __new__(cls):
-        if not cls.__instance:
-            cls.__instance = super().__new__(cls)
-            cls.__instance.data = {}
-            with open('resources/mimetypes.tray') as f:  # TODO: Confirgurable
-                for line in f.readlines():
-                    cls.__instance.data[line.split(" ")[0].strip()] = line.split(" ")[-1].strip()
-        return cls.__instance
-
-    def __setitem__(self, key, value):
-        self.data[key] = value
-
-    def __getitem__(self, key):
-        return self.data[key]
-
-    def get(self, key, default=None):
-        key = key.lower()
-        try:
-            return self[key]
-        except KeyError:
-            return default
-
-
 def get_mimetype(target=None):
+    mimetypes = {
+        'bin': 'application/octet-stream',
+        'class': 'application/octet-stream',
+        'com': 'application/octet-stream',
+        'css': 'text/css',
+        'extension': 'application/octet-stream',
+        'file': 'application/octet-stream',
+        'flac': 'audio/flac',
+        'gzip': 'application/gzip',
+        'jpg': 'image/jpg',
+        'json': 'application/json',
+        'log': 'text/plain',
+        'mp3': 'audio/mpeg',
+        'pdf': 'application/pdf',
+        'png': 'image/png',
+        'tar': 'application/x-tar',
+        'ttf': 'font/ttf',
+        'woff': 'font/woff',
+        'woff2': 'font/woff2',
+        'zip': 'application/zip',
+    }
     extenstion = target.split("/")[-1].split('.')[-1]
-    mimetypes = MimeTypeCache()
     return mimetypes.get(extenstion, 'text/html; charset=utf-8;')
+
 
 
 class Response:
@@ -133,7 +164,7 @@ class Response:
                 ('Content-Length', str(len(self.body))),
                 ('Content-Type', get_mimetype(self.request.target))
             ]
-        self.headers.append(('HeregoestheCookie', 'SettheCookie!'))
+        self.headers.append(self.request.session.cookie_header())
 
 
 class App:
@@ -141,9 +172,10 @@ class App:
     context_preprocessors = []
     static_files_dir = None
     static_files_url = None
+    secret_key = None
 
     def run(self, environ, start_response):
-        self.request = Request(environ)
+        self.request = Request(environ, App.secret_key)
 
         #return self.send_response(start_response)
 

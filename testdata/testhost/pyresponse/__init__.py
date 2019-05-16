@@ -1,7 +1,8 @@
 from request import App, redirect, render, url_for
 
-App.static_files_dir = "/home/christian/Pictures/"
+App.static_files_dir = "/home/xgwschk/Pictures/"
 App.static_files_url = "/static/"
+App.secret_key = "sdjgbh845$%436*()t35896yhpu"
 
 app = App()
 
@@ -121,5 +122,9 @@ def session_write(request, value):
     response = template.format(title=request.session['key'], body=request.session['key'])
     return render(response)
 
+@app.route("/session/read/")
+def session_read(request):
+    response = template.format(title=request.session['key'], body=request.session['key'])
+    return render(response)
 
 application = app.run
