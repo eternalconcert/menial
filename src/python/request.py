@@ -147,7 +147,6 @@ def get_mimetype(target=None):
     return mimetypes.get(extenstion, 'text/html; charset=utf-8;')
 
 
-
 class Response:
 
     def __init__(self, request, function, func_args):

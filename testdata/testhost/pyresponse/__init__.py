@@ -122,9 +122,30 @@ def session_write(request, value):
     response = template.format(title=request.session['key'], body=request.session['key'])
     return render(response)
 
+
 @app.route("/session/read/")
 def session_read(request):
     response = template.format(title=request.session['key'], body=request.session['key'])
     return render(response)
+
+
+@app.route("/post_files/")
+def post_files(request):
+    if request.method == "GET":
+        body = """
+        <form action="/post_files/" method="POST" enctype="multipart/form-data">
+            <input type="file" name="data" />
+            <button id="submit">Submit</button>
+        </form>
+        """
+        response = template.format(title="Post form", body=body)
+        return render(response)
+
+    elif request.method == "POST":
+        data = request.post['data']
+        print(request.post)
+        return redirect(url_for('post_files'))
+
+
 
 application = app.run
