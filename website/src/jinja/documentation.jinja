@@ -7,7 +7,7 @@
     </p>
     <p>
         <pre class="prettyprint lang-c">
-g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I src/include/ -lssl -lcrypto
+g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.6m/ -l python3.6m -I src/include/ -lssl -lcrypto
         </pre>
     </p>
     <h3>Prerequisited</h3>
