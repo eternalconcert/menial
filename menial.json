@@ -32,6 +32,7 @@
         }
     },
     "iplogging": true,
+    "debug": true,
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug",

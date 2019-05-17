@@ -58,6 +58,12 @@ void Config::update(std::string configPath) {
         this->iplogging = document["iplogging"].GetBool();
     }
 
+    // Debug
+    this->debug = false;
+    if (document.HasMember("debug")) {
+        this->debug = document["debug"].GetBool();
+    }
+
     // Error pages
     std::string globalstaticDir = "resources/staticdir/";
     if (document.HasMember("staticdir")) {

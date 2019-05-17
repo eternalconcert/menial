@@ -18,6 +18,7 @@ class Config {
         std::set<int> ports;
         std::map<int, std::map<std::string, std::string>> sslPortmap;
         bool iplogging;
+        bool debug;
         static Config* getConfig(std::string path);
 
     private:

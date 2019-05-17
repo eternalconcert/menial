@@ -18,6 +18,10 @@ std::string FileResponse::makeEtag() {
 
 
 bool FileResponse::contentMatch() {
+    if (this->config->debug) {
+        // Early exit if debug mode is active
+        return false;
+    }
     std::string requestHeaders = this->getRequest()->getHeaders();
     std::string tag = "If-None-Match: ";
 
