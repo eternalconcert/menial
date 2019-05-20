@@ -51,10 +51,12 @@
         }
     },
     "logger": "console",
-    "loglevel": "debug",
+    "loglevel": "info",
     "iplogging": false,
     "logfilepath": "/tmp/",
     "staticdir": "/etc/menial/static/",
+    "resources": "/etc/menial/resources/",
+    "debug": false,
     "ssl": {
         "443": {
             "on": true,
@@ -143,6 +145,12 @@
                 <b>staticdir:</b> (Optional, default: "default/static/") Like the host specific staticdir configuration (see above); but global. If there is no static directory configured for a host, this global directive will be used. Please be aware, that this is optional, but if no static directory is configured nor a host specific static directory is set, the server will die with a FileNotFoundExcpetion if a the request needs one of the static pages (e.g. a 404.html).
             </li>
             <li>
+                <b id="resources_dir">resources:</b> (Optional, default: "resources/") Directory where menial looks for resource files which are not source code. E.g. the directory must contain a file called "mimetypes.tray" which defines the mimetypes for the response header. (More information about mimetypes.tray, can be found in the <a href="{{ url_for('documentation.html') }}#mimetypes">documentation</a>.)
+            </li>
+            <li>
+                <b>debug</b>: (Optional, default: false) This directive can be used during development to reduce the need for server restarts. E.g. if set to true, the mimetypes file will not be stored in memory during server start and edits take effect without a server restart.
+            </li>
+            <li>
                 <b>ssl:</b> (Optional) A dictionary, containing the configuration directives for SSL/TLS encrypted connections.
                 <ul>
                     <li>
@@ -200,6 +208,7 @@
     "iplogging": true,
     "logfilepath": "/var/log/menial/",
     "staticdir": "/etc/menial/static/",
+    "resources": "/etc/menial/resources/",
     "ssl": {
         "443": {
             "on": true,

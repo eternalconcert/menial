@@ -10,7 +10,7 @@
 g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.6m/ -l python3.6m -I src/include/ -lssl -lcrypto
         </pre>
     </p>
-    <h3>Prerequisited</h3>
+    <h3>Prerequisites</h3>
     <ul>
         <li>
             g++/gcc
@@ -92,5 +92,41 @@ jane:c953b25ee7b3e7fb5dbf6e8f02<wbr>a4e303dbe898156bfa6e700c81f9<wbr>d8e8219f8e
     </p>
     <p>
         The &lt;_DIR_&gt; placeholder will be replaced just by the directory path without any classes or id's. None of the placeholders must be used and can be used more than once.
+    </p>
+
+    <h3>Resources</h3>
+    <p>
+        menial needs some resources to work properly. This files have fix names and must be included in the <a href="{{ url_for('help.html') }}#resources_dir">resources directory</a>.
+    </p>
+    <h4 id="mimetypes">Mimetypes file</h4>
+    <p>
+        To get the correct mimetype for a requested file or page, menial need to look up file name extention. The resource file "mimetypes.tray", must contain a mapping from file name extension on mimetype. File name extension and mimetype must be separareted by at least one blank (" "). The example below show some valid entries.
+    </p>
+    <p>
+        <pre class="prettyprint lang-html">
+bin         application/octet-stream
+class       application/octet-stream
+com         application/octet-stream
+css         text/css
+csv         text/comma-separated-values
+extension   application/octet-stream
+file        application/octet-stream
+flac        audio/flac
+gzip        application/gzip
+jpg         image/jpg
+json        application/json
+log         text/plain
+mp3         audio/mpeg
+pdf         application/pdf
+png         image/png
+tar         application/x-tar
+ttf         font/ttf
+woff        font/woff
+woff2       font/woff2
+zip         application/zip
+        </pre>
+    </p>
+    <p>
+        If no file name extension matches, the default mimetype "text/html; charset=utf-8;" will be used.
     </p>
 {% endblock %}
