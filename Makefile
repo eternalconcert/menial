@@ -50,11 +50,15 @@ src:
 	tar -zcvf menial.tar.gz src/
 
 docker-image:
+	docker run -v $(PWD):/menial/ menial_build
 	#docker build . -t menial  --build-arg https_proxy=http://proxy:3128
 	#docker tag menial cloud.canister.io:5000/eternalconcert/menial:latest
-	docker push cloud.canister.io:5000/eternalconcert/menial:latest
+	#docker push cloud.canister.io:5000/eternalconcert/menial:latest
 
-deploy: clean test compile_static src website
+build-image:
+	docker build . -t menial_build -f BuildDockerfile # --build-arg http_proxy=http://10.254.1.64:3128
+
+deploy: clean test docker-image src website
 	tar -zcvf menial_pkg.tar.gz website/build/ build/menial.bin resources/static/ deployment/Dockerfile
 	scp menial_pkg.tar.gz christian@softcreate.de://tmp/
 	scp menial.tar.gz christian@softcreate.de://tmp/
