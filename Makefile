@@ -38,7 +38,6 @@ clean:
 	rm -rf build/*
 	rm -rf website/build/*
 	rm -rf menial.tar.gz
-	rm -rf menial_pkg.tar.gz
 
 website:
 	rm -rf website/build/*
@@ -49,19 +48,15 @@ website:
 src:
 	tar -zcvf menial.tar.gz src/
 
-docker-image:
-	docker run -v $(PWD):/menial/ menial_build
-	#docker build . -t menial  --build-arg https_proxy=http://proxy:3128
-	#docker tag menial cloud.canister.io:5000/eternalconcert/menial:latest
-	#docker push cloud.canister.io:5000/eternalconcert/menial:latest
+docker-image: clean test
+	docker run -v $(PWD):/menial/ menial_build  # Compiles menial in a container
+	$(MAKE) src
+	$(MAKE) website
+	docker build . -t menial # --build-arg http_proxy=http://proxy:3128
+	docker tag menial cloud.canister.io:5000/eternalconcert/menial:latest
+	docker push cloud.canister.io:5000/eternalconcert/menial:latest
 
 build-image:
 	docker build . -t menial_build -f BuildDockerfile # --build-arg http_proxy=http://10.254.1.64:3128
-
-deploy: clean test docker-image src website
-	tar -zcvf menial_pkg.tar.gz website/build/ build/menial.bin resources/static/ deployment/Dockerfile
-	scp menial_pkg.tar.gz christian@softcreate.de://tmp/
-	scp menial.tar.gz christian@softcreate.de://tmp/
-	ssh -t christian@softcreate.de "tar -xvf /tmp/menial_pkg.tar.gz -C /tmp/; /home/christian/deploymentscripts/menial.sh"
 
 .PHONY: clean compile serve website src deploy

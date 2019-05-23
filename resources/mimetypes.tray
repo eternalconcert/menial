@@ -6,6 +6,7 @@ csv         text/comma-separated-values
 extension   application/octet-stream
 file        application/octet-stream
 flac        audio/flac
+gz          application/gzip
 gzip        application/gzip
 jpg         image/jpg
 json        application/json
