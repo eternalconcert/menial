@@ -129,4 +129,32 @@ zip         application/zip
     <p>
         If no file name extension matches, the default mimetype "text/html; charset=utf-8;" will be used.
     </p>
+
+    <h3>Handlers</h3>
+    <h4 id="python">Python</h4>
+    <p>
+        menial implements the <a href="https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface">Web Server Gateway Interface/WsGI</a>. To handle WSGI applictions, the handler of the desired host must be set to "python". The root of the host must be the WSGI application, which will be called by menial.
+    </p>
+    <p>
+        The root directive must have one of the following forms:
+    </p>
+    <p>
+        <i>([module].)[module]</i>
+        <br>
+        <i>e.g. myapp.wsgi</i>
+        <br>
+        <br>
+        <i>([module].)[module]:[wsgi-application]</i>
+        <br>
+        <i>e.g. myapp.wsgi:application</i>
+    </p>
+    <p>
+        If no callable (in the example the part after the colon: <i>application</i>) is provided, menial will look for a callable called <i>application</i> by default.
+    </p>
+    <p>
+        Please make sure, the python path is set properly.
+    </p>
+    <p>
+        menial can be compiled with any Python3-Version but not with Python2. The <a href="{{ url_for('download.html' ) }}">downloadble</a> executable has been compiled with Python3.6.
+    </p>
 {% endblock %}

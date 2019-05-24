@@ -82,7 +82,7 @@
                     </li>
                     <ul>
                         <li>
-                            <b>handler:</b> (Optional, default: "file") The handler is used to specify the request handler. The default handler is "file", which means, static content will be delivered. There are other types of handlers, like "python" or "redirect".
+                            <b>handler:</b> (Optional, default: "file") The handler is used to specify the request handler. The default handler is "file", which means, static content will be delivered. There are other types of handlers, like "<a href="{{ url_for('documentation.html') }}#python">python</a>" or "redirect".
                         </li>
                         <li>
                             <b>root:</b> The document root directory. When the handler is set to "file", the content of the document root will be delivered. Path can be absolute or relative to the menial binary.
@@ -199,7 +199,7 @@
         },
         "*:8000": {
             "handler": "python",
-            "root": "pyresponse.py",
+            "root": "wsgi:application",
             "staticdir": "/can/be/blank/because/<wbr>python/must/handle/errors/"
         }
     },
