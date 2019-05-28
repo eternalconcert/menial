@@ -9,8 +9,9 @@
 std::map<std::string, WSGIAdapter*> wsgiAdapterMap;
 
 
-WSGIAdapter::WSGIAdapter(std::string root, Logger *logger) {
+WSGIAdapter::WSGIAdapter(std::string root, Config *config, Logger *logger) {
     this->logger = logger;
+    this->config = config;
     std::string rootCopy = root;  // No idea, but without something went wrong
     Py_Initialize();
     PyObject *pName;
@@ -54,9 +55,9 @@ WSGIAdapter::WSGIAdapter(std::string root, Logger *logger) {
 };
 
 
-WSGIAdapter* WSGIAdapter::getWSGIAdapter(std::string root, Logger *logger) {
+WSGIAdapter* WSGIAdapter::getWSGIAdapter(std::string root, Config *config, Logger *logger) {
     if (wsgiAdapterMap.find(root) == wsgiAdapterMap.end()) {
-        WSGIAdapter* instance = new WSGIAdapter(root, logger);
+        WSGIAdapter* instance = new WSGIAdapter(root, config, logger);
         wsgiAdapterMap[root] = instance;
     }
     return wsgiAdapterMap[root];
@@ -88,7 +89,7 @@ std::string WSGIAdapter::getValue(PyObject *pArgs) {
 
 
 std::string PyResponse::get() {
-    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->hostConfig["root"], this->logger);
+    WSGIAdapter* adaptor = WSGIAdapter::getWSGIAdapter(this->hostConfig["root"], this->config, this->logger);
 
     PyObject *pArgs;
     pArgs = PyTuple_New(5);
