@@ -22,7 +22,7 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
         return new RedirectResponse(request, config, logger);
     }
     else {
-        return new Response(request, config, logger);
+        throw HandlerNotFound(handlerName);
     }
 }
 

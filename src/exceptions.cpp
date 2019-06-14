@@ -16,6 +16,12 @@ ConfigException::ConfigException(std::string message) {
     exit(1);
 };
 
+HandlerNotFound::HandlerNotFound(std::string message) {
+    std::string msg = "HandlerNotFound: " + message + "\n\nmenial terminated.";
+    printf("%s\n", msg.c_str());
+    exit(1);
+};
+
 SSLError::SSLError(std::string message) {
     std::string msg = "SSLError: " + message + "\n\nmenial terminated.";
     printf("%s\n", msg.c_str());

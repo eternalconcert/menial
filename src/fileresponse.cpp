@@ -32,7 +32,7 @@ bool FileResponse::contentMatch() {
         int i = requestHeaders.find(tag) + tag.length();
         int j = 0;
         result = true;
-        // Hacky comparson: No idea why == does not work.
+        // Hacky comparson: No idea why == did not work.
         while (j < 64) {
             if (requestHeaders[i] != eTag[j]) {
                 result = false;

@@ -5,7 +5,7 @@
 
 class LogHandler {
     public:
-        virtual void log(std::string level, std::string message) {};
+        virtual void log(std::string level, std::string message) = 0;
 };
 
 

@@ -8,25 +8,20 @@
 class Response {
     public:
         virtual std::string get() {
-            return "";
+            return "Virtual method get() called";
         };
-
         virtual std::string head() {
-            return "";
+            return "Virtual method head() called";
         };
-
         virtual std::string methodNotAllowed() {
-            return "";
+            return "Virtual method methodNotAllowed() called";
         };
-
         virtual std::string notFound() {
-            return "";
+            return "Virtual method notFound() called";
         };
-
         virtual std::string internalServerError() {
-            return "";
+            return "Virtual method internalServerError() called";
         };
-
 
         Request* getRequest();
         void setStatus(int status);

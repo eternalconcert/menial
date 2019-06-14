@@ -16,6 +16,13 @@ class ConfigException: public Exception {
         ConfigException(std::string message = "");
 };
 
+class HandlerNotFound: public Exception {
+    using Exception::Exception;
+
+    public:
+        HandlerNotFound(std::string message = "");
+};
+
 class SSLError: public Exception {
     using Exception::Exception;
 
