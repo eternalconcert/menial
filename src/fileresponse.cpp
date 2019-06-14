@@ -10,7 +10,7 @@
 #include "fileresponse.h"
 
 
-static const std::string HEADERDELIM = "\n\n";
+static const std::string HEADERDELIM = "\r\n";
 
 std::string FileResponse::makeEtag() {
     return sha256hash(this->getLastModified());
@@ -239,7 +239,7 @@ std::string FileResponse::getContent() {
 std::string FileResponse::getETag() {
     std::string Etag = "ETag: ";
     Etag += this->makeEtag();
-    return Etag;
+    return Etag + "\n";
 }
 
 std::string FileResponse::getLastModified() {
