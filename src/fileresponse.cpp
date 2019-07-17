@@ -239,7 +239,7 @@ std::string FileResponse::getContent() {
 std::string FileResponse::getETag() {
     std::string Etag = "ETag: ";
     Etag += this->makeEtag();
-    return Etag + "\n";
+    return Etag;
 }
 
 std::string FileResponse::getLastModified() {

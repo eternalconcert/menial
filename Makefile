@@ -2,7 +2,7 @@
 
 export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:/home/xgwschk/projects/eternalconcert/:/home/xgwschk/projects/eternalconcert/pythonenv/lib/$(PYTHON)/site-packages/
 
-PYTHON=python3.6
+PYTHON=python3.5
 
 SOURCES = $(shell find src/ -name "*.cpp")
 BUILD_NUMBER_FILE=deployment/buildno.txt

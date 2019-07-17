@@ -6,6 +6,7 @@
         },
         "menial.localhost:8000": {
             "handler": "file",
+            "staticdir": "static/",
             "root": "website/build/"
         },
         "selenium.localhost:8000": {

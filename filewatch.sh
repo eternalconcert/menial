@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run with
-# ./filewatch.sh . make website
+# ./filewatch.sh website make website
 
 check() {
     dir="$1"
