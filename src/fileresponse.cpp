@@ -10,7 +10,7 @@
 #include "fileresponse.h"
 
 
-static const std::string HEADERDELIM = "\r\n";
+static const std::string HEADERDELIM = "\n\n";
 
 std::string FileResponse::makeEtag() {
     return sha256hash(this->getLastModified());
