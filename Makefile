@@ -48,7 +48,7 @@ website:
 src:
 	tar -zcvf menial.tar.gz src/
 
-docker-image: clean test
+docker-image: clean
 	docker run -v $(PWD):/menial/ menial_build  # Compiles menial in a container
 	$(MAKE) src
 	$(MAKE) website

@@ -22,6 +22,7 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
         return new RedirectResponse(request, config, logger);
     }
     else {
+        logger->error("Unknown handler requested: " + handlerName);
         throw HandlerNotFound(handlerName);
     }
 }
