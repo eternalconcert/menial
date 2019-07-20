@@ -10,8 +10,6 @@
 #include "fileresponse.h"
 
 
-static const std::string HEADERDELIM = "\n\n";
-
 std::string FileResponse::makeEtag() {
     return sha256hash(this->getLastModified());
 }
@@ -111,25 +109,15 @@ std::string FileResponse::get() {
 }
 
 
+std::string FileResponse::post() {
+    return this->methodNotAllowed();
+}
+
+
 std::string FileResponse::notFound() {
     this->logger->info("404: Unknown target requested: " + target);
     this->setStatus(404);
     std::string content = this->headerBase() + HEADERDELIM + readFile(this->hostConfig["staticdir"] + "404.html");
-    return content;
-}
-
-
-std::string FileResponse::methodNotAllowed() {
-    this->setStatus(405);
-    std::string header = this->headerBase();
-    return header;
-}
-
-
-std::string FileResponse::internalServerError() {
-    this->logger->error("Internal server error");
-    this->setStatus(500);
-    std::string content = this->headerBase() + HEADERDELIM + readFile(this->hostConfig["staticdir"] + "500.html");
     return content;
 }
 

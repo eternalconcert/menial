@@ -141,7 +141,15 @@ bool Request::authenticate() {
 
 
 std::string Request::getResponse() {
-    Response* response = _getHandler(this, this->config, this->logger);
+    Response* response;
+    try {
+        response = _getHandler(this, this->config, this->logger);
+
+    }
+    catch (HandlerNotFound) {
+        response =  new Response(this, this->config, this->logger);
+        return response->internalServerError();
+    }
     bool authenticated;
     try {
         // Authenticate
@@ -159,8 +167,7 @@ std::string Request::getResponse() {
         return response->get();
     }
     else if (this->getMethod() == "POST")  {
-        // Maybe theres no need to implement a dedicated POST?
-        return response->get();
+        return response->post();
     }
     else if (this->getMethod() == "HEAD") {
         return response->head();

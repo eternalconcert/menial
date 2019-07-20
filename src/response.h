@@ -5,23 +5,25 @@
 #include "logger.h"
 #include "request.h"
 
+static const std::string HEADERDELIM = "\n\n";
+
 class Response {
     public:
         virtual std::string get() {
-            return "Virtual method get() called";
+            return "";
+        };
+        virtual std::string post() {
+            return "";
         };
         virtual std::string head() {
-            return "Virtual method head() called";
-        };
-        virtual std::string methodNotAllowed() {
-            return "Virtual method methodNotAllowed() called";
+            return "";
         };
         virtual std::string notFound() {
-            return "Virtual method notFound() called";
+            return "";
         };
-        virtual std::string internalServerError() {
-            return "Virtual method internalServerError() called";
-        };
+
+        std::string methodNotAllowed();
+        std::string internalServerError();
 
         Request* getRequest();
         void setStatus(int status);

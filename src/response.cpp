@@ -75,3 +75,18 @@ std::string Response::getStatusMessage() {
     this->logger->info("Reply status: " + statusMessage);
     return statusMessage;
 };
+
+
+std::string Response::methodNotAllowed() {
+    this->setStatus(405);
+    std::string header = this->headerBase();
+    return header;
+}
+
+
+std::string Response::internalServerError() {
+    this->logger->error("Internal server error");
+    this->setStatus(500);
+    std::string content = this->headerBase() + HEADERDELIM + readFile(this->hostConfig["staticdir"] + "500.html");
+    return content;
+}

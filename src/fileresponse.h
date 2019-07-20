@@ -9,13 +9,12 @@
 class FileResponse: public Response {
     public:
         std::string get();
+        std::string post();
         std::string head();
         std::string getHeader(std::string content, std::string fileName);
 
         std::string notFound();
         std::string notModified();
-        std::string internalServerError();
-        std::string methodNotAllowed();
 
         std::string getDirlisting();
         void setFilePath();
