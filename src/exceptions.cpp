@@ -14,10 +14,6 @@ ConfigException::ConfigException(std::string message) {
     exit(1);
 };
 
-HandlerNotFound::HandlerNotFound(std::string message) {
-    printf("HandlerNotFound: %s\n", message.c_str());
-};
-
 SSLError::SSLError(std::string message) {
     printf("SSLError: %s\n", message.c_str());
 };

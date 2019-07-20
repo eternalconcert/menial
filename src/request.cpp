@@ -23,7 +23,7 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
     }
     else {
         logger->error("Unknown handler requested: " + handlerName);
-        throw HandlerNotFound(handlerName);
+        return new Response(request, config, logger);
     }
 }
 
@@ -141,15 +141,7 @@ bool Request::authenticate() {
 
 
 std::string Request::getResponse() {
-    Response* response;
-    try {
-        response = _getHandler(this, this->config, this->logger);
-
-    }
-    catch (HandlerNotFound) {
-        response =  new Response(this, this->config, this->logger);
-        return response->internalServerError();
-    }
+    Response *response = _getHandler(this, this->config, this->logger);
     bool authenticated;
     try {
         // Authenticate
