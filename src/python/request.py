@@ -61,7 +61,7 @@ class Request(object):
         self.body = environ['wsgi.input'].read()
         self.query_string = environ['QUERY_STRING']
         self.content_type = environ.get('CONTENT_TYPE')
-        self.cookies = environ.get('HTTP_COOKIE')
+        self.cookies = environ.get('HTTP_COOKIE', '')
         self.referer = environ.get('HTTP_REFERER')
         self.get = self._get_get_params()
         self.post = self._get_post_params()
