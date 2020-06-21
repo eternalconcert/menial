@@ -206,16 +206,16 @@ void Server::runPlain() {
                     std::string message = this->readPlain(sd);
                     Request *request = new Request(message, inet_ntoa(serv_addr.sin_addr), false, this->config, this->logger);
                     this->sendReply(request->getResponse(), sd);
-                } catch (std::out_of_range) {
+                } catch (const std::out_of_range &) {
                     this->sendError(400, sd);
                     this->logger->error("Bad request");
-                } catch (RequestHeaderFieldTooLarge& e) {
+                } catch (const RequestHeaderFieldTooLarge& e) {
                     this->sendError(431, sd);
                     this->logger->warning(e.message);
-                } catch (CouldNotParseHeaders& e) {
+                } catch (const CouldNotParseHeaders& e) {
                     this->sendError(500, sd);
                     this->logger->error(e.message);
-                } catch (SocketError& e) {
+                } catch (const SocketError& e) {
                     this->sendError(500, sd);
                     this->logger->error(e.message);
                 }
@@ -326,16 +326,16 @@ void Server::runSSL() {
                     Request *request = new Request(message, inet_ntoa(serv_addr.sin_addr), true, this->config, this->logger);
                     std::string response = request->getResponse();
                     SSL_write(ssl, response.c_str(), response.length());
-                } catch (std::out_of_range) {
+                } catch (const std::out_of_range &) {
                     // this->sendError(400, sd);
                     this->logger->error("Bad request");
-                } catch (RequestHeaderFieldTooLarge& e) {
+                } catch (const RequestHeaderFieldTooLarge& e) {
                     // this->sendError(431, sd);
                     this->logger->warning(e.message);
-                } catch (CouldNotParseHeaders& e) {
+                } catch (const CouldNotParseHeaders& e) {
                     // this->sendError(500, sd);
                     this->logger->error(e.message);
-                } catch (SocketError& e) {
+                } catch (const SocketError& e) {
                     // this->sendError(500, sd);
                     this->logger->error(e.message);
                 }

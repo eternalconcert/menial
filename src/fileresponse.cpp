@@ -209,7 +209,7 @@ std::string FileResponse::getContent() {
                 }
                 return this->getDirlisting();
             }
-        } catch (FileNotFoundException) {
+        } catch (const FileNotFoundException &) {
             this->setStatus(404);
             return readFile(this->hostConfig["staticdir"] + "404.html");
         }
@@ -217,7 +217,7 @@ std::string FileResponse::getContent() {
 
     try {
         content = readFile(filePath);
-    } catch (FileNotFoundException) {
+    } catch (const FileNotFoundException &) {
         this->setStatus(404);
         return readFile(this->hostConfig["staticdir"] + "404.html");
     }

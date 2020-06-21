@@ -2,7 +2,7 @@
 
 export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:/home/xgwschk/projects/eternalconcert/:/home/xgwschk/projects/eternalconcert/pythonenv/lib/$(PYTHON)/site-packages/
 
-PYTHON=python3.5
+PYTHON=python3.8
 
 SOURCES = $(shell find src/ -name "*.cpp")
 BUILD_NUMBER_FILE=deployment/buildno.txt
@@ -13,7 +13,7 @@ OUTFILE=build/menial.bin
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/$(PYTHON)m/ -l $(PYTHON)m -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
+	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/$(PYTHON)/ -l $(PYTHON) -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
 	$(MAKE) index
 
 

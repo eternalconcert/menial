@@ -23,7 +23,7 @@ std::string readFile(std::string path) {
     try {
         std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         return content;
-    } catch (std::ios_base::failure) {
+    } catch (const std::ios_base::failure &) {
         throw FileNotFoundException(path);
     }
 }

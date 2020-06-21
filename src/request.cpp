@@ -147,7 +147,7 @@ std::string Request::getResponse() {
         // Authenticate
         authenticated = this->authenticate();
     }
-    catch (FileNotFoundException) {
+    catch (const FileNotFoundException &) {
         this->logger->error("Auth file cannot be read");
         return response->internalServerError();
     }
