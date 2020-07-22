@@ -52,11 +52,11 @@ docker-image: clean
 	docker run -v $(PWD):/menial/ menial_build  # Compiles menial in a container
 	$(MAKE) src
 	$(MAKE) website
-	docker build . -t menial # --build-arg http_proxy=http://proxy:3128
+	docker build . -t menial
 	docker tag menial cloud.canister.io:5000/eternalconcert/menial:latest
 	docker push cloud.canister.io:5000/eternalconcert/menial:latest
 
 build-image:
-	docker build . -t menial_build -f BuildDockerfile # --build-arg http_proxy=http://10.254.1.64:3128
+	docker build . -t menial_build -f BuildDockerfile
 
 .PHONY: clean compile serve website src deploy
