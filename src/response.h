@@ -18,12 +18,16 @@ class Response {
         virtual std::string head() {
             return "";
         };
+        virtual std::string options() {
+            return "";
+        };
         virtual std::string notFound() {
             return "";
         };
 
         std::string methodNotAllowed();
         std::string internalServerError();
+        std::string empty();
 
         Request* getRequest();
         void setStatus(int status);

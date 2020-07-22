@@ -94,6 +94,11 @@ std::string FileResponse::head() {
 }
 
 
+std::string FileResponse::options() {
+    return this->empty();
+}
+
+
 std::string FileResponse::get() {
     if (this->contentMatch()) {
         return this->notModified();

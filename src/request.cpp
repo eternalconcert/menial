@@ -164,6 +164,9 @@ std::string Request::getResponse() {
     else if (this->getMethod() == "HEAD") {
         return response->head();
     }
+    else if (this->getMethod() == "OPTIONS") {
+        return response->options();
+    }
     else {
         return response->methodNotAllowed();
     }

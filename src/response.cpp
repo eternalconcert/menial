@@ -38,7 +38,7 @@ std::string Response::unauthorized() {
     this->logger->info("401: unauthorized");
     this->setStatus(401);
     std::string header = this->headerBase();
-    header += "WWW-Authenticate: Basic realm = /\n\n";
+    header += "WWW-Authenticate: Basic realm = /" + HEADERDELIM;
     std::string content = readFile(this->hostConfig["staticdir"] + "401.html");
     return header + content;
 }
@@ -49,6 +49,9 @@ std::string Response::getStatusMessage() {
     switch (this->status) {
         case 200:
             statusMessage = "200 OK";
+            break;
+        case 204:
+            statusMessage = "204 No Content";
             break;
         case 301:
             statusMessage = "301 Moved Permanently";
@@ -80,7 +83,7 @@ std::string Response::getStatusMessage() {
 std::string Response::methodNotAllowed() {
     this->setStatus(405);
     std::string header = this->headerBase();
-    return header;
+    return header + HEADERDELIM;
 }
 
 
@@ -89,4 +92,11 @@ std::string Response::internalServerError() {
     this->setStatus(500);
     std::string content = this->headerBase() + HEADERDELIM + readFile(this->hostConfig["staticdir"] + "500.html");
     return content;
+}
+
+
+std::string Response::empty() {
+    this->setStatus(204);
+    std::string header = this->headerBase() + "Allow: OPTIONS, GET, HEAD" + HEADERDELIM;
+    return header;
 }

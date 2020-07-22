@@ -24,10 +24,11 @@ class WSGIAdapter {
 };
 
 
-
 class PyResponse: public Response {
     public:
         std::string get();
+        std::string post();
+        std::string options();
         PyResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {};
 };
 

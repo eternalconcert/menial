@@ -11,6 +11,7 @@ class FileResponse: public Response {
         std::string get();
         std::string post();
         std::string head();
+        std::string options();
         std::string getHeader(std::string content, std::string fileName);
 
         std::string notFound();

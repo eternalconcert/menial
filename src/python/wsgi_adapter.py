@@ -4,14 +4,13 @@ from base64 import b64encode
 import traceback
 
 
-def make_headers(status, headers):
+def make_headers(status, headers, additional_response_headers):
     result = "HTTP/1.0 {status}\n" \
              "Server: menial\n".format(status=status)
 
     for key, value in headers:
         result += key + ": " + value + "\n"
-
-    return result
+    return result + additional_response_headers.decode()
 
 
 template = "<h1>Internal Server Error</h1>"
@@ -88,6 +87,7 @@ def wsgi_interface(app, *args):
     target = args[1]
     header = args[2]
     body = args[3]
+    additional_response_headers = args[4]
     wsgi_input = BytesIO(body)
 
     environ = {
@@ -108,6 +108,6 @@ def wsgi_interface(app, *args):
     }
 
     _status, _headers, _body = call_application(app, environ)
-    headers = make_headers(_status, _headers)
+    headers = make_headers(_status, _headers, additional_response_headers)
     wsgi_input.close()
     return headers.encode(), b64encode(_body)

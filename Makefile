@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:/home/xgwschk/projects/eternalconcert/:/home/xgwschk/projects/eternalconcert/pythonenv/lib/$(PYTHON)/site-packages/
+export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/
 
 PYTHON=python3.8
 
