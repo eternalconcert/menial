@@ -2,6 +2,7 @@ syntax: glob
 
 *.pyc
 build/*
+website/build/*
 target/*
 pythonenv/*
 webdriver/*
