@@ -8,7 +8,7 @@ Always at your service!
 To compile menial, you can use the following commands:
 
 ```bash
-g++ $(find src/  -name "*.cpp")  -o menial.bin -std=c++11  -pthread -Wall  -I /usr/include/python3.8m/  -l python3.8m  -I src/include/  -lssl -lcrypto
+g++ $(find src/  -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8m/ -l python3.8m -I src/include/ -lssl -lcrypto
 ```
 ## Prerequisites
 
