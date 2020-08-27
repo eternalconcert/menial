@@ -1,0 +1,18 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: |
+        g++ find src/ -name "*.cpp" -o menial_test.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8/ -l python3.8 -I src/include/ -lssl -lcrypto -D TEST=1
+    - name: Test
+      run: |
+        ./menial_test.bin
