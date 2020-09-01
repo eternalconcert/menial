@@ -3,7 +3,11 @@
 #include <set>
 #include <map>
 #include <string>
-#include "common.h"
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include "../exceptions/exceptions.h"
+#include "../common/common.h"
 
 class Config {
     public:

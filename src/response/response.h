@@ -1,9 +1,9 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 #include <string>
-#include "config.h"
-#include "logger.h"
-#include "request.h"
+#include "../config/config.h"
+#include "../logger/logger.h"
+#include "../request/request.h"
 
 static const std::string HEADERDELIM = "\n\n";
 

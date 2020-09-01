@@ -1,9 +1,17 @@
 #ifndef SERVER_H
 #define SERVER_H
 #include <openssl/ssl.h>
-#include "config.h"
-#include "logger.h"
-#include "request.h"
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <unistd.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include "../config/config.h"
+#include "../exceptions/exceptions.h"
+#include "../logger/logger.h"
+#include "../request/request.h"
+#include "../common/common.h"
 
 
 class Server {

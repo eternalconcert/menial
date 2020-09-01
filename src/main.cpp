@@ -1,11 +1,10 @@
 #include <signal.h>
-#include "config.h"
-#include "logger.h"
-#include "server.h"
-
 #include <list>
 #include <set>
 #include <thread>
+#include "config/config.h"
+#include "logger/logger.h"
+#include "server/server.h"
 
 
 void signalHandler(int signal) {

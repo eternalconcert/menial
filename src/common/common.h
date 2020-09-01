@@ -1,6 +1,19 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <string>
+#include <fstream>
+#include <algorithm>
+#include <sstream>
+#include <iostream>
+#include <map>
+#include <vector>
+#include <openssl/sha.h>
+#include <sstream>
+#include <iomanip>
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include "../exceptions/exceptions.h"
 
 enum LogLevel {DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40, CRITICAL = 50, HIGHLIGHT = 60, NOTSET = 100};
 LogLevel logLevelByName(std::string levelName);

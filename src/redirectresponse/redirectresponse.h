@@ -1,13 +1,13 @@
 #ifndef REDIRECTRESPONSE_H
 #define REDIRECTRESPONSE_H
 #include <stdio.h>
-#include "../config.h"
-#include "../logger.h"
-#include "../response.h"
-#include "../request.h"
-#include "../common.h"
-#include "../exceptions.h"
-#include "../logger.h"
+#include "../config/config.h"
+#include "../logger/logger.h"
+#include "../response/response.h"
+#include "../request/request.h"
+#include "../common/common.h"
+#include "../exceptions/exceptions.h"
+#include "../logger/logger.h"
 
 class RedirectResponse: public Response {
     public:

@@ -1,8 +1,8 @@
 #if TEST==1
 #define CATCH_CONFIG_MAIN
 #include "catch.h"
-#include "../common.h"
-#include "../exceptions.h"
+#include "../common/common.h"
+#include "../exceptions/exceptions.h"
 
 
 TEST_CASE ("Testing readFile", "[readFile]") {

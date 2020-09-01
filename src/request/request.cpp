@@ -1,13 +1,9 @@
-#include <netinet/in.h>
-#include <sstream>
-#include "common.h"
-#include "exceptions.h"
-#include "response.h"
-#include "request.h"
-#include "redirectresponse/redirectresponse.h"
-#include "fileresponse/fileresponse.h"
-#include "pyresponse/pyresponse.h"
+#include "../response/response.h"
+#include "../redirectresponse/redirectresponse.h"
+#include "../fileresponse/fileresponse.h"
+#include "../pyresponse/pyresponse.h"
 
+#include "request.h"
 
 Response* _getHandler(Request *request, Config *config, Logger *logger) {
     /* Helper method to get the correct handler */

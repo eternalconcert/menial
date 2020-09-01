@@ -1,7 +1,11 @@
 #ifndef REQUEST_H
 #define REQUEST_H
-#include "config.h"
-#include "logger.h"
+#include <netinet/in.h>
+#include <sstream>
+#include "../common/common.h"
+#include "../exceptions/exceptions.h"
+#include "../config/config.h"
+#include "../logger/logger.h"
 
 
 class Request {

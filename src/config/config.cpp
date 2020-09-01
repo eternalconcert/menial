@@ -1,8 +1,4 @@
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
 #include "config.h"
-#include "exceptions.h"
 
 using namespace rapidjson;
 

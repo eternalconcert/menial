@@ -6,12 +6,12 @@
 #include <regex>
 #include <stdio.h>
 #include <sys/stat.h>
-#include "../config.h"
-#include "../logger.h"
-#include "../response.h"
-#include "../request.h"
-#include "../common.h"
-#include "../exceptions.h"
+#include "../config/config.h"
+#include "../logger/logger.h"
+#include "../response/response.h"
+#include "../request/request.h"
+#include "../common/common.h"
+#include "../exceptions/exceptions.h"
 
 
 class FileResponse: public Response {

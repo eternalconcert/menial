@@ -1,17 +1,4 @@
-#include <fstream>
-#include <algorithm>
 #include "common.h"
-#include "exceptions.h"
-#include <sstream>
-#include <iostream>
-#include <map>
-#include <vector>
-#include <openssl/sha.h>
-#include <sstream>
-#include <iomanip>
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
 
 std::string readFile(std::string path) {
     std::ifstream file(path);

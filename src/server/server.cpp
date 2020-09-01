@@ -1,13 +1,4 @@
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <unistd.h>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-#include "common.h"
-#include "exceptions.h"
 #include "server.h"
-#include "request.h"
 
 const int QUEUE_LENGTH = 100;
 

@@ -1,7 +1,7 @@
 #if TEST==1
 #include "catch.h"
 #include "utils.h"
-#include "../request.h"
+#include "../request/request.h"
 
 
 TEST_CASE("Testing authenticate open host", "[authenticate]") {
