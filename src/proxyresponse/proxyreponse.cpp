@@ -1,11 +1,9 @@
 #include "proxyresponse.h"
 
 std::string ProxyResponse::readFromUpstream() {
-    int sockfd, m, n;
+    int sockfd, bytesRead, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-
-    char buffer[BUFFER_SIZE];
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -43,21 +41,26 @@ std::string ProxyResponse::readFromUpstream() {
     std::string outMessage = "GET / HTTP/1.0\nHost: " + upstreamHostName + ":" +
         std::to_string(upstreamPort) + "\n\n" + this->request->getBody();
 
-    printf("%s", outMessage.c_str());
+    //printf("%s", outMessage.c_str());
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {
         this->logger->error("Error: Cannot write to socket");
     }
 
+    char buffer[BUFFER_SIZE];
+    std::string result;
     bzero(buffer, BUFFER_SIZE);
-    m = read(sockfd, buffer, BUFFER_LIMIT);
-    if (m < 0) {
+    while ((bytesRead = read(sockfd, buffer, BUFFER_LIMIT) > 0)) {
+        result += buffer;
+        bzero(buffer, BUFFER_SIZE);
+
+    };
+    if (bytesRead < 0) {
         this->logger->error("Error: Cannot read from socket");
     }
-    printf("Buffer: %s\n", buffer);
     close(sockfd);
-    return "0";
+    return result;
 }
 
 
