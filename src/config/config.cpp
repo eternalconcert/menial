@@ -89,15 +89,24 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["root"] = root;
 
-
         std::string handler = "file";
         if (document["hosts"][host.c_str()].HasMember("handler")) {
             handler = document["hosts"][host.c_str()]["handler"].GetString();
         };
         this->hosts[host]["handler"] = handler;
 
-        if (handler != "redirect" and root == "") {
+        if ((handler != "redirect" && handler != "proxy") && root == "") {
             throw ConfigException("No root specified for host: " + host);
+        }
+
+        std::string upstream = "";
+        if (document["hosts"][host.c_str()].HasMember("upstream")) {
+            upstream = document["hosts"][host.c_str()]["upstream"].GetString();
+        }
+        this->hosts[host]["upstream"] = upstream;
+
+        if (handler == "proxy" && upstream == "") {
+            throw ConfigException("No upstream specified for host: " + host);
         }
 
         bool dirlisting = false;

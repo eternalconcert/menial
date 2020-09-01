@@ -1,7 +1,8 @@
 #include "../response/response.h"
-#include "../redirectresponse/redirectresponse.h"
 #include "../fileresponse/fileresponse.h"
 #include "../pyresponse/pyresponse.h"
+#include "../redirectresponse/redirectresponse.h"
+#include "../proxyresponse/proxyresponse.h"
 
 #include "request.h"
 
@@ -16,6 +17,9 @@ Response* _getHandler(Request *request, Config *config, Logger *logger) {
     }
     else if (handlerName == "redirect") {
         return new RedirectResponse(request, config, logger);
+    }
+    else if (handlerName == "proxy") {
+        return new ProxyResponse(request, config, logger);
     }
     else {
         logger->error("Unknown handler requested: " + handlerName);

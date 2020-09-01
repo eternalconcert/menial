@@ -35,6 +35,7 @@ class Response {
         std::string getStatusMessage();
         std::string headerBase();
         std::string unauthorized();
+        std::string fullHostName;
         std::string hostName;
         Response(Request *request, Config *config, Logger *logger);
 

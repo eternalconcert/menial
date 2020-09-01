@@ -1,11 +1,21 @@
 #include "response.h"
 
+
+std::string makeHostname(std::string fullHostName) {
+    // TODO: Member function
+    std::string hostName = fullHostName;
+    hostName.erase(hostName.find(":"), std::string::npos);
+    return hostName;
+};
+
+
 Response::Response(Request *request, Config *config, Logger *logger) {
     this->request = request;
     this->config = config;
     this->hostConfig = config->hosts[this->getRequest()->getVirtualHost()];
     this->logger = logger;
-    this->hostName = this->getRequest()->getVirtualHost();
+    this->fullHostName = this->getRequest()->getVirtualHost();
+    this->hostName = makeHostname(this->fullHostName);
     this->setStatus(200);
 }
 
