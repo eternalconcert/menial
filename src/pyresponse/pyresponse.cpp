@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <Python.h>
-#include "common.h"
-#include "exceptions.h"
-#include "logger.h"
 #include "pyresponse.h"
 
 

@@ -4,9 +4,9 @@
 #include "exceptions.h"
 #include "response.h"
 #include "request.h"
-#include "redirectresponse.h"
-#include "fileresponse.h"
-#include "pyresponse.h"
+#include "redirectresponse/redirectresponse.h"
+#include "fileresponse/fileresponse.h"
+#include "pyresponse/pyresponse.h"
 
 
 Response* _getHandler(Request *request, Config *config, Logger *logger) {

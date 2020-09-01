@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include "common.h"
-#include "exceptions.h"
-#include "logger.h"
 #include "redirectresponse.h"
 
 std::string RedirectResponse::get() {

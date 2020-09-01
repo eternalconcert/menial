@@ -1,10 +1,14 @@
 #ifndef PYRESPONSE_H
 #define PYRESPONSE_H
 #include <Python.h>
-#include "config.h"
-#include "logger.h"
-#include "response.h"
-#include "request.h"
+#include <stdio.h>
+#include "../config.h"
+#include "../logger.h"
+#include "../response.h"
+#include "../request.h"
+#include "../common.h"
+#include "../exceptions.h"
+#include "../logger.h"
 
 
 class WSGIAdapter {

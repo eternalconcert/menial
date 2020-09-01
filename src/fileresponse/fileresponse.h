@@ -1,9 +1,17 @@
 #ifndef FILERESPONSE_H
 #define FILERESPONSE_H
-#include "config.h"
-#include "logger.h"
-#include "response.h"
-#include "request.h"
+#include <dirent.h>
+#include <ctime>
+#include <cstring>
+#include <regex>
+#include <stdio.h>
+#include <sys/stat.h>
+#include "../config.h"
+#include "../logger.h"
+#include "../response.h"
+#include "../request.h"
+#include "../common.h"
+#include "../exceptions.h"
 
 
 class FileResponse: public Response {
