@@ -1,29 +1,29 @@
 {
     "hosts": {
-        "localhost:8000": {
+        "localhost:9000": {
             "handler": "file",
             "root": "deployment/default/"
         },
-        "proxy.localhost:8000": {
+        "proxy.localhost:9000": {
             "handler": "proxy",
-            "upstream": "https://eternalconcert.de:443"
+            "upstream": "http://localhost:4000"
         },
-        "menial.localhost:8000": {
+        "menial.localhost:9000": {
             "handler": "file",
             "staticdir": "static/",
             "root": "website/build/"
         },
-        "selenium.localhost:8000": {
+        "selenium.localhost:9000": {
             "handler": "file",
             "root": "selenium/reports/",
             "defaultdocument": "report.html"
         },
-        "files.localhost:8000": {
+        "files.localhost:9000": {
             "handler": "file",
             "root": "/home/",
             "dirlisting": true
         },
-        "tmmk.localhost:8000": {
+        "tmmk.localhost:9000": {
             "handler": "file",
             "root": "../tmmk/build/"
         },

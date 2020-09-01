@@ -38,10 +38,10 @@ std::string ProxyResponse::readFromUpstream() {
         this->logger->error("Error: Cannot connect");
     }
 
-    std::string outMessage = "GET / HTTP/1.0\nHost: " + upstreamHostName + ":" +
-        std::to_string(upstreamPort) + "\n\n" + this->request->getBody();
+    // std::string outMessage = "GET / HTTP/1.1\nHost: " + upstreamHostName + ":" +
+    //     std::to_string(upstreamPort) + "\n\n" + this->request->getBody();
 
-    //printf("%s", outMessage.c_str());
+    std::string outMessage = this->request->getHeaders() + "\n\n" + this->request->getBody();
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {
