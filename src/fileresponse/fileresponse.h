@@ -41,7 +41,8 @@ class FileResponse: public Response {
     private:
         std::string guessFileType(std::string fileName);
         std::string getContent();
-        std::string getLastModified();
+        std::string getLastModifiedTime();
+        std::string getLastModifiedHeader();
         bool contentMatch();
         std::string makeEtag();
         std::string getETag();

@@ -2,7 +2,7 @@
 
 
 std::string FileResponse::makeEtag() {
-    return sha256hash(this->getLastModified());
+    return sha256hash(this->getLastModifiedHeader());
 }
 
 
@@ -12,26 +12,48 @@ bool FileResponse::contentMatch() {
         return false;
     }
     std::string requestHeaders = this->getRequest()->getHeaders();
-    std::string tag = "If-None-Match: ";
+    std::string ifNoneMatchTag = "If-None-Match: ";
 
-    bool result = false;
-    if (requestHeaders.find(tag) != std::string::npos) {
+    bool eTagsMatch = false;
+    if (requestHeaders.find(ifNoneMatchTag) != std::string::npos) {
         std::string hash;
         std::string eTag = this->makeEtag();
-        int i = requestHeaders.find(tag) + tag.length();
+        int i = requestHeaders.find(ifNoneMatchTag) + ifNoneMatchTag.length();
         int j = 0;
-        result = true;
+        eTagsMatch = true;
         // Hacky comparson: No idea why == did not work.
         while (j < 64) {
             if (requestHeaders[i] != eTag[j]) {
-                result = false;
+                eTagsMatch = false;
             };
             i++;
             j++;
         }
     }
 
-    return result;
+    if (eTagsMatch == true) {
+        return true;
+    };
+
+    bool modifiedSinceHeaderMatch;
+    std::string modifiedSinceHeader = "If-Modified-Since: ";
+    int headerEndPos = requestHeaders.find(modifiedSinceHeader) + modifiedSinceHeader.length();
+    std::string modifiedSinceHeaderValue = requestHeaders.substr(headerEndPos, 28);
+    time_t requestedTime;
+    struct tm rtTimestruct;
+    strptime(modifiedSinceHeaderValue.c_str(), "%a, %d %m %Y %H:%M:%S GMT", &rtTimestruct);
+    requestedTime = mktime(&rtTimestruct);
+    time_t ownTime;
+    struct tm otTimestruct;
+    strptime(this->getLastModifiedTime().c_str(), "%a, %d %m %Y %H:%M:%S GMT", &otTimestruct);
+    ownTime = mktime(&otTimestruct);
+    modifiedSinceHeaderMatch = difftime(requestedTime, ownTime) == 0.0;
+
+    if (modifiedSinceHeaderMatch) {
+        return true;
+    };
+
+    return false;
 }
 
 
@@ -123,7 +145,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     if (this->status == 200) {
-        header += this->getLastModified();
+        header += this->getLastModifiedHeader();
         header += this->getETag() + "\n";
     }
     header += this->hostConfig["additionalheaders"];
@@ -226,15 +248,21 @@ std::string FileResponse::getETag() {
     return Etag;
 }
 
-std::string FileResponse::getLastModified() {
+
+
+std::string FileResponse::getLastModifiedTime() {
     // Last-Modified: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
-    char mtime[50];
+    char mtime[29];
     memset(mtime, 0, sizeof(mtime));
     struct stat fileInfo;
     stat(this->filePath.c_str(), &fileInfo);
     time_t t = fileInfo.st_mtime;
     struct tm lt;
     localtime_r(&t, &lt);
-    strftime(mtime, sizeof(mtime), "Last-Modified: %a, %d %m %Y %H:%M:%S GMT\n", &lt);
+    strftime(mtime, sizeof(mtime), "%a, %d %m %Y %H:%M:%S GMT", &lt);
     return std::string(mtime);
+}
+
+std::string FileResponse::getLastModifiedHeader() {
+    return "Last-Modified: " + this->getLastModifiedTime() + "\n";
 };
