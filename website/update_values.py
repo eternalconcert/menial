@@ -3,12 +3,12 @@ import json
 from hashlib import sha256
 
 
-with open('build/menial.bin', 'r') as menial:
+with open('build/menial.bin', 'rb') as menial:
     menial_hash = sha256(menial.read()).hexdigest()
     menial_hash = menial_hash[:32] + "<wbr>" + menial_hash[32:]
 
 
-with open('menial.tar.gz', 'r') as menial_tar_gz:
+with open('menial.tar.gz', 'rb') as menial_tar_gz:
     menial_tar_gz_hash = sha256(menial_tar_gz.read()).hexdigest()
     menial_tar_gz_hash = menial_tar_gz_hash[:32] + "<wbr>" + menial_tar_gz_hash[32:]
 

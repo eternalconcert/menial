@@ -45,58 +45,46 @@ std::string ProxyResponse::readFromUpstream() {
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {
-        this->logger->error("Error: Cannot write to socket");
+        throw SocketError("Error: Cannot write to socket");
     }
 
     char buffer[BUFFER_SIZE];
     std::string result;
     bzero(buffer, BUFFER_SIZE);
-    while ((bytesRead = read(sockfd, buffer, BUFFER_LIMIT) > 0)) {
-        result += buffer;
-        bzero(buffer, BUFFER_SIZE);
+    do {
+        bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, 0);
+        for (int j = 0; j < bytesRead; j++) {
+            result += buffer[j];
+        }
+        if (bytesRead < 0) {
+            throw SocketError("Error: Reading from socket");
+        }
+    } while (bytesRead > 0);
 
-    };
-    if (bytesRead < 0) {
-        this->logger->error("Error: Cannot read from socket");
-    }
     close(sockfd);
     return result;
 }
 
 
 std::string ProxyResponse::get() {
-    std::string result;
     std::string content = this->getContent();
-    result = content;
-    return result;
+    return content;
 }
 
 
 std::string ProxyResponse::getContent() {
-    std::string result = this->readFromUpstream();
-    return result;
-    //std::string content;
-    //if (this->hostConfig["dirlisting"] == "true") {
-    //    try {
-    //        std::string targetPath = this->target;
-    //        if (targetPath.rfind("/") == (targetPath.length() - 1)) {
-    //            if (targetPath.find("..") != std::string::npos) {
-    //                this->logger->warning("Intrusion try detected: " + targetPath);
-    //                throw FileNotFoundException("Intrusion try detected: " + targetPath);
-    //            }
-    //            return this->getDirlisting();
-    //        }
-    //    } catch (const FileNotFoundException &) {
-    //        this->setStatus(404);
-    //        return readFile(this->hostConfig["staticdir"] + "404.html");
-    //    }
-    //}
-//
-    //try {
-    //    content = readFile(filePath);
-    //} catch (const FileNotFoundException &) {
-    //    this->setStatus(404);
-    //    return readFile(this->hostConfig["staticdir"] + "404.html");
-    //}
-    //return content;
+    std::string result;
+    try {
+        result = this->readFromUpstream();
+    } catch (const SocketError &) {
+        printf("%s\n", "ljdkfdl;kfglk;dfjl;kdsmglkdsfnmglkjdsfglk");
+    }
+
+    std::string preHeader = result;
+    std::string postHeader = result;
+    postHeader.erase(0, (postHeader.find("Server:") + postHeader.find("\n")));
+    preHeader.erase(preHeader.find("Server:"), std::string::npos);
+
+    return preHeader + "Server: menial\n" + postHeader;
+
 }
