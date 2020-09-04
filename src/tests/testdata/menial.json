@@ -10,6 +10,7 @@
             "authfile": "src/tests/testdata/test_auth.db"
         }
     },
+    "resources": "src/tests/testdata/",
     "iplogging": true,
     "logger": "console",
     "loglevel": "critical",
