@@ -19,7 +19,7 @@ compile:
 
 test: TEST=1
 test: OUTFILE=build/menial_test.bin
-test: compile
+test: clean compile
 	@build/menial_test.bin -s
 
 compile_static:
@@ -39,7 +39,7 @@ clean:
 	rm -rf website/build/*
 	rm -rf menial.tar.gz
 
-website:
+website: src
 	rm -rf website/build/*
 	@mkdir -p website/build/styles
 	python website/update_values.py

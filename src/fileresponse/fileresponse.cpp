@@ -35,23 +35,25 @@ bool FileResponse::contentMatch() {
         return true;
     };
 
-    bool modifiedSinceHeaderMatch;
     std::string modifiedSinceHeader = "If-Modified-Since: ";
-    int headerEndPos = requestHeaders.find(modifiedSinceHeader) + modifiedSinceHeader.length();
-    std::string modifiedSinceHeaderValue = requestHeaders.substr(headerEndPos, 28);
-    time_t requestedTime;
-    struct tm rtTimestruct;
-    strptime(modifiedSinceHeaderValue.c_str(), "%a, %d %m %Y %H:%M:%S GMT", &rtTimestruct);
-    requestedTime = mktime(&rtTimestruct);
-    time_t ownTime;
-    struct tm otTimestruct;
-    strptime(this->getLastModifiedTime().c_str(), "%a, %d %m %Y %H:%M:%S GMT", &otTimestruct);
-    ownTime = mktime(&otTimestruct);
-    modifiedSinceHeaderMatch = difftime(requestedTime, ownTime) == 0.0;
+    if (requestHeaders.find(modifiedSinceHeader) != std::string::npos) {
+        bool modifiedSinceHeaderMatch = false;
+        int headerEndPos = requestHeaders.find(modifiedSinceHeader) + modifiedSinceHeader.length();
+        std::string modifiedSinceHeaderValue = requestHeaders.substr(headerEndPos, 28);
+        time_t requestedTime;
+        struct tm rtTimestruct;
+        strptime(modifiedSinceHeaderValue.c_str(), "%a, %d %m %Y %H:%M:%S GMT", &rtTimestruct);
+        requestedTime = mktime(&rtTimestruct);
+        time_t ownTime;
+        struct tm otTimestruct;
+        strptime(this->getLastModifiedTime().c_str(), "%a, %d %m %Y %H:%M:%S GMT", &otTimestruct);
+        ownTime = mktime(&otTimestruct);
+        modifiedSinceHeaderMatch = difftime(requestedTime, ownTime) < 0.0;
 
-    if (modifiedSinceHeaderMatch) {
-        return true;
-    };
+        if (!modifiedSinceHeaderMatch) {
+            return true;
+        };
+    }
 
     return false;
 }
@@ -89,7 +91,7 @@ void FileResponse::setFilePath() {
 std::string FileResponse::notModified() {
     this->logger->debug("Content has not changed, -> 304");
     this->setStatus(304);
-    return this->headerBase() + this->getETag() + HEADERDELIM;
+    return this->headerBase() + this->getETag() + "\n" + this->getLastModifiedHeader() + HEADERDELIM;
 }
 
 
@@ -145,7 +147,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     if (this->status == 200) {
-        header += this->getLastModifiedHeader();
+        header += this->getLastModifiedHeader() + "\n";
         header += this->getETag() + "\n";
     }
     header += this->hostConfig["additionalheaders"];
@@ -264,5 +266,5 @@ std::string FileResponse::getLastModifiedTime() {
 }
 
 std::string FileResponse::getLastModifiedHeader() {
-    return "Last-Modified: " + this->getLastModifiedTime() + "\n";
+    return "Last-Modified: " + this->getLastModifiedTime();
 };
