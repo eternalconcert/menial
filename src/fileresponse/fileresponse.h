@@ -45,7 +45,7 @@ class FileResponse: public Response {
         std::string getLastModifiedHeader();
         bool contentMatch();
         std::string makeEtag();
-        std::string getETag();
+        std::string getETagHeader();
 };
 
 

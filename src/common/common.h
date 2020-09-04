@@ -29,5 +29,6 @@ std::string base64decode(std::string const &encoded);
 std::string sha256hash(const std::string input);
 
 std::string getMimeType(std::string extension, std::string filePath);
+std::string currentDateTime();
 
 #endif

@@ -91,7 +91,7 @@ void FileResponse::setFilePath() {
 std::string FileResponse::notModified() {
     this->logger->debug("Content has not changed, -> 304");
     this->setStatus(304);
-    return this->headerBase() + this->getETag() + "\n" + this->getLastModifiedHeader() + HEADERDELIM;
+    return this->headerBase() + this->getETagHeader() + "\n" + this->getLastModifiedHeader() + HEADERDELIM;
 }
 
 
@@ -148,7 +148,7 @@ std::string FileResponse::getHeader(std::string content, std::string fileName) {
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
     if (this->status == 200) {
         header += this->getLastModifiedHeader() + "\n";
-        header += this->getETag() + "\n";
+        header += this->getETagHeader() + "\n";
     }
     header += this->hostConfig["additionalheaders"];
     header += "\r\n";
@@ -244,7 +244,7 @@ std::string FileResponse::getContent() {
     return content;
 }
 
-std::string FileResponse::getETag() {
+std::string FileResponse::getETagHeader() {
     std::string Etag = "ETag: ";
     Etag += this->makeEtag();
     return Etag;

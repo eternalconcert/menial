@@ -36,9 +36,9 @@ int Response::getStatus() {
 
 
 std::string Response::headerBase() {
-    std::string header = "HTTP/1.0 ";
-    header += this->getStatusMessage();
-    header += "\n";
+    std::string header = "HTTP/1.1 ";
+    header += this->getStatusMessage() + "\n";
+    header += "Date: " + currentDateTime() + "\n";
     header += "Server: menial\n";
     return header;
 }

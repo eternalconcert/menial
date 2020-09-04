@@ -110,3 +110,13 @@ std::string getMimeType(std::string extension, std::string filePath) {
     }
     return fileType;
 }
+
+
+std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm timeStruct = *localtime(&now);
+    char timeBuffer[29];
+
+    strftime(timeBuffer, sizeof(timeBuffer), "%a, %d %m %Y %H:%M:%S GMT", &timeStruct);
+    return timeBuffer;
+};
