@@ -26,7 +26,7 @@
             <table id="info-table">
                 <tr>
                     <td>Version:</td>
-                    <td>0.0.1</td>
+                    <td>0.0.{{ BUILDNO }}</td>
                 </tr>
                 <tr>
                     <td>Build:</td>

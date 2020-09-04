@@ -1,12 +1,13 @@
 {
     "hosts": {
-        "*:80": {
+        "*:8888": {
             "handler": "file",
-            "root": "default/",
-            "staticdir": "default/static/"
+            "root": "/usr/share/menial/http/default/",
+            "staticdir": "/usr/share/menial/resources/static/"
         }
     },
-    "loglevel": "debug",
+    "resources": "/usr/share/menial/resources/",
+    "loglevel": "info",
     "logfilepath": "/tmp/",
     "logger": "console"
 }

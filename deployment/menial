@@ -1,0 +1,3 @@
+#!/bin/bash
+
+menial.bin /etc/menial/menial.json

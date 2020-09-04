@@ -3,6 +3,7 @@ class       application/octet-stream
 com         application/octet-stream
 css         text/css
 csv         text/comma-separated-values
+deb         application/x-debian-package
 extension   application/octet-stream
 file        application/octet-stream
 flac        audio/flac

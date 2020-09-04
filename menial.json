@@ -37,12 +37,12 @@
         }
     },
     "iplogging": true,
-    "debug": true,
+    "debug": false,
     "logger": "console",
     "logfilepath": "/tmp/",
     "loglevel": "debug",
-    "staticdir": "resources/static/",
-    "resources": "resources/",
+    "staticdir": "deployment/resources/static/",
+    "resources": "deployment/resources/",
     "ssl": {
         "4433": {
             "on": false,

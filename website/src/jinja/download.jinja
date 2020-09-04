@@ -30,6 +30,24 @@
     <p>
         Menial also runs on ARM machines. Currently there are no precomiled ARM binaries. If there is demand, it will be added.
     </p>
+
+    {% set deb_name = 'menial_0.0.' + version + '.deb' %}
+    <h3>Debian Package</h3>
+    <ul>
+        <li>
+            <a href="{{ url_for(deb_name) }}">{{ deb_name }}</a>
+        </li>
+        <li>
+            Checksum: <span class="hashvalue">{{ deb_hash }} (SHA256)</span>
+        </li>
+        <li>
+            Built: {{ timestamp }}
+        </li>
+    </ul>
+    <p>
+        Menial also runs on ARM machines. Currently there are no precomiled ARM binaries. If there is demand, it will be added.
+    </p>
+
     <h3>License</h3>
     <p>
         Please make sure you have read the license notices on <a href="{{ url_for('license.html') }}">License</a>. menial is licensed under a GPLv3 license but it uses third-party libraries which are licensed under a MIT license.

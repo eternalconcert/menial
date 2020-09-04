@@ -3,12 +3,13 @@
 export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/
 
 PYTHON=python3.8
-
 SOURCES = $(shell find src/ -name "*.cpp")
 BUILD_NUMBER_FILE=deployment/buildno.txt
 
 TEST=0
 OUTFILE=build/menial.bin
+VERSION=0.0.$(shell cat $(BUILD_NUMBER_FILE))
+
 
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
@@ -39,10 +40,12 @@ clean:
 	rm -rf website/build/*
 	rm -rf menial.tar.gz
 
-website: src
+website: deb src
 	rm -rf website/build/*
 	@mkdir -p website/build/styles
-	python website/update_values.py
+	cp build/menial_$(VERSION).deb website/src/static/
+	python3 website/update_values.py
+
 	anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
 
 src:
@@ -58,5 +61,27 @@ docker-image: clean
 
 build-image:
 	docker build . -t menial_build -f BuildDockerfile
+
+deb: clean compile
+	mkdir build/menial_$(VERSION)
+	mkdir build/menial_$(VERSION)/DEBIAN
+	mkdir build/menial_$(VERSION)/usr
+	mkdir build/menial_$(VERSION)/usr/share
+	mkdir build/menial_$(VERSION)/usr/share/menial
+	mkdir build/menial_$(VERSION)/usr/bin
+	mkdir -p build/menial_$(VERSION)/etc/menial
+	mkdir -p build/menial_$(VERSION)/usr/share/menial/resources/static/
+	mkdir -p build/menial_$(VERSION)/usr/share/menial/http/
+
+	cp build/menial.bin build/menial_$(VERSION)/usr/bin/menial.bin
+	cp deployment/menial build/menial_$(VERSION)/usr/bin/menial
+	cp deployment/menial.json build/menial_$(VERSION)/etc/menial/
+	cp -r deployment/resources/ build/menial_$(VERSION)/usr/share/menial/
+	cp -r deployment/default build/menial_$(VERSION)/usr/share/menial/http/
+
+
+	echo "Package: menial\nVersion: $(VERSION)\nSection: base\nPriority: optional\nArchitecture: amd64\nDepends: python3 (>=3.6), python3-dev (>=3.6)\nDescription: Always at your service!\nMaintainer: Christian Kokoska (info@softcreate.de)" > build/menial_$(VERSION)/DEBIAN/control
+	dpkg-deb --build build/menial_$(VERSION)
+
 
 .PHONY: clean compile serve website src deploy

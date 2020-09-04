@@ -16,3 +16,4 @@ menial.tar.gz
 cert.pem
 key.pem
 auth.db
+*.deb
