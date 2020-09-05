@@ -42,6 +42,7 @@ clean:
 
 website: deb src
 	rm -rf website/build/*
+	rm website/src/static/*.deb
 	@mkdir -p website/build/styles
 	cp build/menial_$(VERSION).deb website/src/static/
 	python3 website/update_values.py
