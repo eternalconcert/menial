@@ -52,9 +52,8 @@ src:
 	tar -zcvf menial.tar.gz src/
 
 docker-image: clean
-	docker run -v $(PWD):/menial/ menial_build  # Compiles menial in a container
-	$(MAKE) src
-	$(MAKE) website
+	# docker run -v $(PWD):/menial/ menial_build  # Compiles menial in a container
+	$(MAKE) website  # creates sources and deb
 	docker build . -t menial
 	docker tag menial cloud.canister.io:5000/eternalconcert/menial:latest
 	docker push cloud.canister.io:5000/eternalconcert/menial:latest
