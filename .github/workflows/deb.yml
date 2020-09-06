@@ -52,6 +52,7 @@ jobs:
           cp -r deployment/resources/ menial_$VERSION/usr/share/menial/
           cp -r deployment/default menial_$VERSION/usr/share/menial/http/
           echo "Package: menial\nVersion: $VERSION\nSection: base\nPriority: optional\nArchitecture: amd64\nDepends: python3 (>=3.6), python3-dev (>=3.6)\nDescription: Always at your service!\nMaintainer: Christian Kokoska (info@softcreate.de)" > menial_$VERSION/DEBIAN/control
+          cat menial_$VERSION/DEBIAN/control
           dpkg-deb --build menial_$VERSION
 
       - name: Save artifact
