@@ -51,7 +51,14 @@ jobs:
           cp deployment/menial.json menial_$VERSION/etc/menial/
           cp -r deployment/resources/ menial_$VERSION/usr/share/menial/
           cp -r deployment/default menial_$VERSION/usr/share/menial/http/
-          echo "Package: menial\nVersion: $VERSION\nSection: base\nPriority: optional\nArchitecture: amd64\nDepends: python3 (>=3.6), python3-dev (>=3.6)\nDescription: Always at your service!\nMaintainer: Christian Kokoska (info@softcreate.de)" > menial_$VERSION/DEBIAN/control
+          echo "Package: menial" > menial_$VERSION/DEBIAN/control
+          echo "Version: $VERSION" >> menial_$VERSION/DEBIAN/control
+          echo "Section: base" >> menial_$VERSION/DEBIAN/control
+          echo "Priority: optional" >> menial_$VERSION/DEBIAN/control
+          echo "Architecture: amd64" >> menial_$VERSION/DEBIAN/control
+          echo "Depends: python3 (>=3.6), python3-dev (>=3.6)" >> menial_$VERSION/DEBIAN/control
+          echo "Description: Always at your service!" >> menial_$VERSION/DEBIAN/control
+          echo "Maintainer: Christian Kokoska (info@softcreate.de)" >> menial_$VERSION/DEBIAN/control
           cat menial_$VERSION/DEBIAN/control
           dpkg-deb --build menial_$VERSION
 
