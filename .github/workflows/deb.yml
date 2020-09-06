@@ -37,12 +37,12 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          mkdir build/menial_$VERSION
-          mkdir build/menial_$VERSION/DEBIAN
-          mkdir build/menial_$VERSION/usr
-          mkdir build/menial_$VERSION/usr/share
-          mkdir build/menial_$VERSION/usr/share/menial
-          mkdir build/menial_$VERSION/usr/bin
+          mkdir -p build/menial_$VERSION
+          mkdir -p build/menial_$VERSION/DEBIAN
+          mkdir -p build/menial_$VERSION/usr
+          mkdir -p build/menial_$VERSION/usr/share
+          mkdir -p build/menial_$VERSION/usr/share/menial
+          mkdir -p build/menial_$VERSION/usr/bin
           mkdir -p build/menial_$VERSION/etc/menial
           mkdir -p build/menial_$VERSION/usr/share/menial/resources/static/
           mkdir -p build/menial_$VERSION/usr/share/menial/http/
