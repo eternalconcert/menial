@@ -62,5 +62,5 @@ jobs:
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
-          name: menial_${{ env.GITHUB_RUN_NUMBER }}.deb
-          path: menial_${{ env.GITHUB_RUN_NUMBER }}.deb
+          name: menial_${{ github.run_number }}.deb
+          path: menial_${{ github.run_number }}.deb
