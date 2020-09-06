@@ -22,9 +22,9 @@ jobs:
         run: |
           g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8/ -l python3.8 -I src/include/ -lssl -lcrypto -D TEST=0
 
-      - name: Run a multi-line script
+      - name: Create .deb
         run: |
-          deployment/create_index.sh 0.1.$GITHUB_RUN_NUMBER
+          deployment/create_index.sh $GITHUB_RUN_NUMBER
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr
