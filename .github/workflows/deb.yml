@@ -34,33 +34,33 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          mkdir -p menial_$GITHUB_RUN_NUMBER
-          mkdir -p menial_$GITHUB_RUN_NUMBER/DEBIAN
-          mkdir -p menial_$GITHUB_RUN_NUMBER/usr
-          mkdir -p menial_$GITHUB_RUN_NUMBER/usr/share
-          mkdir -p menial_$GITHUB_RUN_NUMBER/usr/share/menial
-          mkdir -p menial_$GITHUB_RUN_NUMBER/usr/bin
-          mkdir -p menial_$GITHUB_RUN_NUMBER/etc/menial
-          mkdir -p menial_$GITHUB_RUN_NUMBER/usr/share/menial/resources/static/
-          mkdir -p menial_$GITHUB_RUN_NUMBER/usr/share/menial/http/
-          cp menial.bin menial_$GITHUB_RUN_NUMBER/usr/bin/menial.bin
-          cp deployment/menial menial_$GITHUB_RUN_NUMBER/usr/bin/menial
-          cp deployment/menial.json menial_$GITHUB_RUN_NUMBER/etc/menial/
-          cp -r deployment/resources/ menial_$GITHUB_RUN_NUMBER/usr/share/menial/
-          cp -r deployment/default menial_$GITHUB_RUN_NUMBER/usr/share/menial/http/
-          echo "Package: menial" > menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Version: $GITHUB_RUN_NUMBER" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Section: base" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Priority: optional" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Architecture: amd64" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Depends: python3 (>=3.6), python3-dev (>=3.6)" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Description: Always at your service!" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Maintainer: Christian Kokoska (info@softcreate.de)" >> menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          cat menial_$GITHUB_RUN_NUMBER/DEBIAN/control
-          dpkg-deb --build menial_$GITHUB_RUN_NUMBER
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/bin
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/etc/menial
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/resources/static/
+          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
+          cp menial.bin menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial.bin
+          cp deployment/menial menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial
+          cp deployment/menial.json menial_0.1.$GITHUB_RUN_NUMBER/etc/menial/
+          cp -r deployment/resources/ menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/
+          cp -r deployment/default menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
+          echo "Package: menial" > menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Version: 0.1.$GITHUB_RUN_NUMBER" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Section: base" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Priority: optional" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Architecture: amd64" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Depends: python3 (>=3.6), python3-dev (>=3.6)" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Description: Always at your service!" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Maintainer: Christian Kokoska (info@softcreate.de)" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          cat menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          dpkg-deb --build menial_0.1.$GITHUB_RUN_NUMBER
 
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
-          name: menial_${{ github.run_number }}.deb
-          path: menial_${{ github.run_number }}.deb
+          name: menial_0.1.${{ github.run_number }}.deb
+          path: menial_0.1.${{ github.run_number }}.deb
