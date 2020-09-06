@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+
+name: debian package
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  VERSION: $GITHUB_RUN_NUMBER
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3 python3-dev
+      - name: Build
+        run: |
+          g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.6m/ -l python3.6m -I src/include/ -lssl -lcrypto -D TEST=0
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          mkdir build/menial_$VERSION
+          mkdir build/menial_$VERSION/DEBIAN
+          mkdir build/menial_$VERSION/usr
+          mkdir build/menial_$VERSION/usr/share
+          mkdir build/menial_$VERSION/usr/share/menial
+          mkdir build/menial_$VERSION/usr/bin
+          mkdir -p build/menial_$VERSION/etc/menial
+          mkdir -p build/menial_$VERSION/usr/share/menial/resources/static/
+          mkdir -p build/menial_$VERSION/usr/share/menial/http/
+          cp build/menial.bin build/menial_$VERSION/usr/bin/menial.bin
+          cp deployment/menial build/menial_$VERSION/usr/bin/menial
+          cp deployment/menial.json build/menial_$VERSION/etc/menial/
+          cp -r deployment/resources/ build/menial_$VERSION/usr/share/menial/
+          cp -r deployment/default build/menial_$VERSION/usr/share/menial/http/
+          echo "Package: menial\nVersion: $VERSION\nSection: base\nPriority: optional\nArchitecture: amd64\nDepends: python3 (>=3.6), python3-dev (>=3.6)\nDescription: Always at your service!\nMaintainer: Christian Kokoska (info@softcreate.de)" > build/menial_$VERSION/DEBIAN/control
+          dpkg-deb --build build/menial_$VERSION
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: menial_$VERSION.deb
+          path: menial_$VERSION.deb
