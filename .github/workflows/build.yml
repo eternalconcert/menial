@@ -8,22 +8,6 @@ on:
 
 jobs:
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install python3 python3-dev
-    - name: Build
-      run: |
-        g++ $(find src/ -name "*.cpp") -o menial_test.bin -std=c++11 -pthread -Wall -I /usr/include/python3.6m/ -l python3.6m -I src/include/ -lssl -lcrypto -D TEST=1
-    - name: Test
-      run: |
-        ./menial_test.bin
-
-
   build:
     runs-on: ubuntu-latest
 
