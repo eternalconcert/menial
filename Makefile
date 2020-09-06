@@ -30,7 +30,7 @@ compile_static:
 	$(MAKE) index
 
 index:
-	@deployment/create_index.sh
+	@deployment/create_index.sh $(VERSION)
 
 serve:
 	@DEBUG=1 build/menial.bin menial.json

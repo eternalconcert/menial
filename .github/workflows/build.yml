@@ -24,6 +24,7 @@ jobs:
 
       - name: Run a multi-line script
         run: |
+          deployment/create_index.sh 0.1.$GITHUB_RUN_NUMBER
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr
