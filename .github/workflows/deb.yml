@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libpython3.8-dev
-          sudo apt-get install python3 python3.8-dev
+          ls -la /usr/include/
       - name: Build
         run: |
           g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.6m/ -l python3.6m -I src/include/ -lssl -lcrypto -D TEST=0
