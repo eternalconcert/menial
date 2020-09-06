@@ -30,7 +30,7 @@ jobs:
           ls -la /usr/include/
       - name: Build
         run: |
-          g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.6m/ -l python3.6m -I src/include/ -lssl -lcrypto -D TEST=0
+          g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8/ -l python3.8 -I src/include/ -lssl -lcrypto -D TEST=0
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
