@@ -57,7 +57,7 @@ jobs:
           path: menial_0.1.${{ github.run_number }}.deb
 
       - name: Build docker image
-        run: docker build . --file Dockerfile --tag menial
+        run: docker build . --file GithubDockerfile --tag menial
 
       - name: Log into GitHub Container Registry
       # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
