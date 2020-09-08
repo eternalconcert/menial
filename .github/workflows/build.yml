@@ -18,6 +18,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libpython3.8-dev
+          sudo apt-get install deployment/anvil_0.1.1.deb
       - name: Build
         run: |
           g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8/ -l python3.8 -I src/include/ -lssl -lcrypto -D TEST=0
@@ -57,7 +58,13 @@ jobs:
           path: menial_0.1.${{ github.run_number }}.deb
 
       - name: Build docker image
-        run: docker build . --file GithubDockerfile --tag menial
+        run: |
+          tar -zcvf menial.tar.gz src/
+	        mkdir -p website/build/styles
+	        cp menial_0.1.$GITHUB_RUN_NUMBER.deb website/src/static/
+	        python3 website/update_values.py
+	        anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
+          docker build . --file GithubDockerfile --tag menial
 
       - name: Log into GitHub Container Registry
       # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
