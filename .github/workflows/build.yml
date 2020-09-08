@@ -60,10 +60,10 @@ jobs:
       - name: Build docker image
         run: |
           tar -zcvf menial.tar.gz src/
-	        mkdir -p website/build/styles
-	        cp menial_0.1.$GITHUB_RUN_NUMBER.deb website/src/static/
-	        python3 website/update_values.py
-	        anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
+          mkdir -p website/build/styles
+          cp menial_0.1.$GITHUB_RUN_NUMBER.deb website/src/static/
+          python3 website/update_values.py
+          anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
           docker build . --file GithubDockerfile --tag menial
 
       - name: Log into GitHub Container Registry
