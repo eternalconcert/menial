@@ -1,7 +1,9 @@
-from datetime import datetime
+import sys
 import json
+from datetime import datetime
 from hashlib import sha256
 
+version = sys.argv[1]
 
 with open('menial.bin', 'rb') as menial:
     menial_hash = sha256(menial.read()).hexdigest()
@@ -12,8 +14,6 @@ with open('menial.tar.gz', 'rb') as menial_tar_gz:
     menial_tar_gz_hash = sha256(menial_tar_gz.read()).hexdigest()
     menial_tar_gz_hash = menial_tar_gz_hash[:32] + "<wbr>" + menial_tar_gz_hash[32:]
 
-with open('deployment/buildno.txt', 'r') as buildno_txt:
-    version = buildno_txt.read().strip()
 
 with open(f'menial_0.0.{version}.deb', 'rb') as deb:
     deb_hash = sha256(deb.read()).hexdigest()
