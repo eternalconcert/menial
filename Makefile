@@ -14,7 +14,7 @@ VERSION=0.0.$(shell cat $(BUILD_NUMBER_FILE))
 compile:
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	@mkdir -p build
-	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/$(PYTHON)/ -l $(PYTHON) -I src/include/ -lssl -lcrypto -D TEST=$(TEST)
+	g++ $(SOURCES) -o $(OUTFILE) -std=c++11 -pthread -Wall -I /usr/include/$(PYTHON)/ -l $(PYTHON) -I src/include/ -lssl -lcrypto -lz -D TEST=$(TEST)
 	$(MAKE) index
 
 

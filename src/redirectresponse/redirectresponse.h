@@ -7,7 +7,6 @@
 #include "../request/request.h"
 #include "../common/common.h"
 #include "../exceptions/exceptions.h"
-#include "../logger/logger.h"
 
 class RedirectResponse: public Response {
     public:

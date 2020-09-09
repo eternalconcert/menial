@@ -2,6 +2,11 @@
 #define COMMON_H
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <iostream>
+#include <stdexcept>
+#include <iomanip>
+#include <zlib.h>
 #include <algorithm>
 #include <sstream>
 #include <iostream>
@@ -30,5 +35,7 @@ std::string sha256hash(const std::string input);
 
 std::string getMimeType(std::string extension, std::string filePath);
 std::string currentDateTime();
+
+std::string compressString(std::string str, std::string compression);
 
 #endif

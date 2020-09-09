@@ -20,7 +20,7 @@ class FileResponse: public Response {
         std::string post();
         std::string head();
         std::string options();
-        std::string getHeader(std::string content, std::string fileName);
+        std::string getHeader(std::string content, std::string fileName, std::string compression);
 
         std::string notFound();
         std::string notModified();
@@ -40,7 +40,7 @@ class FileResponse: public Response {
 
     private:
         std::string guessFileType(std::string fileName);
-        std::string getContent();
+        std::string getContent(std::string compression);
         std::string getLastModifiedTime();
         std::string getLastModifiedHeader();
         bool contentMatch();
