@@ -2,8 +2,8 @@ FROM ubuntu:latest
 WORKDIR /data
 
 ADD website/build/ ./website/
-ADD website/pyresponse/ ./pyresponse/
-ADD src/python ./pyresponse/
+ADD website/pyweb/ ./pyweb/
+ADD src/python ./pyweb/
 ADD menial.bin ./website/static/
 COPY menial_*.deb ./website/static/
 COPY menial.tar.gz ./website/static/
