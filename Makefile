@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/
+export PYTHONPATH=$PYTHONPATH:src/python:testdata/testhost/:website/pyweb/
 
 PYTHON=python3.8
 SOURCES = $(shell find src/ -name "*.cpp")

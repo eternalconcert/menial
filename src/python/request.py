@@ -247,6 +247,9 @@ class App:
 
 
 def url_for(func_name, *args):
+    if func_name == 'static':
+        if App.static_files_url:
+            return App.static_files_url + args[0]
     for key, value in App.url_patterns.items():
         if value.__name__ == func_name:
             arg_idx = 0
