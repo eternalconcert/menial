@@ -103,8 +103,8 @@ std::string FileResponse::head() {
     std::string fileName = this->fileName;
 
     std::string result;
-    std::string content = this->getContent("");
-    result = this->getHeader(content, fileName, "");
+    std::string content = this->getContent();
+    result = this->getHeader(content, fileName);
     return result;
 }
 
@@ -119,28 +119,22 @@ std::string FileResponse::get() {
         return this->notModified();
     }
 
-    std::string requestHeaders = this->getRequest()->getHeaders();
-    std::string acceptEncodingTag = "Accept-Encoding: ";
+    std::string requestAcceptEncoding = this->getRequest()->getEncodings();
 
-    std::string compression = "";
-    if (requestHeaders.find(acceptEncodingTag) != std::string::npos) {
-
-        int headerEndPos = requestHeaders.find(acceptEncodingTag) + acceptEncodingTag.length();
-        std::string accpetEncodingValue = requestHeaders.substr(headerEndPos, std::string::npos);
-        accpetEncodingValue = accpetEncodingValue.substr(0, accpetEncodingValue.find("\n"));
-        if (accpetEncodingValue.find("gzip") != std::string::npos) {
-            compression = "gzip";
+    if (requestAcceptEncoding.length() > 0) {
+        if (requestAcceptEncoding.find("gzip") != std::string::npos) {
+            this->compression = "gzip";
             this->logger->debug("Using compression: gzip");
-        } else  if (accpetEncodingValue.find("deflate") != std::string::npos) {
-            compression = "deflate";
+        } else  if (requestAcceptEncoding.find("deflate") != std::string::npos) {
+            this->compression = "deflate";
             this->logger->debug("Using compression: deflate");
         };
     }
     std::string fileName = this->fileName;
     std::string result;
-    std::string content = this->getContent(compression);
+    std::string content = this->getContent();
 
-    result = this->getHeader(content, fileName, compression) + content;
+    result = this->getHeader(content, fileName) + content;
 
     return result;
 }
@@ -159,12 +153,12 @@ std::string FileResponse::notFound() {
 }
 
 
-std::string FileResponse::getHeader(std::string content, std::string fileName, std::string compression) {
+std::string FileResponse::getHeader(std::string content, std::string fileName) {
     std::string header = this->headerBase();
     header += "Content-Length: " + std::to_string(content.length()) + "\n";
     header += "Content-Type: " + this->guessFileType(fileName) + "\n";
-    if (compression.length() > 0) {
-        header += "Content-Encoding: " + compression + "\n";
+    if (this->compression.length() > 0) {
+        header += "Content-Encoding: " + this->compression + "\n";
     }
     if (this->status == 200) {
         header += this->getLastModifiedHeader() + "\n";
@@ -236,7 +230,7 @@ std::string FileResponse::getDirlisting() {
 }
 
 
-std::string FileResponse::getContent(std::string compression) {
+std::string FileResponse::getContent() {
 
     std::string filePath = this->filePath;
     std::string content;
@@ -248,23 +242,24 @@ std::string FileResponse::getContent(std::string compression) {
                     this->logger->warning("Intrusion try detected: " + targetPath);
                     throw FileNotFoundException("Intrusion try detected: " + targetPath);
                 }
-                return this->getDirlisting();
+                content = this->getDirlisting();
             }
         } catch (const FileNotFoundException &) {
             this->setStatus(404);
-            return readFile(this->hostConfig["staticdir"] + "404.html");
+            content = readFile(this->hostConfig["staticdir"] + "404.html");
+        }
+    }
+    if (content.empty()) {
+        try {
+            content = readFile(filePath);
+        } catch (const FileNotFoundException &) {
+            this->setStatus(404);
+            content = readFile(this->hostConfig["staticdir"] + "404.html");
         }
     }
 
-    try {
-        content = readFile(filePath);
-    } catch (const FileNotFoundException &) {
-        this->setStatus(404);
-        content = readFile(this->hostConfig["staticdir"] + "404.html");
-    }
-
-    if (compression.length() > 0) {
-        content = compressString(content, compression);
+    if (this->compression.length() > 0) {
+        content = compressString(content, this->compression);
     }
 
     return content;

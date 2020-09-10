@@ -16,11 +16,16 @@
 
 class FileResponse: public Response {
     public:
+        std::string filePath;
+        std::string fileName;
+        std::string target;
+        std::string compression;
+
         std::string get();
         std::string post();
         std::string head();
         std::string options();
-        std::string getHeader(std::string content, std::string fileName, std::string compression);
+        std::string getHeader(std::string content, std::string fileName);
 
         std::string notFound();
         std::string notModified();
@@ -28,19 +33,15 @@ class FileResponse: public Response {
         std::string getDirlisting();
         void setFilePath();
 
-        std::string filePath;
-        std::string fileName;
-        std::string target;
-
         FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {
-            this->target = getRequest()->getTarget();
+            this->target = this->getRequest()->getTarget();
             setFilePath();
             this->fileName = this->target.substr(this->target.find_last_of("/") + 1, this->target.length());
         };
 
     private:
         std::string guessFileType(std::string fileName);
-        std::string getContent(std::string compression);
+        std::string getContent();
         std::string getLastModifiedTime();
         std::string getLastModifiedHeader();
         bool contentMatch();

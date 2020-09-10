@@ -16,4 +16,4 @@ menial.tar.gz
 cert.pem
 key.pem
 auth.db
-*.deb
+website/src/static/*.deb

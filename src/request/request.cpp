@@ -39,6 +39,7 @@ Request::Request(std::string message, std::string client_ip, bool ssl, Config* c
     this->setHostAndPort();
     this->setTarget();
     this->setUserAgent();
+    this->setEncodings();
 }
 
 
@@ -80,7 +81,7 @@ void Request::setHostAndPort() {
     if (host.find(":") != std::string::npos) {
         port = host;
         host = host.substr(0, host.find(":"));
-        port = port.erase(0, host.length() + 1);
+        port = port.substr(port.find(":") + 1, port.length());
     }
     this->host = host;
     this->port = port;
@@ -102,6 +103,16 @@ void Request::setUserAgent() {
     std::string userAgent = headers.substr(0, headers.find("\n") - 1);
     this->userAgent = userAgent;
 }
+
+
+void Request::setEncodings() {
+    std::string headers = this->headers;
+    std::string fieldName = "Accept-Encoding: ";
+    headers.erase(0, headers.find(fieldName) + fieldName.length());
+    std::string encodings = headers.substr(0, headers.find("\n") - 1);
+    this->encodings = encodings;
+}
+
 
 bool Request::authenticate() {
     std::string authFile = this->config->hosts[this->getVirtualHost()]["authfile"];
@@ -207,4 +218,8 @@ std::string Request::getTarget() {
 
 std::string Request::getUserAgent() {
     return this->userAgent;
+};
+
+std::string Request::getEncodings() {
+    return this->encodings;
 };
