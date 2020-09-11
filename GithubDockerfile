@@ -6,7 +6,7 @@ ADD website/pyweb/ ./pyweb/
 ADD src/python ./pyweb/
 ADD build/menial.bin ./website/static/
 COPY build/menial_*.deb ./website/static/
-COPY build/menial.tar.gz ./website/static/
+COPY menial.tar.gz ./website/static/
 
 COPY build/menial_*.deb .
 RUN apt-get update && apt-get install -y python3 python3-dev
