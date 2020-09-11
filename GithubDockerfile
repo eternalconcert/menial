@@ -4,7 +4,7 @@ WORKDIR /data
 ADD website/build/ ./website/
 ADD website/pyweb/ ./pyweb/
 ADD src/python ./pyweb/
-ADD menial.bin ./website/static/
+ADD build/menial.bin ./website/static/
 COPY build/menial_*.deb ./website/static/
 COPY build/menial.tar.gz ./website/static/
 
