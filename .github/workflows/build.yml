@@ -28,36 +28,35 @@ jobs:
       - name: Create .deb
         run: |
           deployment/create_index.sh $GITHUB_RUN_NUMBER
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/bin
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/etc/menial
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/resources/static/
-          mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
-          cp build/menial.bin menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial.bin
-          cp deployment/menial menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial
-          cp deployment/menial.json menial_0.1.$GITHUB_RUN_NUMBER/etc/menial/
-          cp -r deployment/resources/ menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/
-          cp -r deployment/default menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
-          echo "Package: menial" > menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Version: 0.1.$GITHUB_RUN_NUMBER" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Section: base" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Priority: optional" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Architecture: amd64" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Depends: python3 (>=3.6), python3-dev (>=3.6)" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Description: Always at your service!" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          echo "Maintainer: Christian Kokoska (info@softcreate.de)" >> menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          cat menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
-          dpkg-deb --build menial_0.1.$GITHUB_RUN_NUMBER
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/usr
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/usr/share
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/usr/bin
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/etc/menial
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/resources/static/
+          mkdir -p build/menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
+          cp build/menial.bin build/menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial.bin
+          cp deployment/menial build/menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial
+          cp deployment/menial.json build/menial_0.1.$GITHUB_RUN_NUMBER/etc/menial/
+          cp -r deployment/resources/ build/menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/
+          cp -r deployment/default build/menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
+          echo "Package: menial" > build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Version: 0.1.$GITHUB_RUN_NUMBER" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Section: base" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Priority: optional" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Architecture: amd64" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Depends: python3 (>=3.6), python3-dev (>=3.6)" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Description: Always at your service!" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          echo "Maintainer: Christian Kokoska (info@softcreate.de)" >> build/menial_0.1.$GITHUB_RUN_NUMBER/DEBIAN/control
+          dpkg-deb --build build/menial_0.1.$GITHUB_RUN_NUMBER
 
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
           name: menial_0.1.${{ github.run_number }}.deb
-          path: menial_0.1.${{ github.run_number }}.deb
+          path: build/menial_0.1.${{ github.run_number }}.deb
 
       - name: Build docker image
         run: |
