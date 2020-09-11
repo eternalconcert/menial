@@ -22,7 +22,7 @@ jobs:
           sudo apt-get install ./deployment/anvil_0.1.1.deb
       - name: Build
         run: |
-          g++ $(find src/ -name "*.cpp") -o menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8/ -l python3.8 -I src/include/ -lssl -lcrypto -lz -D TEST=0
+          g++ $(find src/ -name "*.cpp") -o build/menial.bin -std=c++11 -pthread -Wall -I /usr/include/python3.8/ -l python3.8 -I src/include/ -lssl -lcrypto -lz -D TEST=0
 
       - name: Create .deb
         run: |
@@ -36,7 +36,7 @@ jobs:
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/etc/menial
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/resources/static/
           mkdir -p menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/http/
-          cp menial.bin menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial.bin
+          cp build/menial.bin menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial.bin
           cp deployment/menial menial_0.1.$GITHUB_RUN_NUMBER/usr/bin/menial
           cp deployment/menial.json menial_0.1.$GITHUB_RUN_NUMBER/etc/menial/
           cp -r deployment/resources/ menial_0.1.$GITHUB_RUN_NUMBER/usr/share/menial/

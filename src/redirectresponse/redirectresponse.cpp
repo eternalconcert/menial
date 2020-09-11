@@ -17,7 +17,7 @@ std::string RedirectResponse::methodNotAllowed() {
 }
 
 std::string RedirectResponse::headerBase() {
-    std::string header = "HTTP/1.0 ";
+    std::string header = "HTTP/1.1 ";
     header += this->getStatusMessage();
     header += "\n";
     header += "Location: " + this->hostConfig["target"];

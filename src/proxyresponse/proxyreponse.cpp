@@ -17,6 +17,7 @@ std::string ProxyResponse::readFromUpstream() {
 
     std::string upstreamHostName = this->hostConfig["upstream"];
     upstreamHostName.erase(0, upstreamHostName.find(":") + 3);
+    std::string upstreamHost = upstreamHostName;
     std::string upstreamPortStr = upstreamHostName;
 
     upstreamHostName.erase(upstreamHostName.find(":"), std::string::npos);
@@ -41,7 +42,10 @@ std::string ProxyResponse::readFromUpstream() {
     // std::string outMessage = "GET / HTTP/1.1\nHost: " + upstreamHostName + ":" +
     //     std::to_string(upstreamPort) + "\n\n" + this->request->getBody();
 
-    std::string outMessage = this->request->getHeaders() + "\n\n" + this->request->getBody();
+    std::string origMethodLine = this->request->getHeaders();
+    origMethodLine = origMethodLine.substr(0, origMethodLine.find("\n"));
+    std::string outMessage = origMethodLine + "\nHost: " +  upstreamHost + "\n\n" + this->request->getBody();
+
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {

@@ -42,10 +42,10 @@ clean:
 
 website: deb src
 	rm -rf website/build/*
-	rm website/src/static/*.deb
+	rm -f website/src/static/*.deb
 	@mkdir -p website/build/styles
 	cp build/menial_$(VERSION).deb website/src/static/
-	python3 website/update_values.py
+	python3 website/update_values.py $(VERSION)
 
 	anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
 
