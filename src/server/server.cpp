@@ -10,7 +10,7 @@ Server::Server(int portno, Config* config, Logger* logger) {
 };
 
 
-void Server::checkHeaderLengh(int idx) {
+void Server::checkHeaderLength(int idx) {
     // Check header length
     if (idx > MAX_HEADER_LENGTH) {
         this->logger->warning(
@@ -51,7 +51,7 @@ std::string Server::readPlain(int sockfd) {
             throw CouldNotParseHeaders("Not a plain connection. Maybe it is TLS?");
         }
         if (!foundHeaderEnd) {
-            this->checkHeaderLengh(idx);
+            this->checkHeaderLength(idx);
         }
     } while ((bytesReceived == BUFFER_LIMIT) and not (idx > MAX_MESSAGE_LENGTH));
 
@@ -90,7 +90,7 @@ std::string Server::readSSL(SSL *sockfd) {
             idx++;
         }
         if (!foundEnd) {
-            this->checkHeaderLengh(idx);
+            this->checkHeaderLength(idx);
         }
     } while ((bytesReceived == BUFFER_LIMIT) and not (idx > MAX_MESSAGE_LENGTH));
 

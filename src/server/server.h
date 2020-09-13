@@ -23,7 +23,7 @@ class Server {
         void runSSL();
         void sendReply(std::string replyMessage, int newsockfd);
         void sendError(int status, int sockfd);
-        void checkHeaderLengh(int idx);
+        void checkHeaderLength(int idx);
         Server(int portno, Config* config, Logger* logger);
 
     private:

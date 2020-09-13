@@ -1,7 +1,26 @@
 #include "proxyresponse.h"
 
+
+std::string readResponse(int sockfd) {
+    std::string response;
+    char buffer[BUFFER_SIZE];
+    bzero(buffer, BUFFER_SIZE);
+    int bytesRead;
+    do {
+        bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, 0);
+        for (int j = 0; j < bytesRead; j++) {
+            response += buffer[j];
+        }
+        if (bytesRead < 0) {
+            throw SocketError("Error: Reading from socket");
+        }
+    } while (bytesRead > 0);
+    return response;
+}
+
+
 std::string ProxyResponse::readFromUpstream() {
-    int sockfd, bytesRead, n;
+    int sockfd, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
@@ -39,34 +58,21 @@ std::string ProxyResponse::readFromUpstream() {
         this->logger->error("Error: Cannot connect");
     }
 
-    // std::string outMessage = "GET / HTTP/1.1\nHost: " + upstreamHostName + ":" +
-    //     std::to_string(upstreamPort) + "\n\n" + this->request->getBody();
-
     std::string origMethodLine = this->request->getHeaders();
+    // Rewrite headers
     origMethodLine = origMethodLine.substr(0, origMethodLine.find("\n"));
     std::string outMessage = origMethodLine + "\nHost: " +  upstreamHost + "\n\n" + this->request->getBody();
-
+    // End rewrite headers
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {
         throw SocketError("Error: Cannot write to socket");
     }
 
-    char buffer[BUFFER_SIZE];
-    std::string result;
-    bzero(buffer, BUFFER_SIZE);
-    do {
-        bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, 0);
-        for (int j = 0; j < bytesRead; j++) {
-            result += buffer[j];
-        }
-        if (bytesRead < 0) {
-            throw SocketError("Error: Reading from socket");
-        }
-    } while (bytesRead > 0);
 
+    std::string upstreamResponse = readResponse(sockfd);
     close(sockfd);
-    return result;
+    return upstreamResponse;
 }
 
 
@@ -81,7 +87,7 @@ std::string ProxyResponse::getContent() {
     try {
         result = this->readFromUpstream();
     } catch (const SocketError &) {
-        printf("%s\n", "ljdkfdl;kfglk;dfjl;kdsmglkdsfnmglkjdsfglk");
+        this->logger->error("Cannot read from upstream");
     }
 
     std::string preHeader = result;
