@@ -5,7 +5,7 @@ std::string readResponse(int sockfd) {
     char buffer[BUFFER_SIZE];
     bzero(buffer, BUFFER_SIZE);
     int bytesRead;
-    while((bytesRead = read(sockfd, buffer, BUFFER_LIMIT)) > 0) {
+    while((bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, SOCK_NONBLOCK)) > 0) {
         for (int j = 0; j < bytesRead; j++) {
             response += buffer[j];
         }
