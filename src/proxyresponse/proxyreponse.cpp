@@ -1,23 +1,17 @@
 #include "proxyresponse.h"
 
-
 std::string readResponse(int sockfd) {
     std::string response;
     char buffer[BUFFER_SIZE];
     bzero(buffer, BUFFER_SIZE);
     int bytesRead;
-    do {
-        bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, 0);
+    while((bytesRead = read(sockfd, buffer, BUFFER_LIMIT)) > 0) {
         for (int j = 0; j < bytesRead; j++) {
             response += buffer[j];
         }
-        if (bytesRead < 0) {
-            throw SocketError("Error: Reading from socket");
-        }
-    } while (bytesRead > 0);
+    }
     return response;
 }
-
 
 std::string ProxyResponse::readFromUpstream() {
     int sockfd, n;
@@ -68,8 +62,6 @@ std::string ProxyResponse::readFromUpstream() {
     if (n < 0) {
         throw SocketError("Error: Cannot write to socket");
     }
-
-
     std::string upstreamResponse = readResponse(sockfd);
     close(sockfd);
     return upstreamResponse;
@@ -90,11 +82,11 @@ std::string ProxyResponse::getContent() {
         this->logger->error("Cannot read from upstream");
     }
 
-    std::string preHeader = result;
-    std::string postHeader = result;
-    postHeader.erase(0, (postHeader.find("Server:") + postHeader.find("\n")));
-    preHeader.erase(preHeader.find("Server:"), std::string::npos);
+    // std::string preHeader = result;
+    // std::string postHeader = result;
+    // postHeader.erase(0, (postHeader.find("Server:") + postHeader.find("\n")));
+    // preHeader.erase(preHeader.find("Server:"), std::string::npos);
 
-    return preHeader + "Server: menial\n" + postHeader;
-
+    return result;
+    //return preHeader + "Server: menial\n" + postHeader;
 }
