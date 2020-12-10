@@ -229,6 +229,11 @@ std::string FileResponse::getDirlisting() {
     return listTemplate;
 }
 
+std::string FileResponse::make404() {
+    this->setStatus(404);
+    return readFile(this->hostConfig["staticdir"] + "404.html");
+}
+
 
 std::string FileResponse::getContent() {
 
@@ -245,16 +250,23 @@ std::string FileResponse::getContent() {
                 content = this->getDirlisting();
             }
         } catch (const FileNotFoundException &) {
-            this->setStatus(404);
-            content = readFile(this->hostConfig["staticdir"] + "404.html");
+            content = make404();
         }
     }
     if (content.empty()) {
         try {
             content = readFile(filePath);
         } catch (const FileNotFoundException &) {
-            this->setStatus(404);
-            content = readFile(this->hostConfig["staticdir"] + "404.html");
+            std::string defaultFile = this->hostConfig["defaultfile"];
+            if (defaultFile == "") {
+                content = make404();
+            } else {
+                try {
+                    content = readFile(this->hostConfig["root"] + defaultFile);
+                } catch (const FileNotFoundException &) {
+                    content = make404();
+                }
+            }
         }
     }
 

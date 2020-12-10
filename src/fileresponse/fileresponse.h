@@ -27,6 +27,8 @@ class FileResponse: public Response {
         std::string options();
         std::string getHeader(std::string content, std::string fileName);
 
+        std::string make404();
+
         std::string notFound();
         std::string notModified();
 

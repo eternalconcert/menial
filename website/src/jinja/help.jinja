@@ -117,6 +117,9 @@
                         <li>
                             <b>dirlisting: </b> (Optional, default: false) If set to true, the files and folders of the current directory are listet and no default document will be delievered. More about <a href="{{ url_for('documentation.html') }}#dirlisting">directory listing</a>.
                         </li>
+                        <li>
+                            <b>defaultfile: </b> (Optional, default: blank) File which will be delievered whenever the requested file cannot be found. A 404 will be returned only if the configured default file itself cannot be found. Otherwise the default file will always be returned. If the requested file can be found, the default file will not be returned. This option can be used to serve bundled JavaScript files which handle routes by themselves but to also return e.g. CSS files.</a>.
+                        </li>
                     </ul>
                 </ul>
             </li>

@@ -109,6 +109,12 @@ void Config::update(std::string configPath) {
             throw ConfigException("No upstream specified for host: " + host);
         }
 
+        std::string defaultfile = "";
+        if (document["hosts"][host.c_str()].HasMember("defaultfile")) {
+            defaultfile = document["hosts"][host.c_str()]["defaultfile"].GetString();
+        }
+        this->hosts[host]["defaultfile"] = defaultfile;
+
         bool dirlisting = false;
         if (document["hosts"][host.c_str()].HasMember("dirlisting")) {
             dirlisting = document["hosts"][host.c_str()]["dirlisting"].GetBool();
