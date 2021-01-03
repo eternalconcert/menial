@@ -10,7 +10,7 @@
         },
         "menial.localhost:9000": {
             "handler": "file",
-            "staticdir": "static/",
+            "staticdir": "deployment/resources/static/",
             "root": "website/build/"
         },
         "selenium.localhost:9000": {
@@ -20,7 +20,7 @@
         },
         "files.localhost:9000": {
             "handler": "file",
-            "root": "/home/",
+            "root": "/home/christian/",
             "dirlisting": true
         },
         "tmmk.localhost:9000": {
@@ -29,7 +29,7 @@
         },
         "python.localhost:9999": {
             "handler": "python",
-            "root": "pyresponse:application"
+            "root": "menial:application"
         },
         "eternalconcert.localhost:9999": {
             "handler": "python",

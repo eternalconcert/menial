@@ -24,6 +24,7 @@ class Config {
         bool iplogging;
         bool debug;
         static Config* getConfig(std::string path);
+        void selfCheck();
 
     private:
         static Config *_instance;

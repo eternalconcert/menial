@@ -61,6 +61,8 @@ int main(int argc, char *argv[]) {
     for (threadItr = threads.begin(); threadItr != threads.end(); threadItr++) {
         threadItr->join();
     }
+    delete config;
+    delete logger;
     return 0;
 }
 #endif

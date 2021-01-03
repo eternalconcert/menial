@@ -155,7 +155,6 @@ std::string Request::getResponse() {
     Response *response = _getHandler(this, this->config, this->logger);
     bool authenticated;
     try {
-        // Authenticate
         authenticated = this->authenticate();
     }
     catch (const FileNotFoundException &) {

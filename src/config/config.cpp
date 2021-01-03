@@ -75,6 +75,10 @@ void Config::update(std::string configPath) {
     this->resources = resources;
 
     // hosts
+    if (!document.HasMember("hosts")) {
+        throw ConfigException("No config for hosts defined.");
+    }
+
     Value& hosts = document["hosts"];
     if (!hosts.IsObject()) {
         throw ConfigException("No valid config value for hosts defined.");
@@ -212,16 +216,31 @@ void Config::update(std::string configPath) {
     }
 }
 
+void Config::selfCheck() {
+    std::map<std::string, std::map<std::string, std::string>>::iterator hostItr = this->hosts.begin();
+    for (hostItr = this->hosts.begin(); hostItr != this->hosts.end(); hostItr++) {
+
+        if (hostItr->second["handler"] == "file") {
+            try {
+                readFile(this->hosts[hostItr->first]["staticdir"] + "404.html");
+            } catch (const FileNotFoundException &) {
+                printf("404.html cannot be found for host: %s\n", hostItr->first.c_str());
+                exit(1);
+            };
+        };
+    }
+}
+
 Config* Config::_instance = 0;
 
-Config::Config() {
-};
+Config::Config() {};
 
 
 Config* Config::getConfig(std::string path) {
     if (_instance == 0) {
         _instance = new Config();
         _instance->update(path);
+        _instance->selfCheck();
     }
     return _instance;
 }
