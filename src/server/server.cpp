@@ -110,7 +110,7 @@ int makeMasterSocket(Logger *logger) {
         throw SocketError();
     }
     int option = 1;
-    if(setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option))) {
+    if(setsockopt(master_socket, SOL_SOCKET, SO_KEEPALIVE, &option, sizeof(option))) {
         logger->error("Unable to setup socket options");
         throw SocketError();
     }
