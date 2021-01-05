@@ -1,28 +1,23 @@
 #include "proxyresponse.h"
 
+
 std::string readResponse(int sockfd, bool keepAlive) {
     std::string response;
     char buffer[BUFFER_SIZE];
     bzero(buffer, BUFFER_SIZE);
-    int bytesRead;
-    //if (keepAlive) {
-    //    condition = (response.length() != expectedLength) || (expectedLength == 0);
-    //}
-    // size_t expectedLength = 0;
-    // int contentLength = -1;
-    while((bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, SOCK_NONBLOCK)) > 0) {
+
+    size_t expectedLength = 0;
+    int bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, SOCK_NONBLOCK);
+    while((keepAlive && (!(response.length() >= expectedLength) || (expectedLength == 0))) || (!keepAlive && bytesRead > 0)) {
         for (int j = 0; j < bytesRead; j++) {
             response += buffer[j];
         }
-        // if (keepAlive) {
-        //     if (!(contentLength > -1) && (response.find("Content-Length:") != std::string::npos)) {
-        //         std::string contentLengthHeaderValue = response.substr(response.find("Content-Length:") + 16, response.find("\n", response.find("Content-Length:")));
-        //         contentLength = std::stoi(contentLengthHeaderValue);
-        //     }
-        //     if ((expectedLength == 0) && (response.find("\n\n") != std::string::npos)) {
-        //         expectedLength = response.find("\n\n") + 1 + contentLength;
-        //     }
-        // }
+
+        if (!(expectedLength > 0) && (response.find("Content-Length:") != std::string::npos)) {
+            std::string contentLengthHeaderValue = response.substr(response.find("Content-Length:") + 16, response.find("\n", response.find("Content-Length:")));
+            expectedLength = std::stoi(contentLengthHeaderValue);
+        }
+        bytesRead = recv(sockfd, buffer, BUFFER_LIMIT, SOCK_NONBLOCK);
     }
     return response;
 }
@@ -35,8 +30,8 @@ std::string ProxyResponse::readFromUpstream() {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     int option = 1;
-    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
-
+    int sockOpt = this->config->debug ? SO_REUSEADDR : SO_KEEPALIVE;
+    setsockopt(sockfd, SOL_SOCKET, sockOpt, &option, sizeof(option));
 
     if (sockfd < 0) {
         this->logger->error("Error: Cannot open socket");
@@ -71,11 +66,11 @@ std::string ProxyResponse::readFromUpstream() {
     origMethodLine = origMethodLine.substr(0, origMethodLine.find("\n"));
     std::string origHeadersRest = this->request->getHeaders();
     // TODO: Do not ignore keep-alive
+    bool keepAlive = origHeadersRest.find("Connection: keep-alive") != std::string::npos;
     origHeadersRest = origHeadersRest.replace(origHeadersRest.find("Connection: keep-alive"), origHeadersRest.find("Connection: keep-alive") + 22, "Connection: close\n");
     origHeadersRest = origHeadersRest.substr(nthOccurance(origHeadersRest, "\n", 2) + 1, origHeadersRest.find("\n\n"));
     std::string outMessage = origMethodLine + "\nHost: " +  upstreamHost + "\n" + origHeadersRest + "\n\n" + this->request->getBody();
     // End rewrite headers
-    bool keepAlive = origHeadersRest.find("Connection: keep-alive") != std::string::npos;
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {

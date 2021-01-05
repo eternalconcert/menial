@@ -103,14 +103,15 @@ std::string Server::readSSL(SSL *sockfd) {
 }
 
 
-int makeMasterSocket(Logger *logger) {
+int makeMasterSocket(Logger *logger, Config *config) {
     int master_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (master_socket == 0) {
         logger->error("Unable to setup master_socket");
         throw SocketError();
     }
     int option = 1;
-    if(setsockopt(master_socket, SOL_SOCKET, SO_KEEPALIVE, &option, sizeof(option))) {
+    int sockOpt = config->debug ? SO_REUSEADDR : SO_KEEPALIVE;
+    if(setsockopt(master_socket, SOL_SOCKET, sockOpt, &option, sizeof(option))) {
         logger->error("Unable to setup socket options");
         throw SocketError();
     }
@@ -151,7 +152,7 @@ void Server::runPlain() {
         client_socket[i] = 0;
     }
 
-    int master_socket = makeMasterSocket(this->logger);
+    int master_socket = makeMasterSocket(this->logger, this->config);
     struct sockaddr_in serv_addr = makeServerAddr(this->portno, master_socket, this->logger);
     int addrlen = sizeof(serv_addr);
 
@@ -265,7 +266,7 @@ void Server::runSSL() {
         throw (ConfigException("Unable to read certfile " + std::string(certFile)));
     }
 
-    int master_socket = makeMasterSocket(this->logger);
+    int master_socket = makeMasterSocket(this->logger, this->config);
     struct sockaddr_in serv_addr = makeServerAddr(this->portno, master_socket, this->logger);
     int addrlen = sizeof(serv_addr);
 
