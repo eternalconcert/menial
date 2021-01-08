@@ -5,7 +5,7 @@
 #include "../logger/logger.h"
 #include "../request/request.h"
 
-static const std::string HEADERDELIM = "\n\n";
+static const std::string HEADERDELIM = "\n\r\n";
 
 class Response {
     public:

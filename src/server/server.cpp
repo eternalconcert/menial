@@ -54,8 +54,8 @@ std::string Server::readPlain(int sockfd) {
         }
     } while ((bytesReceived == BUFFER_LIMIT) and not (idx > MAX_MESSAGE_LENGTH));
 
-    this->logger->debug("Server::getIncomingRequest message length: " + std::to_string(message.size()));
-    this->logger->debug("Server::getIncomingRequest message content:\n" + message);
+    this->logger->debug("Raw incoming message length: " + std::to_string(message.size()));
+    this->logger->debug("Raw incoming message content:\n" + message);
 
     if (message.length() == 0) {
         throw CouldNotParseHeaders("Could not parse headers.");

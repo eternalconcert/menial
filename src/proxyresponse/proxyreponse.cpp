@@ -67,10 +67,11 @@ std::string ProxyResponse::readFromUpstream() {
     std::string origHeadersRest = this->request->getHeaders();
     // TODO: Do not ignore keep-alive
     bool keepAlive = origHeadersRest.find("Connection: keep-alive") != std::string::npos;
-    origHeadersRest = origHeadersRest.replace(origHeadersRest.find("Connection: keep-alive"), origHeadersRest.find("Connection: keep-alive") + 22, "Connection: close\n");
+    // origHeadersRest = origHeadersRest.replace(origHeadersRest.find("Connection: keep-alive"), origHeadersRest.find("Connection: keep-alive") + 22, "Connection: close\n");
     origHeadersRest = origHeadersRest.substr(nthOccurance(origHeadersRest, "\n", 2) + 1, origHeadersRest.find("\n\n"));
-    std::string outMessage = origMethodLine + "\nHost: " +  upstreamHost + "\n" + origHeadersRest + "\n\n" + this->request->getBody();
+    std::string outMessage = origMethodLine + "\nHost: " +  upstreamHost + "\n" + origHeadersRest + HEADERDELIM + this->request->getBody();
     // End rewrite headers
+
     n = write(sockfd, outMessage.c_str(), strlen(outMessage.c_str()));
 
     if (n < 0) {
@@ -82,16 +83,14 @@ std::string ProxyResponse::readFromUpstream() {
 }
 
 
-std::string ProxyResponse::get() {
-    std::string content = this->getContent();
-    return content;
-}
-
-
-std::string ProxyResponse::getContent() {
+std::string ProxyResponse::forward() {
     std::string result;
     try {
         result = this->readFromUpstream();
+        std::string start = result.substr(0, result.find(HEADERDELIM) - sizeof(HEADERDELIM));
+        std::string rest = result.substr(result.find(HEADERDELIM) + 1, std::string::npos);
+        result = start + "\n" + this->hostConfig["additionalheaders"] + "X-Proxied-By: menial\n" + rest;
+        this->logger->debug("Upstreaming Message: " + result);
     } catch (const SocketError &error) {
         this->logger->error("Cannot read from upstream: " + error.message);
     }

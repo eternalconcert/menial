@@ -12,9 +12,10 @@ void DefaultLogHandler::log(std::string level, std::string message) {
     logColors["highlight"] = "\x1b[47m\x1b[31m"; /* green */
     logColors["reset"] = "\x1b[0m";
 
+    size_t lengthLimit = 5000;
     time_t t = time(0);
     struct tm *now = localtime(&t);
-    printf("%s[%s][%i-%02i-%02i %02i:%02i:%02i]: %s%s\n",
+    printf("%s[%s][%i-%02i-%02i %02i:%02i:%02i]: %s%s%s\n",
            logColors.find(level)->second.c_str(),
            level.c_str(),
            (now->tm_year + 1900),
@@ -23,7 +24,8 @@ void DefaultLogHandler::log(std::string level, std::string message) {
            now->tm_hour,
            now->tm_min,
            now->tm_sec,
-           message.c_str(),
+           message.substr(0, lengthLimit).c_str(),
+           message.length() > lengthLimit ? std::string("... (" + std::to_string(message.length() - lengthLimit) + " characters truncated)").c_str() : "",
            logColors["reset"].c_str());
 };
 

@@ -24,7 +24,19 @@
 
 class ProxyResponse: public Response {
     public:
-        std::string get();
+        std::string forward();
+        std::string get() {
+           return this->forward();
+        };
+        std::string options() {
+           return this->forward();
+        };
+        std::string head() {
+           return this->forward();
+        };
+        std::string post() {
+           return this->forward();
+        };
         std::string readFromUpstream();
         std::string target;
 

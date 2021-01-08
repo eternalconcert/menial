@@ -53,15 +53,15 @@ void Request::setClientIp(std::string ip) {
 
 void Request::parseMessage(std::string message) {
     this->headers = message.substr(0, message.find("\n\r\n"));
-    this->logger->debug("From messages extracted headers:\n" + this->headers);
+    this->logger->debug("Incoming headers:\n" + this->headers);
     this->body = message.substr(message.find("\n\r\n") + 3, std::string::npos);
-    this->logger->debug("From messages extracted body:\n" + this->body);
+    this->logger->debug("Incoming body:\n" + this->body);
 
     std::string paramString = this->headers;
     paramString.erase(0, paramString.find(" ") + 1);
     paramString.erase(paramString.find(" "), paramString.length());
     paramString.erase(0, paramString.find("?"));
-    this->logger->debug("Get Request params " + paramString);
+    this->logger->debug("Incoming Request params " + paramString);
     this->paramString = paramString;
 }
 
