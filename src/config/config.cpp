@@ -93,6 +93,13 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["root"] = root;
 
+        std::string rootPrefix = "";
+        if (host.find("/") != std::string::npos) {
+            rootPrefix = host;
+            rootPrefix = rootPrefix.substr(rootPrefix.find("/"), std::string::npos);
+        }
+        this->hosts[host]["rootPrefix"] = rootPrefix;
+
         std::string handler = "file";
         if (document["hosts"][host.c_str()].HasMember("handler")) {
             handler = document["hosts"][host.c_str()]["handler"].GetString();

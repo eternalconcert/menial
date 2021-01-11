@@ -121,7 +121,7 @@ bool Request::authenticate() {
         return true;
     }
 
-    this->logger->debug("Access is to " + this->getVirtualHost() + " is restricted by " + authFile);
+    this->logger->debug("Access to " + this->getVirtualHost() + " is restricted by " + authFile);
     bool authenticated = false;
     std::string headers = this->headers;
     std::string authDelim = "Authorization: Basic ";
@@ -198,8 +198,13 @@ std::string Request::getBody() {
     return this->body;
 };
 
+
 std::string Request::getVirtualHost() {
     std::string virtualHost = this->host + ":" + this->port;
+    std::string locationHost = virtualHost + this->getTarget().substr(0, nthOccurance(this->getTarget(), "/", 1) + 1);
+    if (this->config->hosts[locationHost]["handler"] != "") {
+        virtualHost = locationHost;
+    }
 
     if (this->config->hosts[virtualHost]["handler"] == "") {
         virtualHost.erase(0, virtualHost.find(":"));
