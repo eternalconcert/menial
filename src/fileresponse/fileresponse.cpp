@@ -68,12 +68,17 @@ void FileResponse::setFilePath() {
 
     targetPath = std::regex_replace(targetPath, std::regex("%20"), " ");
 
+    std::string rootPrefix = this->hostConfig["rootPrefix"];
+    if (rootPrefix.length() != 0) {
+        targetPath = std::regex_replace(targetPath, std::regex(rootPrefix.c_str()), "/");
+    };
+
     std::string paramString = this->getRequest()->getGetParams();
     if (paramString.length() > 0) {
         targetPath.erase(targetPath.find(paramString));
     }
 
-    if (targetPath == "/" and this->hostConfig["dirlisting"] == "false") {
+    if (targetPath == "/" && this->hostConfig["dirlisting"] == "false") {
         targetPath = this->hostConfig["defaultdocument"];
         this->logger->debug("No file on / requested, using default target: " + targetPath);
     }
@@ -83,8 +88,6 @@ void FileResponse::setFilePath() {
     }
     this->logger->debug("Requested document: " + targetPath);
 
-    std::string rootPrefix = this->hostConfig["rootPrefix"];
-    targetPath = std::regex_replace(targetPath, std::regex(rootPrefix.c_str()), "");
     this->filePath = this->hostConfig["root"] + targetPath;
     this->logger->debug("Filepath: " + this->filePath);
 };

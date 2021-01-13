@@ -201,9 +201,18 @@ std::string Request::getBody() {
 
 std::string Request::getVirtualHost() {
     std::string virtualHost = this->host + ":" + this->port;
-    std::string locationHost = virtualHost + this->getTarget().substr(0, nthOccurance(this->getTarget(), "/", 1) + 1);
-    if (this->config->hosts[locationHost]["handler"] != "") {
-        virtualHost = locationHost;
+    std::string locationHost = virtualHost;
+    int i = 1;
+    std::string target = this->getTarget().substr(0, nthOccurance(this->getTarget(), "/", i) + 1);
+    bool found = false;
+    while (target != "" || !found) {
+        i++;
+        target = this->getTarget().substr(0, nthOccurance(this->getTarget(), "/", i) + 1);
+        locationHost += target;
+        if (this->config->hosts[locationHost]["handler"] != "") {
+            found = true;
+            virtualHost = locationHost;
+        }
     }
 
     if (this->config->hosts[virtualHost]["handler"] == "") {
