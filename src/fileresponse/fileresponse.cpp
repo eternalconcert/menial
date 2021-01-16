@@ -60,7 +60,7 @@ bool FileResponse::contentMatch() {
 
 
 void FileResponse::setFilePath() {
-    std::string targetPath = this->target;
+    std::string targetPath = this->getCleanTarget();
     if (targetPath.find("..") != std::string::npos) {
         this->logger->warning("Intrusion try detected: " + targetPath + " Resseting target to /");
         targetPath = "/";
@@ -72,11 +72,6 @@ void FileResponse::setFilePath() {
     if (rootPrefix.length() != 0) {
         targetPath = std::regex_replace(targetPath, std::regex(rootPrefix.c_str()), "/");
     };
-
-    std::string paramString = this->getRequest()->getGetParams();
-    if (paramString.length() > 0) {
-        targetPath.erase(targetPath.find(paramString));
-    }
 
     if (targetPath == "/" && this->hostConfig["dirlisting"] == "false") {
         targetPath = this->hostConfig["defaultdocument"];
@@ -190,7 +185,7 @@ std::string FileResponse::getDirlisting() {
     targetDir = std::regex_replace(targetDir, std::regex("%20"), " ");
     this->logger->debug("Dirlisting is active and no specific file requested. Return dirlisting: " + targetDir);
 
-    std::string cleanTarget = std::regex_replace(this->target, std::regex("%20"), " ");
+    std::string cleanTarget = std::regex_replace(this->getCleanTarget(), std::regex("%20"), " ");
 
     std::vector<std::string> dirList;
     std::vector<std::string> fileList;
@@ -219,12 +214,14 @@ std::string FileResponse::getDirlisting() {
 
     for (std::vector<std::string>::iterator it = dirList.begin(); it != dirList.end(); ++it) {
         std::string dir = *it;
-        listing += "<li class=\"dirlisting dir\"><a href=" + std::regex_replace(dir, std::regex(" "), "%20") + "/>" + dir + "</a></li>\n";
+        std::string hidden = dir.front() == '.' ? " hidden" : "";
+        listing += "<li class=\"dirlisting dir" + hidden + "\"><a href=" + std::regex_replace(dir, std::regex(" "), "%20") + "/>" + dir + "</a></li>\n";
     }
 
     for (std::vector<std::string>::iterator it = fileList.begin(); it != fileList.end(); ++it) {
         std::string file = *it;
-        listing += "<li class=\"dirlisting file\"><a href=" + std::regex_replace(file, std::regex(" "), "%20")  + ">" + file + "</a></li>\n";
+        std::string hidden = file.front() == '.' ? " hidden" : "";
+        listing += "<li class=\"dirlisting file" + hidden + "\"><a href=" + std::regex_replace(file, std::regex(" "), "%20")  + ">" + file + "</a></li>\n";
     }
 
     listing += "</ul>";
@@ -240,13 +237,23 @@ std::string FileResponse::make404() {
 }
 
 
+std::string FileResponse::getCleanTarget() {
+    std::string targetPath = this->target;
+    std::string paramString = this->getRequest()->getGetParams();
+    if (paramString.length() > 0) {
+        targetPath.erase(targetPath.find(paramString));
+    }
+    return targetPath;
+}
+
+
 std::string FileResponse::getContent() {
 
     std::string filePath = this->filePath;
     std::string content;
     if (this->hostConfig["dirlisting"] == "true") {
         try {
-            std::string targetPath = this->target;
+            std::string targetPath = this->getCleanTarget();
             if (targetPath.rfind("/") == (targetPath.length() - 1)) {
                 if (targetPath.find("..") != std::string::npos) {
                     this->logger->warning("Intrusion try detected: " + targetPath);

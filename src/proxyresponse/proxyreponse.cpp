@@ -58,7 +58,8 @@ std::string ProxyResponse::readFromUpstream() {
     serv_addr.sin_port = htons(upstreamPort);
 
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        this->logger->error("Error: Cannot connect");
+        this->setStatus(500);
+        throw SocketError("Error: Cannot connect");
     }
 
     std::string origMethodLine = this->request->getHeaders();
@@ -77,6 +78,7 @@ std::string ProxyResponse::readFromUpstream() {
     if (n < 0) {
         throw SocketError("Error: Cannot write to socket");
     }
+    keepAlive = false;  // TODO: Fix this ****
     std::string upstreamResponse = readResponse(sockfd, keepAlive);
     close(sockfd);
     return upstreamResponse;
@@ -93,6 +95,8 @@ std::string ProxyResponse::forward() {
         this->logger->debug("Upstreaming Message: " + result);
     } catch (const SocketError &error) {
         this->logger->error("Cannot read from upstream: " + error.message);
+        this->setStatus(500);
+        return this->headerBase() + HEADERDELIM;
     }
     return result;
 }

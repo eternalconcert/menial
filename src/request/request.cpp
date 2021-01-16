@@ -204,15 +204,15 @@ std::string Request::getVirtualHost() {
     std::string locationHost = virtualHost;
     int i = 1;
     std::string target = this->getTarget().substr(0, nthOccurance(this->getTarget(), "/", i) + 1);
+
     bool found = false;
-    while (target != "" || !found) {
-        i++;
+    while (!found && target != "") {
         target = this->getTarget().substr(0, nthOccurance(this->getTarget(), "/", i) + 1);
-        locationHost += target;
-        if (this->config->hosts[locationHost]["handler"] != "") {
+        if (this->config->hosts[locationHost + target]["handler"] != "") {
             found = true;
-            virtualHost = locationHost;
+            virtualHost = locationHost + target;
         }
+        i++;
     }
 
     if (this->config->hosts[virtualHost]["handler"] == "") {

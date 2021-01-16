@@ -33,6 +33,7 @@ class FileResponse: public Response {
         std::string notModified();
 
         std::string getDirlisting();
+        std::string getCleanTarget();
         void setFilePath();
 
         FileResponse(Request *request, Config *config, Logger *logger): Response (request, config, logger) {

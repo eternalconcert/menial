@@ -38,11 +38,31 @@
 
     <body>
         <h1>Content of <_DIR_></h1>
+        <button id="toggle-button" onclick="setHidden()"></button>
         <_LISTING_>
         <hr>
         <h2>menial</h2>
         <p id="claim">
             Always at your service!
         </p>
+        <script>
+            let params = (new URL(document.location)).searchParams;
+            let hidden = params.get('showHidden') === 'true' ? false : true;
+
+            var button = document.getElementById("toggle-button");
+            function setHidden() {
+                var items = document.getElementsByClassName("hidden");
+                for (var i = 0; i < items.length; i++) {
+                    items[i].style.display = hidden ? 'none' : '';
+                }
+                hidden = !hidden;
+                button.innerText = hidden ? `Hide ${items.length} invisible elements` : `Show ${items.length} invisible elements`;
+                params.set('showHidden', hidden);
+                window.history.replaceState({}, '', `${location.pathname}?${params}`);
+
+            }
+
+            setHidden(hidden);
+        </script>
     </body>
 </html>
