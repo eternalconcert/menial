@@ -285,7 +285,7 @@ std::string FileResponse::getContent() {
                 content = make404();
             } else {
                 try {
-                    content = readFile(this->hostConfig["root"] + fallbackFile);
+                    content = readFile(fallbackFile);
                 } catch (const FileNotFoundException &) {
                     this->logger->warning(
                         "No fallback file could be found: " + fallbackFile
