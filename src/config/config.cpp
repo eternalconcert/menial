@@ -126,6 +126,12 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["defaultfile"] = defaultfile;
 
+        std::string fallback = "";
+        if (document["hosts"][host.c_str()].HasMember("fallback")) {
+            fallback = document["hosts"][host.c_str()]["fallback"].GetString();
+        }
+        this->hosts[host]["fallback"] = fallback;
+
         bool dirlisting = false;
         if (document["hosts"][host.c_str()].HasMember("dirlisting")) {
             dirlisting = document["hosts"][host.c_str()]["dirlisting"].GetBool();

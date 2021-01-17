@@ -265,7 +265,7 @@ std::string FileResponse::getContent() {
             content = make404();
         }
     }
-    if (content.empty()) {
+    else {
         try {
             content = readFile(filePath);
         } catch (const FileNotFoundException &) {
@@ -279,6 +279,22 @@ std::string FileResponse::getContent() {
                     content = make404();
                 }
             }
+
+            std::string fallbackFile = this->hostConfig["fallback"];
+            if (fallbackFile == "") {
+                content = make404();
+            } else {
+                try {
+                    content = readFile(this->hostConfig["root"] + fallbackFile);
+                } catch (const FileNotFoundException &) {
+                    this->logger->warning(
+                        "No fallback file could be found: " + fallbackFile
+                    );
+                    content = make404();
+
+                }
+            }
+
         }
     }
 

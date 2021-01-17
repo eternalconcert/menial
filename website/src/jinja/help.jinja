@@ -47,7 +47,8 @@
             "handler": "file",
             "root": "/restricted/",
             "authfile": "auth.db",
-            "dirlisting": true
+            "dirlisting": true,
+            "fallback": "index.html"
         }
     },
     "logger": "console",
@@ -119,6 +120,9 @@
                         </li>
                         <li>
                             <b>defaultfile: </b> (Optional, default: blank) File which will be delievered whenever the requested file cannot be found. A 404 will be returned only if the configured default file itself cannot be found. Otherwise the default file will always be returned. If the requested file can be found, the default file will not be returned. This option can be used to serve bundled JavaScript files which handle routes by themselves but to also return e.g. CSS files.</a>.
+                        </li>
+                        <li>
+                            <b>fallback: </b> (Optional, default: blank) File which will be delievered whenever the requested file cannot be found. This will prevent 404 Errors. This cann is useful, whenever the a JavaScript application should handle the URL.</a>.
                         </li>
                     </ul>
                 </ul>
