@@ -10,6 +10,7 @@ flac        audio/flac
 gz          application/gzip
 gzip        application/gzip
 jpg         image/jpg
+js          text/javascript
 json        application/json
 log         text/plain
 mp3         audio/mpeg
