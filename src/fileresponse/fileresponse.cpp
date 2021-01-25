@@ -268,6 +268,7 @@ std::string FileResponse::getContent() {
     else {
         try {
             content = readFile(filePath);
+            this->setStatus(200);
         } catch (const FileNotFoundException &) {
             std::string defaultFile = this->hostConfig["defaultfile"];
             if (defaultFile == "") {
@@ -275,6 +276,7 @@ std::string FileResponse::getContent() {
             } else {
                 try {
                     content = readFile(this->hostConfig["root"] + defaultFile);
+                    this->setStatus(200);
                 } catch (const FileNotFoundException &) {
                     content = make404();
                 }
@@ -286,6 +288,7 @@ std::string FileResponse::getContent() {
             } else {
                 try {
                     content = readFile(fallbackFile);
+                    this->setStatus(200);
                 } catch (const FileNotFoundException &) {
                     this->logger->warning(
                         "No fallback file could be found: " + fallbackFile
