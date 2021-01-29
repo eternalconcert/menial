@@ -265,7 +265,7 @@ std::string FileResponse::getContent() {
             content = make404();
         }
     }
-    else {
+    if (content.empty()) {
         try {
             content = readFile(filePath);
             this->setStatus(200);
