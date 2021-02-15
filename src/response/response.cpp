@@ -90,6 +90,23 @@ std::string Response::getStatusMessage() {
 };
 
 
+std::string Response::trace() {
+    if (this->hostConfig["disabletrace"] == "true") {
+        return this->methodNotAllowed();
+    }
+
+    std::string requestHeaders = this->request->getHeaders();
+
+    std::string responseHeaders = this->headerBase();
+    responseHeaders += "Connection: close\n";
+    responseHeaders += "Content-Type: message/http\n";
+    responseHeaders += "Content-Lenght: " + std::to_string(requestHeaders.length());
+    responseHeaders += HEADERDELIM;
+
+    return responseHeaders + requestHeaders;
+};
+
+
 std::string Response::methodNotAllowed() {
     this->setStatus(405);
     std::string header = this->headerBase();

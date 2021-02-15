@@ -177,6 +177,9 @@ std::string Request::getResponse() {
     else if (this->getMethod() == "OPTIONS") {
         return response->options();
     }
+    else if (this->getMethod() == "TRACE") {
+        return response->trace();
+    }
     else {
         return response->methodNotAllowed();
     }

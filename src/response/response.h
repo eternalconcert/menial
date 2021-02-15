@@ -21,6 +21,9 @@ class Response {
         virtual std::string options() {
             return "";
         };
+
+        std::string trace();
+
         virtual std::string notFound() {
             return "";
         };

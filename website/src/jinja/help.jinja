@@ -48,7 +48,9 @@
             "root": "/restricted/",
             "authfile": "auth.db",
             "dirlisting": true,
-            "fallback": "index.html"
+            "fallback": "index.html",
+            "disabletrace": true
+
         }
     },
     "logger": "console",
@@ -123,6 +125,9 @@
                         </li>
                         <li>
                             <b>fallback: </b> (Optional, default: blank) File which will be delievered whenever the requested file cannot be found. This will prevent 404 Errors. This cann is useful, whenever the a JavaScript application should handle the URL.</a>.
+                        </li>
+                        <li>
+                            <b>disabletrace: </b> (Optional, default: false) When set to true, the TRACE method will return 405: Method Not Allowed.
                         </li>
                     </ul>
                 </ul>

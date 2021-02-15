@@ -180,6 +180,13 @@ void Config::update(std::string configPath) {
         }
         this->hosts[host]["keeptarget"] = keeptarget ? "true" : "false";
 
+        // Disable TRACE Verb
+        bool disableTrace = false;
+        if (document["hosts"][host.c_str()].HasMember("disabletrace")) {
+            disableTrace = document["hosts"][host.c_str()]["disabletrace"].GetBool();
+        }
+        this->hosts[host]["disabletrace"] = disableTrace ? "true" : "false";
+
         int portNum;
         std::string port = host;
         if (port.find(":") == std::string::npos) {
