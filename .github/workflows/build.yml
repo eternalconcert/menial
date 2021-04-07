@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libpython3.8-dev
+          sudo apt-get install libpython3.8-dev npm
           sudo apt-get install ./deployment/anvil_0.1.1.deb
       - name: Build
         run: |
