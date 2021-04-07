@@ -66,6 +66,7 @@ jobs:
           python3 website/update_values.py 0.1.$GITHUB_RUN_NUMBER
           anvil -i website/src/ -s website/src/less/ -o website/build/ -t "menial" -v website/hashvalues.json
           docker build . --file GithubDockerfile --tag menial
+          docker tag menial menial:latest
 
       - name: Log into GitHub Container Registry
       # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
