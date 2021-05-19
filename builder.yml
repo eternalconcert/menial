@@ -1,0 +1,19 @@
+job: example
+image: builder-default
+stages:
+  - name: login
+    run: |
+      echo "Password: $PASSWORD"
+    env:
+      PASSWORD: ${PASSWORD}
+
+  # - name: dependencies
+  #   run: |
+  #     apt-get update
+  #     apt-get upgrade
+  #     apt-get install build-essential python3 python3-dev libssl-dev -y
+  # - name: build
+  #   run: |
+  #     cd menial
+  #     make compile
+  #     cp build/menial.bin /out/
